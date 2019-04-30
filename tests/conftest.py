@@ -11,6 +11,7 @@ def pytest_addoption(parser):
 
 
 def selenium(config, selenium):
+    """Setup Selenium"""
     addon = config.getoption("--experiment")
     selenium.install_addon(addon)
     return selenium
