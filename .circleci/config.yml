@@ -39,7 +39,7 @@ jobs:
           path: results/exp-tests.html
 workflows:
   version: 2.1
-    test_and_lint:
-      jobs:
-        - lint
-        - test
+  test_and_lint:
+    jobs:
+      - lint
+      - test
