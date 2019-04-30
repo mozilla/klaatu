@@ -8,6 +8,7 @@ black = "*"
 
 [packages]
 pytest-selenium = "*"
+urllib3 = "<1.25.0"
 
 [requires]
 python_version = "3.7"
