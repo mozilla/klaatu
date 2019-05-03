@@ -1,3 +1,5 @@
+import os
+
 import pytest
 
 
@@ -10,8 +12,9 @@ def pytest_addoption(parser):
     )
 
 
-def selenium(config, selenium):
+@pytest.fixture
+def selenium(pytestconfig, selenium):
     """Setup Selenium"""
-    addon = config.getoption("--experiment")
-    selenium.install_addon(addon)
+    addon = pytestconfig.getoption("--experiment")
+    selenium.install_addon(os.path.abspath(addon), temporary=True)
     return selenium
