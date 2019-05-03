@@ -30,7 +30,7 @@ jobs:
           command: sudo pip install tox
       - run:
           name: Run tests
-          command: tox -e py37-exp-tests -- --experiment=fixtures/test-experiment.xpi 
+          command: tox -e py37-exp-tests -- --experiment=fixtures/shield_study_example-2.0.0.zip
       - save_cache:
           key: klaatu-test-{{ checksum "Pipfile.lock" }}
           paths:
