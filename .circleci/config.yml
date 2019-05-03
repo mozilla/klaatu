@@ -36,7 +36,7 @@ jobs:
           paths:
             - .tox
       - store_artifacts:
-          path: results/exp-tests.html
+          path: results/py37-exp-tests.html
 workflows:
   version: 2.1
   test_and_lint:
