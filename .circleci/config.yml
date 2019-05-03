@@ -29,8 +29,18 @@ jobs:
           name: Install tox
           command: sudo pip install tox
       - run:
-          name: Run tests
-          command: tox -e py37-exp-tests -- --experiment=fixtures/shield_study_example-2.0.0.zip
+          name: Install Nightly and Run tests
+          command: |
+            set +ex
+            wget -r -l1 --no-parent -A '*.en-US.linux-x86_64.tar.bz2' -R '*.html'  -O /tmp/firefox.tar.bz2  https://download-installer.cdn.mozilla.net/pub/firefox/nightly/latest-mozilla-central/
+            sudo apt-get -y purge firefox
+            sudo rm -rf /opt/firefox
+            sudo tar -C /opt -xjf /tmp/firefox.tar.bz2
+            sudo rm /tmp/firefox.tar.bz2
+            sudo mv /opt/firefox /opt/firefox-nightly
+            sudo ln -fs /opt/firefox-nightly/firefox /usr/bin/firefox
+            firefox --version
+            tox -e py37-exp-tests -- --experiment=fixtures/shield_study_example-2.0.0.zip
       - save_cache:
           key: klaatu-test-{{ checksum "Pipfile.lock" }}
           paths:
