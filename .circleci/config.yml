@@ -20,7 +20,7 @@ jobs:
             - .tox
   test:
     docker:
-      - image: b4handjr/selenium-firefox:python3-latest
+      - image: circleci/python:3.7-browsers
     steps:
       - checkout
       - restore_cache:
