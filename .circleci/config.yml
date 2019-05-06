@@ -19,34 +19,27 @@ jobs:
           paths:
             - .tox
   test:
-    docker:
-      - image: circleci/python:3.7-browsers
+    working_directory: ~/klaatu
+    machine: true
     steps:
       - checkout
       - restore_cache:
           key: klaatu-test-{{ checksum "Pipfile.lock" }}
       - run: 
-          name: Install tox
-          command: sudo pip install tox
-      - run:
-          name: Install Nightly and Run tests
+          name: Build docker image
+          command: docker build -t klaatu:latest .
+      - run: 
+          name: Run tests
           command: |
-            set +ex
-            wget -r -l1 --no-parent -A '*.en-US.linux-x86_64.tar.bz2' -R '*.html'  -O /tmp/firefox.tar.bz2  https://download-installer.cdn.mozilla.net/pub/firefox/nightly/latest-mozilla-central/
-            sudo apt-get -y purge firefox
-            sudo rm -rf /opt/firefox
-            sudo tar -C /opt -xjf /tmp/firefox.tar.bz2
-            sudo rm /tmp/firefox.tar.bz2
-            sudo mv /opt/firefox /opt/firefox-nightly
-            sudo ln -fs /opt/firefox-nightly/firefox /usr/bin/firefox
-            firefox --version
-            tox -e py37-exp-tests -- --experiment=fixtures/shield_study_example-2.0.0.zip
+            set -ex
+            docker run --name "klaatu" klaatu:latest tox --e py37-exp-tests -- --experiment=fixtures/shield_study_example-2.0.0.zip
+            docker cp klaatu:/home/user/code/results/py37-exp-tests.html ./report.html
       - save_cache:
           key: klaatu-test-{{ checksum "Pipfile.lock" }}
           paths:
             - .tox
       - store_artifacts:
-          path: results/py37-exp-tests.html
+          path: report.html
 workflows:
   version: 2.1
   test_and_lint:
