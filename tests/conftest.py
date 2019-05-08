@@ -22,7 +22,7 @@ def pytest_addoption(parser):
 @pytest.fixture
 def firefox_options(pytestconfig, firefox_options):
     if pytestconfig.getoption("--run-old-firefox"):
-        binary = os.path.abspath('utilities/firefox-old-nightly/firefox/firefox-bin')
+        binary = os.path.abspath("utilities/firefox-old-nightly/firefox/firefox-bin")
         firefox_options.binary = binary
     firefox_options.set_preference("extensions.install.requireBuiltInCerts", False)
     firefox_options.set_preference("ui.popup.disable_autohide", True)
