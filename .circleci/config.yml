@@ -18,7 +18,7 @@ jobs:
           key: klaatu-lint-{{ checksum "Pipfile.lock" }}
           paths:
             - .tox
-  test:
+  test-current-nightly:
     working_directory: ~/klaatu
     machine: true
     steps:
@@ -40,9 +40,32 @@ jobs:
             - .tox
       - store_artifacts:
           path: report.html
+  test-old-nightly:
+    working_directory: ~/klaatu
+    machine: true
+    steps:
+      - checkout
+      - restore_cache:
+          key: klaatu-test-{{ checksum "Pipfile.lock" }}
+      - run: 
+          name: Build docker image
+          command: docker build -t klaatu:latest .
+      - run: 
+          name: Run tests
+          command: |
+            set -ex
+            docker run --name "klaatu" klaatu:latest tox -e py37-exp-tests -- --experiment=fixtures/shield_study_example-2.0.0.zip --run-old-firefox
+            docker cp klaatu:/home/user/code/results/py37-exp-tests.html ./report.html
+      - save_cache:
+          key: klaatu-test-{{ checksum "Pipfile.lock" }}
+          paths:
+            - .tox
+      - store_artifacts:
+          path: report.html
 workflows:
   version: 2.1
   test_and_lint:
     jobs:
       - lint
-      - test
+      - test-current-nightly
+      - test-old-nightly
