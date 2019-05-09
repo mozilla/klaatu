@@ -11,7 +11,7 @@ def test_experiment_does_not_stop_startup(selenium):
 
 @pytest.mark.nondestructive
 def test_private_browsing_disables_experiment(firefox, selenium):
-    """Experiment should be disabled in"""
+    """Experiment should be disabled in private browsing mode."""
     new_browser = firefox.browser.open_window(private=True)
     assert new_browser.is_private
     toolbar = ToolBar(selenium)
