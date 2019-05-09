@@ -20,6 +20,7 @@ RUN dependencies=' \
         python3-pip \
         python-setuptools \
         python-wheel \
+        sudo \
         wget \
     ' \
     && set -x \
@@ -28,7 +29,6 @@ RUN dependencies=' \
     && apt-get -qq update && apt-get -qq install --no-install-recommends -y $dependencies \
     && apt-get -y purge firefox \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
-
 
 # Install Firefox and Geckodriver
 RUN INSTALLER_DOWNLOAD_URL=https://raw.githubusercontent.com/hackebrot/install-firefox/master/install-firefox.sh \
@@ -56,5 +56,18 @@ COPY . $HOME/code/
 RUN chown -R user:user $HOME
 
 WORKDIR $HOME/code
+
+RUN usermod -aG sudo user
+
+# Install python deps
+RUN pip3 install -r pipenv.txt
+RUN pipenv install --python 3.7
+
+# Download older firefox nightly
+RUN FIREFOX_OLD_DOWNLOAD_URL=$(pipenv run download_old_firefox) \
+    && wget -O /tmp/firefox_old.tar.bz2 $FIREFOX_OLD_DOWNLOAD_URL \
+    && mkdir utilities/firefox-old-nightly \
+    && tar -C utilities/firefox-old-nightly -xjf /tmp/firefox_old.tar.bz2 \
+    && rm /tmp/firefox_old.tar.bz2
 
 USER user

@@ -9,9 +9,15 @@ black = "*"
 [packages]
 pytest-selenium = "*"
 urllib3 = "<1.25.0"
+beautifulsoup4 = "*"
+foxpuppet = "*"
+pytest-firefox = "*"
 
 [requires]
 python_version = "3.7"
 
 [pipenv]
 allow_prereleases = true
+
+[scripts]
+download_old_firefox = "python utilities/download_old_firefox.py"
