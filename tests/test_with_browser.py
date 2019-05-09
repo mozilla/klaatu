@@ -15,8 +15,8 @@ def test_private_browsing_disables_experiment(firefox, selenium):
     new_browser = firefox.browser.open_window(private=True)
     assert new_browser.is_private
     toolbar = ToolBar(selenium)
-    for items in toolbar.toolbar_items:
-        if "shield.mozilla.org" not in items._id:
+    for item in toolbar.toolbar_items:
+        if "shield.mozilla.org" not in item._id:
             continue
         else:
             raise AssertionError("Extension is Found")

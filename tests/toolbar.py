@@ -25,4 +25,4 @@ class ToolBar:
         def _id(self):
             """Extension name."""
             with self.selenium.context(self.selenium.CONTEXT_CHROME):
-                return self.root.get_attribute("data-extensionid")
+                return f'{self.root.get_attribute("data-extensionid")}'
