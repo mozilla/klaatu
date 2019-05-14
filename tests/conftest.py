@@ -41,6 +41,17 @@ def firefox_options(pytestconfig, firefox_options):
 
 
 @pytest.fixture
+def firefox_startup_time(firefox):
+    """Startup with no extension installed"""
+    return firefox.selenium.execute_script(
+        """
+        perfData = window.performance.timing 
+        return perfData.loadEventEnd - perfData.navigationStart
+        """
+    )
+
+
+@pytest.fixture
 def selenium(pytestconfig, selenium):
     """Setup Selenium"""
     addon = pytestconfig.getoption("--experiment")
