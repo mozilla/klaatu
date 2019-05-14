@@ -20,3 +20,15 @@ def test_private_browsing_disables_experiment(firefox, selenium):
             continue
         else:
             raise AssertionError("Extension is Found")
+
+
+@pytest.mark.nondestructive
+def test_experiment_does_not_drastically_slow_firefox(firefox_startup_time, selenium):
+    """Experiment should not slow firefox down by more then 20%."""
+    startup = selenium.execute_script(
+        """
+        perfData = window.performance.timing 
+        return perfData.loadEventEnd - perfData.navigationStart
+        """
+    )
+    assert (firefox_startup_time * 0.02) < startup
