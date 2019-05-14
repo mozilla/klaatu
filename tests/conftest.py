@@ -35,7 +35,7 @@ def firefox_options(pytestconfig, firefox_options):
     firefox_options.set_preference("devtools.debugger.remote-enabled", True)
     firefox_options.set_preference("devtools.debugger.prompt-connection", False)
     firefox_options.set_preference("shieldStudy.logLevel", "All")
-    firefox_options.add_argument("-headless")
+    # firefox_options.add_argument("-headless")
     firefox_options.log.level = "trace"
     return firefox_options
 
@@ -55,5 +55,6 @@ def firefox_startup_time(firefox):
 def selenium(pytestconfig, selenium):
     """Setup Selenium"""
     addon = pytestconfig.getoption("--experiment")
-    selenium.install_addon(os.path.abspath(addon))
+    addon_id = selenium.install_addon(os.path.abspath(addon))
+    setattr(selenium, "addon_id", addon_id)
     return selenium
