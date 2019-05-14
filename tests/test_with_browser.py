@@ -39,7 +39,7 @@ def test_experiment_shows_on_support_page(selenium):
     """Experiment should show on about:support page."""
     selenium.get("about:support")
     extensions = selenium.find_element_by_id("extensions-tbody")
-    items = extensions.find_elements_by_css_selector('tr > td')
+    items = extensions.find_elements_by_css_selector("tr > td")
     for item in items:
         if selenium.addon_id not in item.text:
             continue
