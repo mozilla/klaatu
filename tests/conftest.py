@@ -55,5 +55,6 @@ def firefox_startup_time(firefox):
 def selenium(pytestconfig, selenium):
     """Setup Selenium"""
     addon = pytestconfig.getoption("--experiment")
-    selenium.install_addon(os.path.abspath(addon))
+    addon_id = selenium.install_addon(os.path.abspath(addon))
+    setattr(selenium, "addon_id", addon_id)
     return selenium

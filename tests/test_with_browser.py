@@ -16,7 +16,7 @@ def test_private_browsing_disables_experiment(firefox, selenium):
     assert new_browser.is_private
     toolbar = ToolBar(selenium)
     for item in toolbar.toolbar_items:
-        if "shield.mozilla.org" not in item._id:
+        if selenium.addon_id not in item._id:
             continue
         else:
             raise AssertionError("Extension is Found")
@@ -31,4 +31,17 @@ def test_experiment_does_not_drastically_slow_firefox(firefox_startup_time, sele
         return perfData.loadEventEnd - perfData.navigationStart
         """
     )
-    assert (firefox_startup_time * 0.02) < startup
+    assert ((firefox_startup_time * 0.2) + firefox_startup_time) >= startup
+
+
+@pytest.mark.nondestructive
+def test_experiment_shows_on_support_page(selenium):
+    """Experiment should show on about:support page."""
+    selenium.get("about:support")
+    extensions = selenium.find_element_by_id("extensions-tbody")
+    items = extensions.find_elements_by_css_selector("tr > td")
+    for item in items:
+        if selenium.addon_id not in item.text:
+            continue
+        else:
+            assert True, "Extension Found"
