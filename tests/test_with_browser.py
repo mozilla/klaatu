@@ -31,4 +31,4 @@ def test_experiment_does_not_drastically_slow_firefox(firefox_startup_time, sele
         return perfData.loadEventEnd - perfData.navigationStart
         """
     )
-    assert (firefox_startup_time * .02) < startup
+    assert (firefox_startup_time * 0.02) < startup
