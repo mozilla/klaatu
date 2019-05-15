@@ -13,14 +13,14 @@ def test_experiment_does_not_stop_startup(selenium: typing.Any):
 
 @pytest.mark.nondestructive
 def test_private_browsing_disables_experiment(
-    firefox: typing.Any, selenium: typing.Any
+    firefox: typing.Any, selenium: typing.Any, addon_ids: list
 ):
     """Experiment should be disabled in private browsing mode."""
     new_browser = firefox.browser.open_window(private=True)
     assert new_browser.is_private
     toolbar = ToolBar(selenium)
     for item in toolbar.toolbar_items:
-        if selenium.addon_id not in item._id:
+        if addon_ids[0] not in item._id:
             continue
         else:
             raise AssertionError("Extension is Found")
@@ -41,13 +41,13 @@ def test_experiment_does_not_drastically_slow_firefox(
 
 
 @pytest.mark.nondestructive
-def test_experiment_shows_on_support_page(selenium: typing.Any):
+def test_experiment_shows_on_support_page(selenium: typing.Any, addon_ids: list):
     """Experiment should show on about:support page."""
     selenium.get("about:support")
     extensions = selenium.find_element_by_id("extensions-tbody")
     items = extensions.find_elements_by_css_selector("tr > td")
     for item in items:
-        if selenium.addon_id not in item.text:
+        if addon_ids[0] not in item.text:
             continue
         else:
             assert True, "Extension Found"
