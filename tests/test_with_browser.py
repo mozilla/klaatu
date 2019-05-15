@@ -1,16 +1,20 @@
+import typing
+
 import pytest
 
 from tests.toolbar import ToolBar
 
 
 @pytest.mark.nondestructive
-def test_experiment_does_not_stop_startup(selenium):
+def test_experiment_does_not_stop_startup(selenium: typing.Any):
     """Experiment does not stop browser startup, or prohibit a clean exit."""
     selenium.get("https://www.mozilla.org")
 
 
 @pytest.mark.nondestructive
-def test_private_browsing_disables_experiment(firefox, selenium):
+def test_private_browsing_disables_experiment(
+    firefox: typing.Any, selenium: typing.Any
+):
     """Experiment should be disabled in private browsing mode."""
     new_browser = firefox.browser.open_window(private=True)
     assert new_browser.is_private
@@ -23,7 +27,9 @@ def test_private_browsing_disables_experiment(firefox, selenium):
 
 
 @pytest.mark.nondestructive
-def test_experiment_does_not_drastically_slow_firefox(firefox_startup_time, selenium):
+def test_experiment_does_not_drastically_slow_firefox(
+    firefox_startup_time: int, selenium: typing.Any
+):
     """Experiment should not slow firefox down by more then 20%."""
     startup = selenium.execute_script(
         """
@@ -35,7 +41,7 @@ def test_experiment_does_not_drastically_slow_firefox(firefox_startup_time, sele
 
 
 @pytest.mark.nondestructive
-def test_experiment_shows_on_support_page(selenium):
+def test_experiment_shows_on_support_page(selenium: typing.Any):
     """Experiment should show on about:support page."""
     selenium.get("about:support")
     extensions = selenium.find_element_by_id("extensions-tbody")

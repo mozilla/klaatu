@@ -14,6 +14,9 @@ jobs:
       - run:
           name: Lint files
           command: tox -e formatting
+      - run:
+          name: Run type check
+          command: tox -e mypy
       - save_cache:
           key: klaatu-lint-{{ checksum "Pipfile.lock" }}
           paths:
