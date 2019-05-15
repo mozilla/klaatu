@@ -1,9 +1,10 @@
 import os
+import typing
 
 import pytest
 
 
-def pytest_addoption(parser):
+def pytest_addoption(parser) -> None:
     parser.addoption(
         "--experiment",
         action="store",
@@ -19,7 +20,9 @@ def pytest_addoption(parser):
 
 
 @pytest.fixture
-def firefox_options(pytestconfig, firefox_options):
+def firefox_options(
+    pytestconfig: typing.Any, firefox_options: typing.Any
+) -> typing.Any:
     if pytestconfig.getoption("--run-old-firefox"):
         binary = os.path.abspath("utilities/firefox-old-nightly/firefox/firefox-bin")
         firefox_options.binary = binary
@@ -41,7 +44,7 @@ def firefox_options(pytestconfig, firefox_options):
 
 
 @pytest.fixture
-def firefox_startup_time(firefox):
+def firefox_startup_time(firefox: typing.Any) -> typing.Any:
     """Startup with no extension installed"""
     return firefox.selenium.execute_script(
         """
@@ -52,7 +55,7 @@ def firefox_startup_time(firefox):
 
 
 @pytest.fixture
-def selenium(pytestconfig, selenium):
+def selenium(pytestconfig: typing.Any, selenium: typing.Any) -> typing.Any:
     """Setup Selenium"""
     addon = pytestconfig.getoption("--experiment")
     addon_id = selenium.install_addon(os.path.abspath(addon))

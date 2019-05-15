@@ -12,6 +12,7 @@ urllib3 = "<1.25.0"
 beautifulsoup4 = "*"
 foxpuppet = "*"
 pytest-firefox = "*"
+mypy = "*"
 
 [requires]
 python_version = "3.7"
