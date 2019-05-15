@@ -18,7 +18,7 @@ if __name__ == "__main__":
     elif today.day >= 10 and today.day < 15:
         download_day = f"0{today.day - 5}"
     else:
-        download_day = download_day - 5
+        download_day = today.day - 5
 
     # Build URL
     download_dir = f"{base_url}/pub/firefox/nightly/{today.year}/{current_month}/"
