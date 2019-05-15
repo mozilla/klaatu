@@ -60,7 +60,9 @@ def addon_ids():
 
 
 @pytest.fixture
-def selenium(pytestconfig: typing.Any, selenium: typing.Any, addon_ids: list) -> typing.Any:
+def selenium(
+    pytestconfig: typing.Any, selenium: typing.Any, addon_ids: list
+) -> typing.Any:
     """Setup Selenium"""
     addon = pytestconfig.getoption("--experiment")
     addon_id = selenium.install_addon(os.path.abspath(addon))
