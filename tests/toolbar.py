@@ -14,7 +14,7 @@ class ToolBar:
         self.selenium = selenium
 
     @property
-    def toolbar_items(self) -> typing.List[Extension]:
+    def toolbar_items(self) -> typing.List:
         """Tool bar items"""
         with self.selenium.context(self.selenium.CONTEXT_CHROME):
             els = self.selenium.find_elements(*self._extension_locator)
