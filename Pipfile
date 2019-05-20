@@ -11,8 +11,9 @@ pytest-selenium = "*"
 urllib3 = "<1.25.0"
 beautifulsoup4 = "*"
 foxpuppet = "*"
-pytest-firefox = "*"
 mypy = "*"
+pytest-firefox = "*"
+pytest-ordering = "*"
 
 [requires]
 python_version = "3.7"

@@ -70,4 +70,14 @@ RUN FIREFOX_OLD_DOWNLOAD_URL=$(pipenv run download_old_firefox) \
     && tar -C utilities/firefox-old-nightly -xjf /tmp/firefox_old.tar.bz2 \
     && rm /tmp/firefox_old.tar.bz2
 
+RUN mv /usr/bin/geckodriver /usr/bin/geckodriver2 \
+    && mv ./utilities/geckodriver /usr/bin/geckodriver \
+    && chmod +x /usr/bin/geckodriver
+
 USER user
+
+# Create profile used for update tests
+RUN utilities/firefox-old-nightly/firefox/firefox -CreateProfile "klaatu-profile /home/user/code/utilities/klaatu-profile"
+
+# Copy prefs needed for test
+RUN cp utilities/user.js utilities/klaatu-profile
