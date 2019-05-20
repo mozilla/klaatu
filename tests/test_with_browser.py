@@ -21,7 +21,7 @@ def test_experiment_does_not_stop_startup(selenium: typing.Any, addon_ids):
         if addon_ids[0] not in item._id:
             continue
         else:
-            assert True # Experiment is installed
+            assert True  # Experiment is installed
 
 
 @pytest.mark.nondestructive
@@ -112,5 +112,4 @@ def test_experiment_does_not_stop_update(addon_ids: list, selenium: typing.Any):
         if addon_ids[0] not in item._id:
             continue
         else:
-            assert True # Experiment is installed
-
+            assert True  # Experiment is installed
