@@ -2,6 +2,7 @@ import os
 import typing
 
 import pytest
+from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
 
 
 def pytest_addoption(parser) -> None:
@@ -23,9 +24,13 @@ def pytest_addoption(parser) -> None:
 def firefox_options(
     pytestconfig: typing.Any, firefox_options: typing.Any
 ) -> typing.Any:
+    firefox_options.log.level = "trace"
     if pytestconfig.getoption("--run-old-firefox"):
         binary = os.path.abspath("utilities/firefox-old-nightly/firefox/firefox-bin")
         firefox_options.binary = binary
+        firefox_options.add_argument("-profile")
+        firefox_options.add_argument(f'{os.path.abspath("utilities/klaatu-profile")}')
+
     firefox_options.set_preference("extensions.install.requireBuiltInCerts", False)
     firefox_options.set_preference("ui.popup.disable_autohide", True)
     firefox_options.set_preference("xpinstall.signatures.required", False)
@@ -39,7 +44,6 @@ def firefox_options(
     firefox_options.set_preference("devtools.debugger.prompt-connection", False)
     firefox_options.set_preference("shieldStudy.logLevel", "All")
     firefox_options.add_argument("-headless")
-    firefox_options.log.level = "trace"
     return firefox_options
 
 
@@ -55,7 +59,7 @@ def firefox_startup_time(firefox: typing.Any) -> typing.Any:
 
 
 @pytest.fixture
-def addon_ids():
+def addon_ids() -> list:
     return []
 
 
