@@ -113,3 +113,11 @@ def test_experiment_does_not_stop_update(addon_ids: list, selenium: typing.Any):
             continue
         else:
             assert True  # Experiment is installed
+
+
+@pytest.mark.expire_experiment
+@pytest.mark.nondestructive
+def test_experiment_expires_correctly(selenium: typing.Any, firefox_options: typing.Any):
+    selenium.get("https://www.allizom.org")
+    selenium.switch_to.window(selenium.window_handles[-1])
+    WebDriverWait(selenium, 10).until(EC.url_contains("qsurvey"))

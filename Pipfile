@@ -12,7 +12,6 @@ urllib3 = "<1.25.0"
 beautifulsoup4 = "*"
 foxpuppet = "*"
 mypy = "*"
-pytest-firefox = "*"
 pytest-ordering = "*"
 
 [requires]
