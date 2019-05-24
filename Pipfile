@@ -13,6 +13,7 @@ beautifulsoup4 = "*"
 foxpuppet = "*"
 mypy = "*"
 pytest-ordering = "*"
+pytest-firefox = "*"
 
 [requires]
 python_version = "3.7"
