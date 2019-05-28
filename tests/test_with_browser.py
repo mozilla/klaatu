@@ -1,5 +1,4 @@
 import os
-import time
 import typing
 
 import pytest
@@ -20,7 +19,6 @@ from tests.toolbar import ToolBar
 @pytest.mark.nondestructive
 def test_experiment_does_not_stop_startup(selenium: typing.Any, addon_ids):
     """Experiment does not stop browser startup, or prohibit a clean exit."""
-    time.sleep(600)
     selenium.get("https://www.allizom.org")
     toolbar = ToolBar(selenium)
     for item in toolbar.toolbar_items:
