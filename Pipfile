@@ -14,6 +14,7 @@ foxpuppet = "*"
 mypy = "*"
 pytest-ordering = "*"
 pytest-firefox = "*"
+pytest-rerunfailures = "*"
 
 [requires]
 python_version = "3.7"

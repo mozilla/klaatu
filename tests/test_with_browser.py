@@ -1,4 +1,5 @@
 import os
+import time
 import typing
 
 import pytest
@@ -67,6 +68,9 @@ def test_experiment_shows_on_support_page(selenium: typing.Any, addon_ids: list)
             assert True, "Extension Found"
 
 
+@pytest.mark.flaky(
+    reruns=1
+)  # Sometimes firefox doesn't pull the update in a reasonable time
 @pytest.mark.last
 @pytest.mark.nondestructive
 @pytest.mark.skipif(
@@ -76,6 +80,9 @@ def test_experiment_shows_on_support_page(selenium: typing.Any, addon_ids: list)
 def test_experiment_does_not_stop_update(addon_ids: list, selenium: typing.Any):
     """Experinemt should not block firefox updates."""
     selenium.get("about:profiles")
+
+    # Sleep to let firefox update
+    time.sleep(60)
     with selenium.context(selenium.CONTEXT_CHROME):
         selenium.find_element_by_id("PanelUI-menu-button").click()
         WebDriverWait(selenium, 30).until(
@@ -117,7 +124,9 @@ def test_experiment_does_not_stop_update(addon_ids: list, selenium: typing.Any):
 
 @pytest.mark.expire_experiment
 @pytest.mark.nondestructive
-def test_experiment_expires_correctly(selenium: typing.Any, firefox_options: typing.Any):
+def test_experiment_expires_correctly(
+    selenium: typing.Any, firefox_options: typing.Any
+):
     selenium.get("https://www.allizom.org")
     selenium.switch_to.window(selenium.window_handles[-1])
     WebDriverWait(selenium, 10).until(EC.url_contains("qsurvey"))

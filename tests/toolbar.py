@@ -30,7 +30,7 @@ class ToolBar:
             """Extension name."""
             with self.selenium.context(self.selenium.CONTEXT_CHROME):
                 return f'{self.root.get_attribute("data-extensionid")}'
-        
+
         @property
         def widget_id(self) -> str:
             with self.selenium.context(self.selenium.CONTEXT_CHROME):

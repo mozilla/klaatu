@@ -1,4 +1,4 @@
-FROM ubuntu:xenial
+FROM ubuntu:bionic-20190307
 
 USER root
 
@@ -7,7 +7,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     MOZ_HEADLESS=1 \
     LC_ALL=C.UTF-8 \
     LANG=C.UTF-8 \
-    FIREFOX_VERSION=65.0 \
+    FIREFOX_VERSION=66.0 \
     GECKODRIVER_VERSION=0.24.0
 
 # Install requirements to install tools
@@ -22,6 +22,7 @@ RUN dependencies=' \
         python-wheel \
         sudo \
         wget \
+        dconf-tools \
     ' \
     && set -x \
     && apt-get -qq update && apt-get -qq install -y software-properties-common \
@@ -77,7 +78,7 @@ RUN mv /usr/bin/geckodriver /usr/bin/geckodriver2 \
 USER user
 
 # Create profile used for update tests
-RUN utilities/firefox-old-nightly/firefox/firefox -CreateProfile "klaatu-profile /home/user/code/utilities/klaatu-profile"
+RUN utilities/firefox-old-nightly/firefox/firefox -no-remote -CreateProfile "klaatu-profile /home/user/code/utilities/klaatu-profile"
 
 # Copy prefs needed for test
 RUN cp utilities/user.js utilities/klaatu-profile

@@ -26,8 +26,12 @@ def pytest_addoption(parser) -> None:
 
 @pytest.fixture
 def firefox_options(
-    pytestconfig: typing.Any, firefox_options: typing.Any, experiment_widget_id, request
+    pytestconfig: typing.Any,
+    firefox_options: typing.Any,
+    experiment_widget_id: typing.Any,
+    request: typing.Any,
 ) -> typing.Any:
+    """Setup Firefox"""
     firefox_options.log.level = "trace"
     if pytestconfig.getoption("--run-old-firefox"):
         binary = os.path.abspath("utilities/firefox-old-nightly/firefox/firefox-bin")
@@ -47,15 +51,21 @@ def firefox_options(
     firefox_options.set_preference("devtools.debugger.remote-enabled", True)
     firefox_options.set_preference("devtools.debugger.prompt-connection", False)
     firefox_options.set_preference("shieldStudy.logLevel", "All")
-    firefox_options.set_preference(f'extensions.{experiment_widget_id}.test.expired', True)
+    firefox_options.set_preference(
+        f"extensions.{experiment_widget_id}.test.expired", True
+    )
     firefox_options.add_argument("-headless")
     yield firefox_options
+    # Remove pref from user.js
     if request.config.option.run_old_firefox:
         with open("utilities/klaatu-profile/user.js", "r+") as f:
             lines = f.readlines()
             f.seek(0)
             for i in lines:
-                if i != f'\nuser_pref("extensions.{experiment_widget_id}.test.expired", true);':
+                if (
+                    i
+                    != f'\nuser_pref("extensions.{experiment_widget_id}.test.expired", true);'
+                ):
                     f.write(i)
             f.truncate()
 
@@ -73,6 +83,7 @@ def firefox_startup_time(firefox: typing.Any) -> typing.Any:
 
 @pytest.fixture
 def experiment_widget_id(pytestconfig: typing.Any, request: typing.Any) -> typing.Any:
+    """Experiment's ID"""
     if not request.node.get_closest_marker("expire_experiment"):
         return
 
@@ -80,11 +91,13 @@ def experiment_widget_id(pytestconfig: typing.Any, request: typing.Any) -> typin
     with ZipFile(zip_file) as myzip:
         with myzip.open("manifest.json") as myfile:
             manifest = json.load(myfile)
-    widget_id = manifest["applications"]["gecko"]["id"].replace("@", "_").replace(".", "_")
+    widget_id = (
+        manifest["applications"]["gecko"]["id"].replace("@", "_").replace(".", "_")
+    )
     if request.config.option.run_old_firefox:
         with open("utilities/klaatu-profile/user.js", "a") as f:
-            f.write(f'\nuser_pref("extensions.{widget_id}.test.expired", true);')        
-    return experiment_widget_id
+            f.write(f'\nuser_pref("extensions.{widget_id}.test.expired", true);')
+    return f"{widget_id}"
 
 
 @pytest.fixture
