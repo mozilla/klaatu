@@ -10,12 +10,17 @@ from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
+from tests.expected import (
+    firefox_update_banner_is_found,
+    firefox_update_banner_is_invisible,
+)
 from tests.toolbar import ToolBar
 
 
 @pytest.mark.nondestructive
 def test_experiment_does_not_stop_startup(selenium: typing.Any, addon_ids):
     """Experiment does not stop browser startup, or prohibit a clean exit."""
+    time.sleep(600)
     selenium.get("https://www.allizom.org")
     toolbar = ToolBar(selenium)
     for item in toolbar.toolbar_items:
@@ -68,9 +73,6 @@ def test_experiment_shows_on_support_page(selenium: typing.Any, addon_ids: list)
             assert True, "Extension Found"
 
 
-@pytest.mark.flaky(
-    reruns=1
-)  # Sometimes firefox doesn't pull the update in a reasonable time
 @pytest.mark.last
 @pytest.mark.nondestructive
 @pytest.mark.skipif(
@@ -80,14 +82,10 @@ def test_experiment_shows_on_support_page(selenium: typing.Any, addon_ids: list)
 def test_experiment_does_not_stop_update(addon_ids: list, selenium: typing.Any):
     """Experinemt should not block firefox updates."""
     selenium.get("about:profiles")
-
     # Sleep to let firefox update
-    time.sleep(60)
     with selenium.context(selenium.CONTEXT_CHROME):
-        selenium.find_element_by_id("PanelUI-menu-button").click()
-        WebDriverWait(selenium, 30).until(
-            EC.visibility_of_element_located((By.CSS_SELECTOR, ".panel-banner-item")),
-            message="Update banner not found",
+        WebDriverWait(selenium, 60).until(
+            firefox_update_banner_is_found(), message="Update banner not found"
         )
         banner = selenium.find_element_by_css_selector(".panel-banner-item")
         banner.click()
@@ -108,12 +106,10 @@ def test_experiment_does_not_stop_update(addon_ids: list, selenium: typing.Any):
         firefox_binary=binary, firefox_profile=profile, firefox_options=options
     )
     selenium.get("https://www.allizom.org")
-    with selenium.context(selenium.CONTEXT_CHROME):
-        selenium.find_element_by_id("PanelUI-menu-button").click()
-        WebDriverWait(selenium, 10).until(
-            EC.invisibility_of_element_located((By.CSS_SELECTOR, ".panel-banner-item")),
-            message="Update banner found, maybe firefox didn't update?",
-        )
+    WebDriverWait(selenium, 10).until(
+        firefox_update_banner_is_invisible(),
+        message="Update banner found, maybe firefox didn't update?",
+    )
     toolbar = ToolBar(selenium)
     for item in toolbar.toolbar_items:
         if addon_ids[0] not in item._id:
