@@ -1,5 +1,6 @@
 import os
 import re
+import shutil
 import typing
 import json
 from zipfile import ZipFile
@@ -25,7 +26,27 @@ def pytest_addoption(parser) -> None:
 
 
 @pytest.fixture
+def setup_profile(pytestconfig: typing.Any, request: typing.Any) -> typing.Any:
+    """"Fixture to create a copy of the profile to use within the test."""
+    if pytestconfig.getoption("--run-old-firefox"):
+        shutil.copytree(
+            os.path.abspath("utilities/klaatu-profile-old-base"),
+            os.path.abspath("utilities/klaatu-profile"),
+        )
+        return f'{os.path.abspath("utilities/klaatu-profile")}'
+    if request.node.get_closest_marker("reuse_profile") and not pytestconfig.getoption(
+        "--run-old-firefox"
+    ):
+        # shutil.copytree(
+        #    os.path.abspath("utilities/klaatu-profile-current-base"),
+        #    os.path.abspath("utilities/klaatu-profile-current-nightly"),
+        # )
+        return f'{os.path.abspath("utilities/klaatu-profile-1")}'
+
+
+@pytest.fixture
 def firefox_options(
+    setup_profile: typing.Any,
     pytestconfig: typing.Any,
     firefox_options: typing.Any,
     experiment_widget_id: typing.Any,
@@ -34,13 +55,31 @@ def firefox_options(
     """Setup Firefox"""
     firefox_options.log.level = "trace"
     if pytestconfig.getoption("--run-old-firefox"):
-        binary = os.path.abspath("utilities/firefox-old-nightly/firefox/firefox-bin")
-        firefox_options.binary = binary
+        if request.node.get_closest_marker(
+            "update_test"
+        ):  # disable test needs different firefox
+            binary = os.path.abspath(
+                "utilities/firefox-old-nightly-disable-test/firefox/firefox-bin"
+            )
+            firefox_options.binary = binary
+            firefox_options.add_argument("-profile")
+            firefox_options.add_argument(
+                f'{os.path.abspath("utilities/klaatu-profile-disable-test")}'
+            )
+        else:
+            binary = os.path.abspath(
+                "utilities/firefox-old-nightly/firefox/firefox-bin"
+            )
+            firefox_options.binary = binary
+            firefox_options.add_argument("-profile")
+            firefox_options.add_argument(setup_profile)
+    if request.node.get_closest_marker("reuse_profile") and not pytestconfig.getoption(
+        "--run-old-firefox"
+    ):
         firefox_options.add_argument("-profile")
-        firefox_options.add_argument(f'{os.path.abspath("utilities/klaatu-profile")}')
-
+        firefox_options.add_argument(setup_profile)
     firefox_options.set_preference("extensions.install.requireBuiltInCerts", False)
-    firefox_options.set_preference("ui.popup.disable_autohide", True)
+    # firefox_options.set_preference("ui.popup.disable_autohide", True)
     firefox_options.set_preference("xpinstall.signatures.required", False)
     firefox_options.set_preference("extensions.webapi.testing", True)
     firefox_options.set_preference("extensions.legacy.enabled", True)
@@ -54,20 +93,15 @@ def firefox_options(
     firefox_options.set_preference(
         f"extensions.{experiment_widget_id}.test.expired", True
     )
-    firefox_options.add_argument("-headless")
+    # firefox_options.add_argument("-headless")
     yield firefox_options
-    # Remove pref from user.js
-    if request.config.option.run_old_firefox:
-        with open("utilities/klaatu-profile/user.js", "r+") as f:
-            lines = f.readlines()
-            f.seek(0)
-            for i in lines:
-                if (
-                    i
-                    != f'\nuser_pref("extensions.{experiment_widget_id}.test.expired", true);'
-                ):
-                    f.write(i)
-            f.truncate()
+    # remove old profile
+    # if (
+    #    request.node.get_closest_marker("reuse_profile")
+    #    and not pytestconfig.getoption("--run-old-firefox")
+    #    or pytestconfig.getoption("--run-old-firefox")
+    # ):
+        # shutil.rmtree(setup_profile)
 
 
 @pytest.fixture
@@ -96,21 +130,33 @@ def experiment_widget_id(pytestconfig: typing.Any, request: typing.Any) -> typin
     )
     if request.config.option.run_old_firefox:
         with open("utilities/klaatu-profile/user.js", "a") as f:
-            f.write(f'\nuser_pref("extensions.{widget_id}.test.expired", true);')
+            f.write(f'\nuser_pref("extensions.{widget_id}.test.expired", true);\n')
     return f"{widget_id}"
 
 
 @pytest.fixture
-def addon_ids() -> list:
-    return []
+def addon_ids() -> dict:
+    return {}
 
 
 @pytest.fixture
 def selenium(
-    pytestconfig: typing.Any, selenium: typing.Any, addon_ids: list
+    pytestconfig: typing.Any, selenium: typing.Any, addon_ids: dict
 ) -> typing.Any:
     """Setup Selenium"""
     addon = pytestconfig.getoption("--experiment")
-    addon_id = selenium.install_addon(os.path.abspath(addon))
-    addon_ids.append(addon_id)
+    addon_name = selenium.install_addon(os.path.abspath(addon))
+    with selenium.context(selenium.CONTEXT_CHROME):
+        addon_id = selenium.execute_script(
+            """
+            var Cu = Components.utils;
+            const {WebExtensionPolicy} = Cu.getGlobalForObject(
+                Cu.import("resource://gre/modules/Extension.jsm", this)
+            );
+
+            return WebExtensionPolicy.getByID(arguments[0]).mozExtensionHostname;
+        """,
+            addon_name,
+        )
+    addon_ids[addon_name] = addon_id
     return selenium
