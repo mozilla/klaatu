@@ -1,4 +1,4 @@
-FROM ubuntu:bionic-20190307
+FROM ubuntu:bionic
 
 USER root
 
@@ -60,9 +60,19 @@ WORKDIR $HOME/code
 
 RUN usermod -aG sudo user
 
+RUN mv /usr/bin/geckodriver /usr/bin/geckodriver2 \
+    && mv ./utilities/geckodriver /usr/bin/geckodriver \
+    && chmod +x /usr/bin/geckodriver
+
 # Install python deps
 RUN pip3 install -r pipenv.txt
 RUN pipenv install --python 3.7
+
+# RUN touch /home/user/.cache/dconf
+
+# RUN chown -R user:user /home/user/.cache/dconf
+
+USER user
 
 # Download older firefox nightly
 RUN FIREFOX_OLD_DOWNLOAD_URL=$(pipenv run download_old_firefox) \
@@ -80,12 +90,6 @@ RUN FIREFOX_OLD_DOWNLOAD_URL=$(pipenv run download_old_firefox) \
 #    && tar -C utilities/firefox-old-nightly-disable-test -xjf /tmp/firefox_old.tar.bz2 \
 #    && rm /tmp/firefox_old.tar.bz2
 
-RUN mv /usr/bin/geckodriver /usr/bin/geckodriver2 \
-    && mv ./utilities/geckodriver /usr/bin/geckodriver \
-    && chmod +x /usr/bin/geckodriver
-
-USER user
-
 # Create profile used for update tests
 RUN utilities/firefox-old-nightly/firefox/firefox -no-remote -CreateProfile "klaatu-profile-old-base /home/user/code/utilities/klaatu-profile-old-base"
 
@@ -99,3 +103,5 @@ RUN cp utilities/user.js utilities/klaatu-profile-old-base
 RUN cp utilities/user.js utilities/klaatu-profile-current-base
 
 RUN cp utilities/user.js utilities/klaatu-profile-disable-test
+
+RUN pipenv run telemetry_server

@@ -70,8 +70,6 @@ def test_experiment_does_not_stop_update(addon_ids: dict, selenium: typing.Any):
 def test_experiment_does_not_stop_startup(selenium: typing.Any, addon_ids: dict):
     """Experiment does not stop browser startup, or prohibit a clean exit."""
     selenium.get("https://www.allizom.org")
-    import time
-    time.sleep(600)
     toolbar = ToolBar(selenium)
     for item in toolbar.toolbar_items:
         if list(addon_ids)[0] not in item._id:
@@ -123,10 +121,22 @@ def test_experiment_shows_on_support_page(selenium: typing.Any, addon_ids: dict)
             assert True, "Extension Found"
 
 
+@pytest.mark.expire_experiment
+@pytest.mark.nondestructive
+def test_experiment_expires_correctly(
+    selenium: typing.Any, firefox_options: typing.Any):
+    selenium.get("https://www.allizom.org")
+    selenium.switch_to.window(selenium.window_handles[-1])
+    WebDriverWait(selenium, 10).until(EC.url_contains("qsurvey"))
+
+
 @pytest.mark.reuse_profile
 @pytest.mark.nondestructive
 def test_experiment_remains_disabled_after_user_disables_it(
-    selenium: typing.Any, addon_ids: dict, pytestconfig: typing.Any
+    selenium: typing.Any,
+    addon_ids: dict,
+    pytestconfig: typing.Any,
+    pings: typing.Any,
 ):
     """Disable experiment, restart Firefox to make sure it stays disabled."""
     selenium.get("about:addons")
@@ -134,20 +144,29 @@ def test_experiment_remains_disabled_after_user_disables_it(
     if selenium.find_element_by_css_selector(".addon-view ").click():
         selenium.find_element_by_css_selector("#detail-disable-btn").click()
     else:
-        import time
-        time.sleep(3)
-        print(selenium.page_source)
-        browser = selenium.find_element_by_css_selector("#html-view-browser")
-        # import pdb;pdb.set_trace()
-        print(selenium.switch_to.frame(browser))
-        assert False
-        # time.sleep(5)
-        # addon = selenium.find_element_by_css_selector(".addon")
-        # time.sleep(5)
-        selenium,find_element_by_css_selector(".more-options-menu").click()
-        # time.sleep(5)
-        selenium,find_element_by_css_selector("#disable-addon-button").click()
-        
+        with selenium.context(selenium.CONTEXT_CHROME):
+            browser = selenium.find_element_by_css_selector(
+                "window#main-window #browser #appcontent .browserStack browser"
+            )
+            selenium.switch_to.frame(browser)
+            browser = selenium.find_element_by_css_selector(
+                "#addons-page #html-view-browser"
+            )
+            selenium.switch_to.frame(browser)
+            selenium.find_element_by_css_selector(".more-options-button").click()
+            options = selenium.find_element_by_css_selector(
+                ".more-options-menu addon-options"
+            )
+            panel_list = options.find_element_by_tag_name("panel-list")
+            els = panel_list.find_elements_by_tag_name("panel-item")
+            assert els[0].is_enabled
+            selenium.execute_script(
+                """
+                let element = arguments[0].shadowRoot
+                element.querySelector("button").click()
+            """,
+                els[0],
+            )
     toolbar = ToolBar(selenium)
     for item in toolbar.toolbar_items:
         if list(addon_ids)[0] not in item._id:
@@ -168,20 +187,21 @@ def test_experiment_remains_disabled_after_user_disables_it(
         options.binary = binary
     else:
         profile = FirefoxProfile(
-            f'{os.path.abspath("utilities/klaatu-profile-1")}'
+            f'{os.path.abspath("utilities/klaatu-profile-current-nightly")}'
         )
         options = Options()
         options.add_argument("-profile")
         options.add_argument(
-            f'{os.path.abspath("utilities/klaatu-profile-1")}'
+            f'{os.path.abspath("utilities/klaatu-profile-current-nightly")}'
         )
-        # options.add_argument("-headless")
+        options.add_argument("-headless")
         binary = "/usr/bin/firefox"
         options.binary = binary
 
     # Start Firefox and test
     selenium = webdriver.Firefox(firefox_profile=profile, firefox_options=options)
     selenium.get("about:addons")
+
     # Make sure experiment is still not enabled
     toolbar = ToolBar(selenium)
     for item in toolbar.toolbar_items:
@@ -189,13 +209,30 @@ def test_experiment_remains_disabled_after_user_disables_it(
             continue
         else:
             raise AssertionError("Extension is Found")
+    
+    # Check last telemetry ping
+    pings = pings.get_pings()
+    addons = pings[-1]["environment"]["addons"]["activeAddons"]
+    for item in addons:
+        if list(addon_ids)[0] in item:
+            assert True
+        else:
+            continue
+    selenium.quit()
 
 
-@pytest.mark.expire_experiment
 @pytest.mark.nondestructive
-def test_experiment_expires_correctly(
-    selenium: typing.Any, firefox_options: typing.Any
+async def test_experiment_sends_correct_telemetry(
+    selenium: typing.Any, addon_ids: dict, pings: typing.Any
 ):
+    """Make sure telemetry is sent and recieved properly."""
     selenium.get("https://www.allizom.org")
-    selenium.switch_to.window(selenium.window_handles[-1])
-    WebDriverWait(selenium, 10).until(EC.url_contains("qsurvey"))
+    pings = pings.get_pings()
+    # for count, item in enumerate(ping_server.pings["pings"])
+    addons = pings[-1]["environment"]["addons"]["activeAddons"]
+    print(pings)
+    for item in addons:
+        if list(addon_ids)[0] in item:
+            assert True
+        else:
+            continue

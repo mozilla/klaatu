@@ -1,10 +1,13 @@
 import os
 import re
+import requests
 import shutil
+import time
 import typing
 import json
 from zipfile import ZipFile
 
+from aiohttp import web
 import pytest
 
 from tests.toolbar import ToolBar
@@ -25,6 +28,31 @@ def pytest_addoption(parser) -> None:
     )
 
 
+@pytest.fixture(name="server_url")
+def fixture_server_url():
+    return "http://0.0.0.0:8080"
+
+
+@pytest.fixture(name="pings")
+def fixture_pings(server_url: typing.AnyStr) -> typing.List:
+    """"""
+
+    class Pings():
+        def get_pings(self):
+            pings = []
+            timeout = time.time() + 10
+            
+            while not pings and time.time() != timeout:
+                response = requests.get(f"{server_url}/pings")
+                pings = json.loads(response.content)
+            return pings
+
+        def delete_pings(self):
+            requests.delete(f"{server_url}/pings")
+            return
+
+    return Pings()
+
 @pytest.fixture
 def setup_profile(pytestconfig: typing.Any, request: typing.Any) -> typing.Any:
     """"Fixture to create a copy of the profile to use within the test."""
@@ -37,11 +65,11 @@ def setup_profile(pytestconfig: typing.Any, request: typing.Any) -> typing.Any:
     if request.node.get_closest_marker("reuse_profile") and not pytestconfig.getoption(
         "--run-old-firefox"
     ):
-        # shutil.copytree(
-        #    os.path.abspath("utilities/klaatu-profile-current-base"),
-        #    os.path.abspath("utilities/klaatu-profile-current-nightly"),
-        # )
-        return f'{os.path.abspath("utilities/klaatu-profile-1")}'
+        shutil.copytree(
+             os.path.abspath("utilities/klaatu-profile-current-base"),
+            os.path.abspath("utilities/klaatu-profile-current-nightly"),
+        )
+        return f'{os.path.abspath("utilities/klaatu-profile-current-nightly")}'
 
 
 @pytest.fixture
@@ -51,6 +79,7 @@ def firefox_options(
     firefox_options: typing.Any,
     experiment_widget_id: typing.Any,
     request: typing.Any,
+    pings: typing.Any
 ) -> typing.Any:
     """Setup Firefox"""
     firefox_options.log.level = "trace"
@@ -79,7 +108,17 @@ def firefox_options(
         firefox_options.add_argument("-profile")
         firefox_options.add_argument(setup_profile)
     firefox_options.set_preference("extensions.install.requireBuiltInCerts", False)
-    # firefox_options.set_preference("ui.popup.disable_autohide", True)
+    firefox_options.set_preference(
+        "toolkit.telemetry.server", "http://0.0.0.0:8080/submit/telemetry/"
+    )
+    firefox_options.set_preference("datareporting.healthreport.uploadEnabled", True)
+    firefox_options.set_preference("toolkit.telemetry.log.level", "Trace")
+    firefox_options.set_preference("toolkit.telemetry.collectInterval", 10)
+    firefox_options.set_preference("toolkit.telemetry.initDelay", 1)
+    firefox_options.set_preference("toolkit.telemetry.minSubsessionLength", 0)
+    firefox_options.set_preference("datareporting.policy.dataSubmissionEnabled", True)
+    firefox_options.set_preference("toolkit.telemetry.log.dump", True)
+    firefox_options.set_preference("oolkit.telemetry.testing.disableFuzzingDelay", True)
     firefox_options.set_preference("xpinstall.signatures.required", False)
     firefox_options.set_preference("extensions.webapi.testing", True)
     firefox_options.set_preference("extensions.legacy.enabled", True)
@@ -93,15 +132,19 @@ def firefox_options(
     firefox_options.set_preference(
         f"extensions.{experiment_widget_id}.test.expired", True
     )
-    # firefox_options.add_argument("-headless")
+    firefox_options.add_argument("-headless")
     yield firefox_options
-    # remove old profile
-    # if (
-    #    request.node.get_closest_marker("reuse_profile")
-    #    and not pytestconfig.getoption("--run-old-firefox")
-    #    or pytestconfig.getoption("--run-old-firefox")
-    # ):
-        # shutil.rmtree(setup_profile)
+
+    # Delete old pings
+    pings.delete_pings()
+
+    Remove old profile
+    if (
+        request.node.get_closest_marker("reuse_profile")
+        and not pytestconfig.getoption("--run-old-firefox")
+        or pytestconfig.getoption("--run-old-firefox")
+    ):
+        shutil.rmtree(setup_profile)
 
 
 @pytest.fixture
