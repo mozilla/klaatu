@@ -29,29 +29,31 @@ def pytest_addoption(parser) -> None:
 
 
 @pytest.fixture(name="server_url")
-def fixture_server_url():
+def fixture_server_url() -> str:
+    """URL where fixture server is located"""
     return "http://0.0.0.0:8080"
 
 
 @pytest.fixture(name="pings")
-def fixture_pings(server_url: typing.AnyStr) -> typing.List:
-    """"""
+def fixture_pings(server_url: typing.AnyStr) -> typing.Any:
+    """Factory for managing Ping server interactions"""
 
-    class Pings():
-        def get_pings(self):
-            pings = []
+    class Pings:
+        def get_pings(self) -> typing.List:
+            pings: typing.List = []
             timeout = time.time() + 10
-            
+
             while not pings and time.time() != timeout:
                 response = requests.get(f"{server_url}/pings")
                 pings = json.loads(response.content)
             return pings
 
-        def delete_pings(self):
+        def delete_pings(self) -> None:
             requests.delete(f"{server_url}/pings")
             return
 
     return Pings()
+
 
 @pytest.fixture
 def setup_profile(pytestconfig: typing.Any, request: typing.Any) -> typing.Any:
@@ -66,7 +68,7 @@ def setup_profile(pytestconfig: typing.Any, request: typing.Any) -> typing.Any:
         "--run-old-firefox"
     ):
         shutil.copytree(
-             os.path.abspath("utilities/klaatu-profile-current-base"),
+            os.path.abspath("utilities/klaatu-profile-current-base"),
             os.path.abspath("utilities/klaatu-profile-current-nightly"),
         )
         return f'{os.path.abspath("utilities/klaatu-profile-current-nightly")}'
@@ -79,7 +81,7 @@ def firefox_options(
     firefox_options: typing.Any,
     experiment_widget_id: typing.Any,
     request: typing.Any,
-    pings: typing.Any
+    pings: typing.Any,
 ) -> typing.Any:
     """Setup Firefox"""
     firefox_options.log.level = "trace"
@@ -138,7 +140,7 @@ def firefox_options(
     # Delete old pings
     pings.delete_pings()
 
-    Remove old profile
+    # Remove old profile
     if (
         request.node.get_closest_marker("reuse_profile")
         and not pytestconfig.getoption("--run-old-firefox")

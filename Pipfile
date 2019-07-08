@@ -16,6 +16,7 @@ pytest-ordering = "*"
 pytest-firefox = "*"
 requests = "*"
 pytest-aiohttp = "*"
+pytest-rerunfailures = "*"
 
 [requires]
 python_version = "3.7"

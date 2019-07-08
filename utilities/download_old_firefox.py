@@ -21,8 +21,10 @@ if __name__ == "__main__":
         download_day = today.day - 5
 
     # if its a new month just grab the 28th day build of last month and build URL
-    if int(download_day) < 7:
-        download_dir = f"{base_url}/pub/firefox/nightly/{today.year}/0{int(current_month) - 1}/"
+    if int(download_day) < 2:
+        download_dir = (
+            f"{base_url}/pub/firefox/nightly/{today.year}/0{int(current_month) - 1}/"
+        )
         html = requests.get(download_dir)
 
         soup = BeautifulSoup(html.text, "html.parser")
