@@ -36,7 +36,7 @@ jobs:
           command: |
             set -ex
             docker run --name "klaatu" klaatu:latest tox -e py37-exp-tests -- --experiment=fixtures/shield_study_example-2.0.0.zip
-            docker cp klaatu:/home/user/code/results/py37-exp-tests.html ./report.html
+            docker cp klaatu:/code/results/py37-exp-tests.html ./report.html
       - save_cache:
           key: klaatu-test-{{ checksum "Pipfile.lock" }}
           paths:
@@ -58,7 +58,7 @@ jobs:
           command: |
             set -ex
             docker run --name "klaatu" klaatu:latest tox -e py37-exp-tests -- --experiment=fixtures/shield_study_example-2.0.0.zip --run-old-firefox
-            docker cp klaatu:/home/user/code/results/py37-exp-tests.html ./report.html
+            docker cp klaatu:/code/results/py37-exp-tests.html ./report.html
       - save_cache:
           key: klaatu-test-{{ checksum "Pipfile.lock" }}
           paths:

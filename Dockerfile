@@ -1,4 +1,4 @@
-FROM ubuntu:bionic-20190307
+FROM ubuntu:bionic
 
 USER root
 
@@ -46,19 +46,14 @@ RUN wget --no-verbose -O /tmp/firefox.tar.bz2 $FIREFOX_DOWNLOAD_URL \
 # Install Tox
 RUN pip3 install tox
 
-# Create user with a home directory
-ENV HOME /home/user
-RUN useradd --create-home --home-dir $HOME user
-
 # Copy all files to the container
-COPY . $HOME/code/
+COPY . /code
 
-# Change file permissions to user
-RUN chown -R user:user $HOME
+WORKDIR /code
 
-WORKDIR $HOME/code
-
-RUN usermod -aG sudo user
+RUN mv /usr/bin/geckodriver /usr/bin/geckodriver2 \
+    && mv ./utilities/geckodriver /usr/bin/geckodriver \
+    && chmod +x /usr/bin/geckodriver
 
 # Install python deps
 RUN pip3 install -r pipenv.txt
@@ -66,19 +61,23 @@ RUN pipenv install --python 3.7
 
 # Download older firefox nightly
 RUN FIREFOX_OLD_DOWNLOAD_URL=$(pipenv run download_old_firefox) \
-    && wget -O /tmp/firefox_old.tar.bz2 $FIREFOX_OLD_DOWNLOAD_URL \
+    && wget -q -O /tmp/firefox_old.tar.bz2 $FIREFOX_OLD_DOWNLOAD_URL \
     && mkdir utilities/firefox-old-nightly \
+    && mkdir utilities/firefox-old-nightly-disable-test \
     && tar -C utilities/firefox-old-nightly -xjf /tmp/firefox_old.tar.bz2 \
+    && tar -C utilities/firefox-old-nightly-disable-test -xjf /tmp/firefox_old.tar.bz2 \
     && rm /tmp/firefox_old.tar.bz2
 
-RUN mv /usr/bin/geckodriver /usr/bin/geckodriver2 \
-    && mv ./utilities/geckodriver /usr/bin/geckodriver \
-    && chmod +x /usr/bin/geckodriver
-
-USER user
-
 # Create profile used for update tests
-RUN utilities/firefox-old-nightly/firefox/firefox -no-remote -CreateProfile "klaatu-profile /home/user/code/utilities/klaatu-profile"
+RUN utilities/firefox-old-nightly/firefox/firefox -no-remote -CreateProfile "klaatu-profile-old-base /code/utilities/klaatu-profile-old-base"
+
+RUN utilities/firefox-old-nightly-disable-test/firefox/firefox -no-remote -CreateProfile "klaatu-profile-disable-test /code/utilities/klaatu-profile-disable-test"
+
+RUN firefox -no-remote -CreateProfile "klaatu-profile-current-base /code/utilities/klaatu-profile-current-base"
 
 # Copy prefs needed for test
-RUN cp utilities/user.js utilities/klaatu-profile
+RUN cp utilities/user.js utilities/klaatu-profile-old-base
+
+RUN cp utilities/user.js utilities/klaatu-profile-current-base
+
+RUN cp utilities/user.js utilities/klaatu-profile-disable-test
