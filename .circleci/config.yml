@@ -1,6 +1,32 @@
 version: 2.1
 
 jobs:
+  build-deploy: # build for the master branch
+    machine: true
+    working_directory: ~/klaatu
+    steps:
+      - checkout
+      - run:
+          name: Build docker image and push to repo
+          command: |
+            docker version
+            docker build -t klaatu .
+            docker tag klaatu mozilla/klaatu:latest
+            docker login -u "${DOCKERHUB_USER}" -p "${DOCKERHUB_PASS}"
+            docker push mozilla/klaatu:latest
+  build-release: # build for tags
+    machine: true
+    working_directory: ~/redash-ui-tests
+    steps:
+      - checkout
+      - run:
+          name: Build docker image and push to repo
+          command: |
+            docker version
+            docker build -t klaatu .
+            docker tag klaatu "mozilla/klaatu:${CIRCLE_TAG}"
+            docker login -u "${DOCKERHUB_USER}" -p "${DOCKERHUB_PASS}"
+            docker push "mozilla/klaatu:${CIRCLE_TAG}"
   lint:
     docker:
       - image: circleci/python:3.7-browsers
@@ -69,6 +95,22 @@ workflows:
   version: 2.1
   test_and_lint:
     jobs:
+      - build-deploy:
+           requires:
+              - test-current-nightly
+              - test-old-nightly
+           filters:
+             branches:
+               only: master
+      - build-release:
+           requires:
+              - test-current-nightly
+              - test-old-nightly
+           filters:
+             tags:
+               only: /.*/
+             branches:
+               ignore: /.*/
       - lint
       - test-current-nightly
       - test-old-nightly
