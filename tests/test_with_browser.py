@@ -3,6 +3,7 @@ import typing
 
 import pytest
 from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
 from selenium.webdriver.firefox.options import Options
@@ -89,9 +90,10 @@ def test_experiment_remains_disabled_after_user_disables_it(
     """Disable experiment, restart Firefox to make sure it stays disabled."""
     selenium.get("about:addons")
     selenium.find_element_by_css_selector("#category-extension").click()
-    if selenium.find_element_by_css_selector(".addon-view ").click():
+    try:
+        selenium.find_element_by_css_selector(".addon-view ").click()
         selenium.find_element_by_css_selector("#detail-disable-btn").click()
-    else:
+    except NoSuchElementException:
         with selenium.context(selenium.CONTEXT_CHROME):
             browser = selenium.find_element_by_css_selector(
                 "window#main-window #browser #appcontent .browserStack browser"
