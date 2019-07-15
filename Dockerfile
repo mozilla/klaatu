@@ -51,6 +51,8 @@ COPY . /code
 
 WORKDIR /code
 
+RUN mkdir /test_files
+
 RUN mv /usr/bin/geckodriver /usr/bin/geckodriver2 \
     && mv ./utilities/geckodriver /usr/bin/geckodriver \
     && chmod +x /usr/bin/geckodriver

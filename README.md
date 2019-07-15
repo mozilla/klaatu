@@ -2,10 +2,15 @@
 
 A tool used to validate firefox experiments
 
+## Prerequisites
+
+You should have docker installed.
+
 ## How to use
 
 1. Clone repository
-2. Run tests with ```--experiment``` flag using the path to the experiment you want to test.
+2. Create ```test_files``` and ```test_results``` directories.
+3. Place experiments in ```test_files``` folder.
+4. Run tests in docker with ```./utilities/run_all.sh```
 
-Example:
-```tox -e exp-tests -- --experiment=/path/to/experiment.xpi```
+The tests should run and move all passed experiments to a ```validated_experiments``` folder.
