@@ -256,12 +256,13 @@ async def test_experiment_sends_correct_telemetry(
 @pytest.mark.last
 @pytest.mark.update_test
 @pytest.mark.nondestructive
-@pytest.mark.skipif(
-    not pytest.config.option.run_old_firefox,
-    reason="needs --run-old-firefox option to run",
-)
-def test_experiment_does_not_stop_update(addon_ids: dict, selenium: typing.Any):
+def test_experiment_does_not_stop_update(
+    addon_ids: dict, selenium: typing.Any, request: typing.Any
+):
     """Experinemt should not block firefox updates."""
+    if not request.config.getoption("--run-old-firefox"):
+        pytest.skip("needs --run-old-firefox option to run")
+        return
     selenium.get("about:profiles")
     # Sleep to let firefox update
     with selenium.context(selenium.CONTEXT_CHROME):
