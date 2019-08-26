@@ -17,6 +17,7 @@ pytest-firefox = "*"
 requests = "*"
 pytest-aiohttp = "*"
 pytest-rerunfailures = "*"
+typing-extensions = "*"
 
 [requires]
 python_version = "3.7"
