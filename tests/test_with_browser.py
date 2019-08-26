@@ -1,4 +1,5 @@
 import os
+import time
 import typing
 
 import pytest
@@ -56,7 +57,9 @@ def test_experiment_does_not_drastically_slow_firefox(
         return perfData.loadEventEnd - perfData.navigationStart
         """
     )
-    assert ((int(firefox_startup_time) * 0.2) + int(firefox_startup_time)) >= startup
+    assert (
+        (int(firefox_startup_time) * 0.2) + int(firefox_startup_time)
+    ) >= startup, "This experiment caused a slowdown within Firefox."
 
 
 @pytest.mark.nondestructive
@@ -75,11 +78,71 @@ def test_experiment_shows_on_support_page(selenium: typing.Any, addon_ids: dict)
 @pytest.mark.expire_experiment
 @pytest.mark.nondestructive
 def test_experiment_expires_correctly(
-    selenium: typing.Any, firefox_options: typing.Any
+    selenium: typing.Any,
+    firefox_options: typing.Any,
+    pings: typing.Any,
+    manifest_id: str,
 ):
-    selenium.get("https://www.allizom.org")
-    selenium.switch_to.window(selenium.window_handles[-1])
-    WebDriverWait(selenium, 10).until(EC.url_contains("qsurvey"))
+    selenium.get("about:addons")
+    loop = True
+    while loop:
+        all_pings = pings.get_pings()
+        for ping in all_pings:
+            if "main" in ping["type"]:
+                loop = False
+            else:
+                continue
+        time.sleep(2)
+    addons = all_pings[-1]["environment"]["addons"]["activeAddons"]
+    for name in addons:
+        if manifest_id not in name:
+            continue
+        else:
+            break
+    # Disable Experiment
+    selenium.find_element_by_css_selector("#category-extension").click()
+    try:
+        selenium.find_element_by_css_selector(".addon-view ").click()
+        selenium.find_element_by_css_selector("#detail-disable-btn").click()
+    except NoSuchElementException:
+        with selenium.context(selenium.CONTEXT_CHROME):
+            browser = selenium.find_element_by_css_selector(
+                "window#main-window #browser #appcontent .browserStack browser"
+            )
+            selenium.switch_to.frame(browser)
+            browser = selenium.find_element_by_css_selector(
+                "#addons-page #html-view-browser"
+            )
+            selenium.switch_to.frame(browser)
+            selenium.find_element_by_css_selector(".more-options-button").click()
+            options = selenium.find_element_by_css_selector(
+                ".more-options-menu addon-options"
+            )
+            panel_list = options.find_element_by_tag_name("panel-list")
+            els = panel_list.find_elements_by_tag_name("panel-item")
+            assert els[0].is_enabled
+            selenium.execute_script(
+                """
+                let element = arguments[0].shadowRoot
+                element.querySelector("button").click()
+            """,
+                els[0],
+            )
+    loop = True
+    while loop:
+        time.sleep(2)
+        all_pings = pings.get_pings()
+        ping_amount = len(all_pings[-1]["environment"]["addons"]["activeAddons"])
+        # ping_amount = len(all_pings)
+        count = 0
+        for ping in all_pings:
+            for specific_ping in ping["environment"]["addons"]["activeAddons"]:
+                if f"{manifest_id}" not in specific_ping:
+                    count = count + 1
+                    continue
+            if count == ping_amount:
+                loop = False
+                break
 
 
 @pytest.mark.reuse_profile
