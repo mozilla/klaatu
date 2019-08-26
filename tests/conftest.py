@@ -120,7 +120,9 @@ def firefox_options(
     firefox_options.set_preference("toolkit.telemetry.minSubsessionLength", 0)
     firefox_options.set_preference("datareporting.policy.dataSubmissionEnabled", True)
     firefox_options.set_preference("toolkit.telemetry.log.dump", True)
-    firefox_options.set_preference("oolkit.telemetry.testing.disableFuzzingDelay", True)
+    firefox_options.set_preference(
+        "toolkit.telemetry.testing.disableFuzzingDelay", True
+    )
     firefox_options.set_preference("xpinstall.signatures.required", False)
     firefox_options.set_preference("extensions.webapi.testing", True)
     firefox_options.set_preference("extensions.legacy.enabled", True)
@@ -161,18 +163,23 @@ def firefox_startup_time(firefox: typing.Any) -> typing.Any:
 
 
 @pytest.fixture
-def experiment_widget_id(pytestconfig: typing.Any, request: typing.Any) -> typing.Any:
-    """Experiment's ID"""
-    if not request.node.get_closest_marker("expire_experiment"):
-        return
-
+def manifest_id(pytestconfig: typing.Any) -> str:
     zip_file = os.path.abspath(pytestconfig.getoption("--experiment"))
     with ZipFile(zip_file) as myzip:
         with myzip.open("manifest.json") as myfile:
             manifest = json.load(myfile)
-    widget_id = (
-        manifest["applications"]["gecko"]["id"].replace("@", "_").replace(".", "_")
-    )
+    return str(manifest["applications"]["gecko"]["id"])
+
+
+@pytest.fixture
+def experiment_widget_id(
+    pytestconfig: typing.Any, request: typing.Any, manifest_id: str
+) -> typing.Any:
+    """Experiment's ID"""
+    if not request.node.get_closest_marker("expire_experiment"):
+        return
+
+    widget_id = manifest_id.replace("@", "_").replace(".", "_")
     if request.config.option.run_old_firefox:
         with open("utilities/klaatu-profile/user.js", "a") as f:
             f.write(f'\nuser_pref("extensions.{widget_id}.test.expired", true);\n')
