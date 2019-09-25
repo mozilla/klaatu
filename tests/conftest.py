@@ -21,11 +21,17 @@ def pytest_addoption(parser) -> None:
         help="path to experiment XPI needing validation",
     ),
     parser.addoption(
-        "--run-old-firefox",
+        "--run-update-test",
         action="store_true",
         default=None,
         help="Run older version of firefox",
-    )
+    ),
+    parser.addoption(
+        "--run-firefox-release",
+        action="store_true",
+        default=None,
+        help="Run older version of firefox",
+    ),
 
 
 @pytest.fixture(name="server_url")
@@ -58,20 +64,27 @@ def fixture_pings(server_url: typing.AnyStr) -> typing.Any:
 @pytest.fixture
 def setup_profile(pytestconfig: typing.Any, request: typing.Any) -> typing.Any:
     """"Fixture to create a copy of the profile to use within the test."""
-    if pytestconfig.getoption("--run-old-firefox"):
+    if pytestconfig.getoption("--run-update-test"):
         shutil.copytree(
             os.path.abspath("utilities/klaatu-profile-old-base"),
             os.path.abspath("utilities/klaatu-profile"),
         )
         return f'{os.path.abspath("utilities/klaatu-profile")}'
     if request.node.get_closest_marker("reuse_profile") and not pytestconfig.getoption(
-        "--run-old-firefox"
+        "--run-update-test"
     ):
+        if pytestconfig.getoption("--run-firefox-release"):
+            shutil.copytree(
+            os.path.abspath("utilities/klaatu-profile-release-firefox-base"),
+            os.path.abspath("utilities/klaatu-profile-release-firefox"),
+        )
+            return f'{os.path.abspath("utilities/klaatu-profile-release-firefox")}'
         shutil.copytree(
             os.path.abspath("utilities/klaatu-profile-current-base"),
             os.path.abspath("utilities/klaatu-profile-current-nightly"),
         )
         return f'{os.path.abspath("utilities/klaatu-profile-current-nightly")}'
+
 
 
 @pytest.fixture
@@ -85,7 +98,7 @@ def firefox_options(
 ) -> typing.Any:
     """Setup Firefox"""
     firefox_options.log.level = "trace"
-    if pytestconfig.getoption("--run-old-firefox"):
+    if pytestconfig.getoption("--run-update-test"):
         if request.node.get_closest_marker(
             "update_test"
         ):  # disable test needs different firefox
@@ -104,8 +117,13 @@ def firefox_options(
             firefox_options.binary = binary
             firefox_options.add_argument("-profile")
             firefox_options.add_argument(setup_profile)
+    if pytestconfig.getoption("--run-firefox-release"):
+        binary = os.path.abspath(
+            "utilities/firefox-release/firefox/firefox-bin"
+        )
+        firefox_options.binary = binary
     if request.node.get_closest_marker("reuse_profile") and not pytestconfig.getoption(
-        "--run-old-firefox"
+        "--run-update-test"
     ):
         firefox_options.add_argument("-profile")
         firefox_options.add_argument(setup_profile)
@@ -145,8 +163,8 @@ def firefox_options(
     # Remove old profile
     if (
         request.node.get_closest_marker("reuse_profile")
-        and not pytestconfig.getoption("--run-old-firefox")
-        or pytestconfig.getoption("--run-old-firefox")
+        and not pytestconfig.getoption("--run-update-test")
+        or pytestconfig.getoption("--run-update-test")
     ):
         shutil.rmtree(setup_profile)
 
@@ -180,7 +198,7 @@ def experiment_widget_id(
         return
 
     widget_id = manifest_id.replace("@", "_").replace(".", "_")
-    if request.config.option.run_old_firefox:
+    if request.config.option.run_update_test:
         with open("utilities/klaatu-profile/user.js", "a") as f:
             f.write(f'\nuser_pref("extensions.{widget_id}.test.expired", true);\n')
     return f"{widget_id}"
