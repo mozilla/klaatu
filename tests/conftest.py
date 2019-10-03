@@ -157,7 +157,7 @@ def firefox_options(
     firefox_options.set_preference(
         f"extensions.{experiment_widget_id}.test.expired", True
     )
-    # firefox_options.add_argument("-headless")
+    firefox_options.add_argument("-headless")
     yield firefox_options
 
     # Delete old pings
@@ -208,11 +208,6 @@ def experiment_widget_id(
 
 
 @pytest.fixture
-def mock_experiment_script() -> typing.Any:
-    pass
-
-
-@pytest.fixture
 def addon_ids() -> dict:
     return {}
 
@@ -247,7 +242,6 @@ def selenium(
                 const { AddonStudies } = ChromeUtils.import(
                     "resource://normandy/lib/AddonStudies.jsm"
                 );
-                const config = arguments[0];
 
                 async function callit(config) {
                     await AddonStudies.add({
