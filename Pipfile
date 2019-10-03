@@ -18,6 +18,7 @@ requests = "*"
 pytest-aiohttp = "*"
 pytest-rerunfailures = "*"
 typing-extensions = "*"
+pytest-variables = "*"
 
 [requires]
 python_version = "3.7"
@@ -27,4 +28,5 @@ allow_prereleases = true
 
 [scripts]
 download_old_firefox = "python utilities/download_old_firefox.py"
+download_release_firefox = "python utilities/download_release_firefox.py"
 telemetry_server = "python utilities/telemetry_server.py"

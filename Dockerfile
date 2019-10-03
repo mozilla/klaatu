@@ -7,8 +7,8 @@ ENV DEBIAN_FRONTEND=noninteractive \
     MOZ_HEADLESS=1 \
     LC_ALL=C.UTF-8 \
     LANG=C.UTF-8 \
-    FIREFOX_VERSION=66.0 \
-    GECKODRIVER_VERSION=0.24.0
+    FIREFOX_VERSION=69.0.2 \
+    GECKODRIVER_VERSION=0.25.0
 
 # Install requirements to install tools
 RUN dependencies=' \
@@ -70,10 +70,17 @@ RUN FIREFOX_OLD_DOWNLOAD_URL=$(pipenv run download_old_firefox) \
     && tar -C utilities/firefox-old-nightly-disable-test -xjf /tmp/firefox_old.tar.bz2 \
     && rm /tmp/firefox_old.tar.bz2
 
+RUN FIREFOX_RELEASE_DOWNLOAD_URL=$(pipenv run download_release_firefox) \
+    && wget -q -O /tmp/firefox_release.tar.bz2 $FIREFOX_RELEASE_DOWNLOAD_URL \
+    && mkdir utilities/firefox-release \
+    && tar -C utilities/firefox-release -xjf /tmp/firefox_release.tar.bz2
+
 # Create profile used for update tests
 RUN utilities/firefox-old-nightly/firefox/firefox -no-remote -CreateProfile "klaatu-profile-old-base /code/utilities/klaatu-profile-old-base"
 
 RUN utilities/firefox-old-nightly-disable-test/firefox/firefox -no-remote -CreateProfile "klaatu-profile-disable-test /code/utilities/klaatu-profile-disable-test"
+
+RUN utilities/firefox-release/firefox/firefox -no-remote -CreateProfile "klaatu-profile-release-firefox-base /code/utilities/klaatu-profile-release-firefox-base"
 
 RUN firefox -no-remote -CreateProfile "klaatu-profile-current-base /code/utilities/klaatu-profile-current-base"
 
@@ -83,3 +90,5 @@ RUN cp utilities/user.js utilities/klaatu-profile-old-base
 RUN cp utilities/user.js utilities/klaatu-profile-current-base
 
 RUN cp utilities/user.js utilities/klaatu-profile-disable-test
+
+RUN cp utilities/user.js utilities/klaatu-profile-release-firefox-base

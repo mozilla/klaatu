@@ -21,7 +21,19 @@ def pytest_addoption(parser) -> None:
         help="path to experiment XPI needing validation",
     ),
     parser.addoption(
-        "--run-old-firefox",
+        "--run-update-test",
+        action="store_true",
+        default=None,
+        help="Run older version of firefox",
+    ),
+    parser.addoption(
+        "--run-firefox-release",
+        action="store_true",
+        default=None,
+        help="Run older version of firefox",
+    ),
+    parser.addoption(
+        "--private-browsing-enabled",
         action="store_true",
         default=None,
         help="Run older version of firefox",
@@ -58,15 +70,21 @@ def fixture_pings(server_url: typing.AnyStr) -> typing.Any:
 @pytest.fixture
 def setup_profile(pytestconfig: typing.Any, request: typing.Any) -> typing.Any:
     """"Fixture to create a copy of the profile to use within the test."""
-    if pytestconfig.getoption("--run-old-firefox"):
+    if pytestconfig.getoption("--run-update-test"):
         shutil.copytree(
             os.path.abspath("utilities/klaatu-profile-old-base"),
             os.path.abspath("utilities/klaatu-profile"),
         )
         return f'{os.path.abspath("utilities/klaatu-profile")}'
     if request.node.get_closest_marker("reuse_profile") and not pytestconfig.getoption(
-        "--run-old-firefox"
+        "--run-update-test"
     ):
+        if pytestconfig.getoption("--run-firefox-release"):
+            shutil.copytree(
+                os.path.abspath("utilities/klaatu-profile-release-firefox-base"),
+                os.path.abspath("utilities/klaatu-profile-release-firefox"),
+            )
+            return f'{os.path.abspath("utilities/klaatu-profile-release-firefox")}'
         shutil.copytree(
             os.path.abspath("utilities/klaatu-profile-current-base"),
             os.path.abspath("utilities/klaatu-profile-current-nightly"),
@@ -85,7 +103,7 @@ def firefox_options(
 ) -> typing.Any:
     """Setup Firefox"""
     firefox_options.log.level = "trace"
-    if pytestconfig.getoption("--run-old-firefox"):
+    if pytestconfig.getoption("--run-update-test"):
         if request.node.get_closest_marker(
             "update_test"
         ):  # disable test needs different firefox
@@ -104,8 +122,11 @@ def firefox_options(
             firefox_options.binary = binary
             firefox_options.add_argument("-profile")
             firefox_options.add_argument(setup_profile)
+    if pytestconfig.getoption("--run-firefox-release"):
+        binary = os.path.abspath("utilities/firefox-release/firefox/firefox-bin")
+        firefox_options.binary = binary
     if request.node.get_closest_marker("reuse_profile") and not pytestconfig.getoption(
-        "--run-old-firefox"
+        "--run-update-test"
     ):
         firefox_options.add_argument("-profile")
         firefox_options.add_argument(setup_profile)
@@ -145,8 +166,8 @@ def firefox_options(
     # Remove old profile
     if (
         request.node.get_closest_marker("reuse_profile")
-        and not pytestconfig.getoption("--run-old-firefox")
-        or pytestconfig.getoption("--run-old-firefox")
+        and not pytestconfig.getoption("--run-update-test")
+        or pytestconfig.getoption("--run-update-test")
     ):
         shutil.rmtree(setup_profile)
 
@@ -180,7 +201,7 @@ def experiment_widget_id(
         return
 
     widget_id = manifest_id.replace("@", "_").replace(".", "_")
-    if request.config.option.run_old_firefox:
+    if request.config.option.run_update_test:
         with open("utilities/klaatu-profile/user.js", "a") as f:
             f.write(f'\nuser_pref("extensions.{widget_id}.test.expired", true);\n')
     return f"{widget_id}"
@@ -193,9 +214,13 @@ def addon_ids() -> dict:
 
 @pytest.fixture
 def selenium(
-    pytestconfig: typing.Any, selenium: typing.Any, addon_ids: dict
+    pytestconfig: typing.Any, selenium: typing.Any, addon_ids: dict, variables: dict
 ) -> typing.Any:
     """Setup Selenium"""
+    zip_file = os.path.abspath(pytestconfig.getoption("--experiment"))
+    with ZipFile(zip_file) as myzip:
+        with myzip.open("manifest.json") as myfile:
+            manifest = json.load(myfile)
     addon = pytestconfig.getoption("--experiment")
     addon_name = selenium.install_addon(os.path.abspath(addon))
     with selenium.context(selenium.CONTEXT_CHROME):
@@ -211,4 +236,33 @@ def selenium(
             addon_name,
         )
     addon_ids[addon_name] = addon_id
+    with selenium.context(selenium.CONTEXT_CHROME):
+        selenium.execute_script(
+            """
+                const { AddonStudies } = ChromeUtils.import(
+                    "resource://normandy/lib/AddonStudies.jsm"
+                );
+
+                async function callit(config) {
+                    await AddonStudies.add({
+                        recipeId: config.recipeId,
+                        slug: config.recipied,
+                        userFacingName: config.userFacingName,
+                        userFacingDescription: config.userFacingDescription,
+                        branch: config.branch,
+                        active: true,
+                        addonId: config.addonId,
+                        addonUrl: config.addonUrl,
+                        addonVersion: config.addonVersion,
+                        extensionApiId: parseInt(config.extensionApiId),
+                        extensionHash: config.extensionHash,
+                        hashAlgorithm: config.hashAlgorithm,
+                        studyStartDate: new Date(),
+                        studyEndDate: null
+                    });
+                };
+                callit(arguments[0]);
+            """,
+            variables,
+        )
     return selenium
