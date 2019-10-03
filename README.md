@@ -35,11 +35,13 @@ Add the path using the ```--variables``` option. ```--variables={PATH/TO/variabl
 
 ## CLI Options
 
-```--run-firefox-release```: Runs the suite with an unbranded release Firefox version.
-```--private-browsing-enabled```: If your experiment runs within private browsing windows please include this option.
-```--run-update-test```: Includes the update test in the test run using Firefox Nightly.
-```--experiment```: Path to the experiment you want to test.
+- ```--run-release-firefox```: Runs the suite with an unbranded release Firefox version.
+- ```--private-browsing-enabled```: If your experiment runs within private browsing windows please include this option.
+- ```--run-update-test```: Includes the update test in the test run using Firefox Nightly.
+- ```--experiment```: Path to the experiment you want to test.
 
 ## Using the docker hub image
 
-To use the docker hub image, you must mount your local dir as a volume in the container. I suggest mounting the volume like `-v {LOCAL-DIR}:/code/test_files`. Here is an example: ```docker run --rm --name "klaatu" -v $PWD/{PATH-TO-XPI-FOLDER}:/code/test_files mozilla/klaatu:latest tox -e exp-tests -- --experiment=test_files/{NAME-OF-FILE}.xpi --html=report.html```
+To use the docker hub image, you must mount your local dir as a volume in the container. I suggest mounting the volume like `-v {LOCAL-DIR}:/code/test_files`.
+
+Here is an example: ```docker run --rm --name "klaatu" -v $PWD/{PATH-TO-XPI-FOLDER}:/code/test_files mozilla/klaatu:latest tox -e exp-tests -- --experiment=test_files/{NAME-OF-FILE}.xpi --html=report.html```
