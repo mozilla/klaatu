@@ -35,7 +35,7 @@ def test_experiment_does_not_stop_startup(selenium: typing.Any, addon_ids: dict)
 
 @pytest.mark.nondestructive
 def test_private_browsing_disables_experiment(
-    firefox: typing.Any, selenium: typing.Any,  pytestconfig: typing.Any, addon_ids: dict
+    firefox: typing.Any, selenium: typing.Any, pytestconfig: typing.Any, addon_ids: dict
 ):
     """Experiment should be disabled in private browsing mode."""
     if pytestconfig.getoption("--private-browsing-enabled"):

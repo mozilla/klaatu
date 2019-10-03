@@ -136,3 +136,4 @@ workflows:
       - lint
       - test-current-nightly
       - test-old-nightly
+      - test-release-firefox

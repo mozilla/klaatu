@@ -39,6 +39,7 @@ def pytest_addoption(parser) -> None:
         help="Run older version of firefox",
     )
 
+
 @pytest.fixture(name="server_url")
 def fixture_server_url() -> str:
     """URL where fixture server is located"""
@@ -80,16 +81,15 @@ def setup_profile(pytestconfig: typing.Any, request: typing.Any) -> typing.Any:
     ):
         if pytestconfig.getoption("--run-firefox-release"):
             shutil.copytree(
-            os.path.abspath("utilities/klaatu-profile-release-firefox-base"),
-            os.path.abspath("utilities/klaatu-profile-release-firefox"),
-        )
+                os.path.abspath("utilities/klaatu-profile-release-firefox-base"),
+                os.path.abspath("utilities/klaatu-profile-release-firefox"),
+            )
             return f'{os.path.abspath("utilities/klaatu-profile-release-firefox")}'
         shutil.copytree(
             os.path.abspath("utilities/klaatu-profile-current-base"),
             os.path.abspath("utilities/klaatu-profile-current-nightly"),
         )
         return f'{os.path.abspath("utilities/klaatu-profile-current-nightly")}'
-
 
 
 @pytest.fixture
@@ -123,9 +123,7 @@ def firefox_options(
             firefox_options.add_argument("-profile")
             firefox_options.add_argument(setup_profile)
     if pytestconfig.getoption("--run-firefox-release"):
-        binary = os.path.abspath(
-            "utilities/firefox-release/firefox/firefox-bin"
-        )
+        binary = os.path.abspath("utilities/firefox-release/firefox/firefox-bin")
         firefox_options.binary = binary
     if request.node.get_closest_marker("reuse_profile") and not pytestconfig.getoption(
         "--run-update-test"
@@ -270,6 +268,7 @@ def selenium(
                     });
                 };
                 callit(arguments[0]);
-            """, variables,
+            """,
+            variables,
         )
     return selenium
