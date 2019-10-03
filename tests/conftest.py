@@ -32,7 +32,12 @@ def pytest_addoption(parser) -> None:
         default=None,
         help="Run older version of firefox",
     ),
-
+    parser.addoption(
+        "--private-browsing-enabled",
+        action="store_true",
+        default=None,
+        help="Run older version of firefox",
+    )
 
 @pytest.fixture(name="server_url")
 def fixture_server_url() -> str:
@@ -154,7 +159,7 @@ def firefox_options(
     firefox_options.set_preference(
         f"extensions.{experiment_widget_id}.test.expired", True
     )
-    firefox_options.add_argument("-headless")
+    # firefox_options.add_argument("-headless")
     yield firefox_options
 
     # Delete old pings
@@ -205,15 +210,24 @@ def experiment_widget_id(
 
 
 @pytest.fixture
+def mock_experiment_script() -> typing.Any:
+    pass
+
+
+@pytest.fixture
 def addon_ids() -> dict:
     return {}
 
 
 @pytest.fixture
 def selenium(
-    pytestconfig: typing.Any, selenium: typing.Any, addon_ids: dict
+    pytestconfig: typing.Any, selenium: typing.Any, addon_ids: dict, variables: dict
 ) -> typing.Any:
     """Setup Selenium"""
+    zip_file = os.path.abspath(pytestconfig.getoption("--experiment"))
+    with ZipFile(zip_file) as myzip:
+        with myzip.open("manifest.json") as myfile:
+            manifest = json.load(myfile)
     addon = pytestconfig.getoption("--experiment")
     addon_name = selenium.install_addon(os.path.abspath(addon))
     with selenium.context(selenium.CONTEXT_CHROME):
@@ -229,4 +243,33 @@ def selenium(
             addon_name,
         )
     addon_ids[addon_name] = addon_id
+    with selenium.context(selenium.CONTEXT_CHROME):
+        selenium.execute_script(
+            """
+                const { AddonStudies } = ChromeUtils.import(
+                    "resource://normandy/lib/AddonStudies.jsm"
+                );
+                const config = arguments[0];
+
+                async function callit(config) {
+                    await AddonStudies.add({
+                        recipeId: config.recipeId,
+                        slug: config.recipied,
+                        userFacingName: config.userFacingName,
+                        userFacingDescription: config.userFacingDescription,
+                        branch: config.branch,
+                        active: true,
+                        addonId: config.addonId,
+                        addonUrl: config.addonUrl,
+                        addonVersion: config.addonVersion,
+                        extensionApiId: parseInt(config.extensionApiId),
+                        extensionHash: config.extensionHash,
+                        hashAlgorithm: config.hashAlgorithm,
+                        studyStartDate: new Date(),
+                        studyEndDate: null
+                    });
+                };
+                callit(arguments[0]);
+            """, variables,
+        )
     return selenium

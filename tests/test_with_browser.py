@@ -4,7 +4,10 @@ import typing
 
 import pytest
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException, InvalidElementStateException
+from selenium.common.exceptions import (
+    NoSuchElementException,
+    InvalidElementStateException,
+)
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
 from selenium.webdriver.firefox.options import Options
@@ -32,9 +35,11 @@ def test_experiment_does_not_stop_startup(selenium: typing.Any, addon_ids: dict)
 
 @pytest.mark.nondestructive
 def test_private_browsing_disables_experiment(
-    firefox: typing.Any, selenium: typing.Any, addon_ids: dict
+    firefox: typing.Any, selenium: typing.Any,  pytestconfig: typing.Any, addon_ids: dict
 ):
     """Experiment should be disabled in private browsing mode."""
+    if pytestconfig.getoption("--private-browsing-enabled"):
+        pytest.skip("Skipping because this extensions runs in private windows.")
     new_browser = firefox.browser.open_window(private=True)
     assert new_browser.is_private
     toolbar = ToolBar(selenium)
@@ -73,6 +78,22 @@ def test_experiment_shows_on_support_page(selenium: typing.Any, addon_ids: dict)
             continue
         else:
             assert True, "Extension Found"
+
+
+@pytest.mark.nondestructive
+def test_experiment_shows_on_studies_page(
+    selenium: typing.Any, addon_ids: dict, variables: dict
+):
+    """Experiment should show on about:studies page."""
+    selenium.get("about:studies")
+    assert (
+        variables["userFacingName"]
+        in selenium.find_element_by_css_selector(".study-name").text
+    )
+    assert (
+        variables["userFacingDescription"]
+        in selenium.find_element_by_css_selector(".study-description").text
+    )
 
 
 @pytest.mark.expire_experiment
@@ -199,10 +220,14 @@ def test_experiment_remains_disabled_after_user_disables_it(
         binary = os.path.abspath("utilities/firefox-old-nightly/firefox/firefox-bin")
         options.binary = binary
     elif pytestconfig.getoption("--run-firefox-release"):
-        profile = FirefoxProfile(f'{os.path.abspath("utilities/klaatu-profile-release-firefox")}')
+        profile = FirefoxProfile(
+            f'{os.path.abspath("utilities/klaatu-profile-release-firefox")}'
+        )
         options = Options()
         options.add_argument("-profile")
-        options.add_argument(f'{os.path.abspath("utilities/klaatu-profile-release-firefox")}')
+        options.add_argument(
+            f'{os.path.abspath("utilities/klaatu-profile-release-firefox")}'
+        )
         options.headless = True
         binary = os.path.abspath("utilities/firefox-release/firefox/firefox-bin")
         options.binary = binary

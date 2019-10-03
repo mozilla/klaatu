@@ -18,6 +18,7 @@ requests = "*"
 pytest-aiohttp = "*"
 pytest-rerunfailures = "*"
 typing-extensions = "*"
+pytest-variables = "*"
 
 [requires]
 python_version = "3.7"

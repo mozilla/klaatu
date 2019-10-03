@@ -1,0 +1,15 @@
+{
+    "recipeId": 42,
+    "slug": "test",
+    "userFacingName": "Test Normandy Nextgen Experiment Addon",
+    "userFacingDescription": "Description Goes Here",
+    "branch": "red",
+    "active": true,
+    "addonId": "normandy-nextgen-study-example@mozilla.org",
+    "addonUrl": "https://example.com/normandy-nextgen-study-example@mozilla.org-signed.xpi",
+    "addonVersion": "0.3.0",
+    "extensionApiId": 1,
+    "extensionHash": "badhash",
+    "hashAlgorithm": "sha256",
+    "studyEndDate": null
+}
