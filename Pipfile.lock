@@ -287,10 +287,10 @@
         },
         "selenium": {
             "hashes": [
-                "sha256:7491b5391f29a74774d475456d3a138e00fae0b3966f68a100f1f3ad331ce166",
-                "sha256:ea4afaf158108dfd77de848f7d57bb8152b22d862481468150206dec957bc13f"
+                "sha256:49d9b3bc156b795b94b06ae4e65dcd9c454b8e5f29624f2a117f02e3020ce411",
+                "sha256:fcddc25a170c7170325bf8154b0d4c1be25a750a96ce373f7bedbb0999d33aa0"
             ],
-            "version": "==4.0.0a1"
+            "version": "==4.0.0a3"
         },
         "six": {
             "hashes": [
