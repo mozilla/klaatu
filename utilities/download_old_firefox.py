@@ -17,8 +17,10 @@ if __name__ == "__main__":
     # Set correct month for URL builder
     if len(f"{today.day}") < 2 and int(today.day - 5) < 0:
         download_day = "01"
-    else:
+    elif int(today.day) < 15:
         download_day = f"0{today.day - 5}"
+    else:
+        download_day = f"{today.day - 5}"
 
     # if its a new month just grab the 28th day build of last month and build URL
     if int(download_day) < 2:
@@ -43,7 +45,6 @@ if __name__ == "__main__":
                 f"{today.year}-{current_month}-{download_day}.*-mozilla-central"
             )
         )
-
     page_link = page_link[1]
 
     html = requests.get(f'{base_url}{page_link["href"]}')
