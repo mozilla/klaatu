@@ -47,7 +47,7 @@ def fixture_server_url() -> str:
 
 
 @pytest.fixture(name="pings")
-def fixture_pings(server_url: typing.AnyStr) -> typing.Any:
+def fixture_pings(server_url: str) -> typing.Any:
     """Factory for managing Ping server interactions"""
 
     class Pings:
