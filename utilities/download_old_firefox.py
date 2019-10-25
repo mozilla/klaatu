@@ -17,7 +17,7 @@ if __name__ == "__main__":
     # Set correct month for URL builder
     if len(f"{today.day}") < 2 and int(today.day - 5) < 0:
         download_day = "01"
-    elif int(today.day) < 15 :
+    elif int(today.day) < 15:
         download_day = f"0{today.day - 5}"
     else:
         download_day = f"{today.day - 5}"
