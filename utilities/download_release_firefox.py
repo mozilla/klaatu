@@ -10,6 +10,6 @@ if __name__ == "__main__":
     soup = BeautifulSoup(html.text, "html.parser")
     firefox_builds = []
     for a in soup.find_all("a", href=True):
-        if a.text == "Linux Installer":
+        if a.text == "Linux":
             firefox_builds.append(a.attrs["href"])
     print(firefox_builds[0])
