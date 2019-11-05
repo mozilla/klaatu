@@ -2,6 +2,24 @@
 
 A tool used to validate firefox experiments
 
+## Using the docker hub image
+
+To use the docker hub image, you must mount your local dir as a volume in the container. I suggest mounting the volume like `-v {LOCAL-DIR}:/code/test_files`.
+
+Here is an example: ```docker run --rm --name "klaatu" -v $PWD/{PATH-TO-XPI-FOLDER}:/code/test_files mozilla/klaatu:latest tox -e exp-tests -- --experiment=test_files/{NAME-OF-FILE}.xpi --html=report.html```
+
+## Included tests
+- ```test_experiment_does_not_stop_startup```: Experiment does not stop browser startup, or prohibit a clean exit.
+- ```test_private_browsing_disables_experiment```: Experiment should be disabled in private browsing mode.
+- ```test_experiment_does_not_drastically_slow_firefox```: Experiment should not slow firefox down by more then 20%.
+- ```test_experiment_shows_on_support_page```: Experiment should show on about:support page.
+- ```test_experiment_shows_on_studies_page```: Experiment should show on about:studies page.
+- ```test_experiment_expires_correctly```: Experiment should not be included in the sent pings when it is disabled/expired.
+- ```test_experiment_remains_disabled_after_user_disables_it```: Disable experiment, restart Firefox to make sure it stays disabled.
+- ```test_experiment_sends_correct_telemetry```: Make sure telemetry is sent and recieved properly.
+- ```test_experiment_does_not_stop_update```: Experiment should not block firefox updates.
+
+
 ## Prerequisites
 
 You should have docker and git installed.
@@ -39,9 +57,3 @@ Add the path using the ```--variables``` option. ```--variables={PATH/TO/variabl
 - ```--private-browsing-enabled```: If your experiment runs within private browsing windows please include this option.
 - ```--run-update-test```: Includes the update test in the test run using Firefox Nightly.
 - ```--experiment```: Path to the experiment you want to test.
-
-## Using the docker hub image
-
-To use the docker hub image, you must mount your local dir as a volume in the container. I suggest mounting the volume like `-v {LOCAL-DIR}:/code/test_files`.
-
-Here is an example: ```docker run --rm --name "klaatu" -v $PWD/{PATH-TO-XPI-FOLDER}:/code/test_files mozilla/klaatu:latest tox -e exp-tests -- --experiment=test_files/{NAME-OF-FILE}.xpi --html=report.html```
