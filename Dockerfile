@@ -23,6 +23,11 @@ RUN dependencies=' \
         sudo \
         wget \
         dconf-tools \
+        build-essential \
+        gcc \
+        python-dev \
+        python3.7-dev \
+        ipython3 \
     ' \
     && set -x \
     && apt-get -qq update && apt-get -qq install -y software-properties-common \
