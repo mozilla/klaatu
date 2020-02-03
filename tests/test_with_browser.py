@@ -87,9 +87,8 @@ def test_experiment_shows_on_studies_page(
     """Experiment should show on about:studies page."""
     selenium.get("about:studies")
     WebDriverWait(selenium, 60).until(
-        EC.visibility_of_element_located(
-            (By.CSS_SELECTOR, ".study-name")),
-            message="Experiment not shown on about:studies."
+        EC.visibility_of_element_located((By.CSS_SELECTOR, ".study-name")),
+        message="Experiment not shown on about:studies.",
     )
     assert (
         variables["userFacingName"]
@@ -139,7 +138,9 @@ def test_experiment_expires_correctly(
                 await addon.disable();
             }
             callit(arguments[0]);
-        """, list(addon_ids.keys())[0])
+        """,
+        list(addon_ids.keys())[0],
+    )
     # Loop to make sure it expires
     loop = True
     counter = 0
@@ -181,7 +182,9 @@ def test_experiment_remains_disabled_after_user_disables_it(
                 await addon.disable();
             }
             callit(arguments[0]);
-        """, list(addon_ids.keys())[0])
+        """,
+        list(addon_ids.keys())[0],
+    )
     toolbar = ToolBar(selenium)
     for item in toolbar.toolbar_items:
         if list(addon_ids)[0] not in item._id:
