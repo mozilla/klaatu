@@ -86,6 +86,11 @@ def test_experiment_shows_on_studies_page(
 ):
     """Experiment should show on about:studies page."""
     selenium.get("about:studies")
+    WebDriverWait(selenium, 60).until(
+        EC.visibility_of_element_located(
+            (By.CSS_SELECTOR, ".study-name")),
+            message="Experiment not shown on about:studies."
+    )
     assert (
         variables["userFacingName"]
         in selenium.find_element_by_css_selector(".study-name").text
@@ -103,6 +108,7 @@ def test_experiment_expires_correctly(
     firefox_options: typing.Any,
     pings: typing.Any,
     manifest_id: str,
+    addon_ids: dict,
 ):
     selenium.get("about:addons")
     loop = True
@@ -121,40 +127,27 @@ def test_experiment_expires_correctly(
         else:
             break
     # Disable Experiment
-    selenium.find_element_by_css_selector("#category-extension").click()
-    try:
-        selenium.find_element_by_css_selector(".addon-view ").click()
-        selenium.find_element_by_css_selector("#detail-disable-btn").click()
-    except (NoSuchElementException, InvalidElementStateException):
-        with selenium.context(selenium.CONTEXT_CHROME):
-            browser = selenium.find_element_by_css_selector(
-                "window#main-window #browser #appcontent .browserStack browser"
-            )
-            selenium.switch_to.frame(browser)
-            browser = selenium.find_element_by_css_selector(
-                "#addons-page #html-view-browser"
-            )
-            selenium.switch_to.frame(browser)
-            selenium.find_element_by_css_selector(".more-options-button").click()
-            options = selenium.find_element_by_css_selector(
-                ".more-options-menu addon-options"
-            )
-            panel_list = options.find_element_by_tag_name("panel-list")
-            els = panel_list.find_elements_by_tag_name("panel-item")
-            assert els[0].is_enabled
-            selenium.execute_script(
-                """
-                let element = arguments[0].shadowRoot
-                element.querySelector("button").click()
-            """,
-                els[0],
-            )
+    selenium.execute_script(
+        """
+            const { AddonManager } = ChromeUtils.import(
+            "resource://gre/modules/AddonManager.jsm"
+            );
+
+            async function callit(add_on) {
+                let addon = await AddonManager.getAddonByID(add_on);
+                console.log(add_on)
+                await addon.disable();
+            }
+            callit(arguments[0]);
+        """, list(addon_ids.keys())[0])
+    # Loop to make sure it expires
     loop = True
-    while loop:
+    counter = 0
+    while loop and counter <= 30:
         time.sleep(2)
+        counter = counter + 1
         all_pings = pings.get_pings()
         ping_amount = len(all_pings[-1]["environment"]["addons"]["activeAddons"])
-        # ping_amount = len(all_pings)
         count = 0
         for ping in all_pings:
             for specific_ping in ping["environment"]["addons"]["activeAddons"]:
@@ -164,6 +157,8 @@ def test_experiment_expires_correctly(
             if count == ping_amount:
                 loop = False
                 break
+    if counter == 25:
+        raise TimeoutError("Pings may not have updated in time")
 
 
 @pytest.mark.reuse_profile
@@ -173,34 +168,20 @@ def test_experiment_remains_disabled_after_user_disables_it(
 ):
     """Disable experiment, restart Firefox to make sure it stays disabled."""
     selenium.get("about:addons")
-    selenium.find_element_by_css_selector("#category-extension").click()
-    try:
-        selenium.find_element_by_css_selector(".addon-view ").click()
-        selenium.find_element_by_css_selector("#detail-disable-btn").click()
-    except (NoSuchElementException, InvalidElementStateException):
-        with selenium.context(selenium.CONTEXT_CHROME):
-            browser = selenium.find_element_by_css_selector(
-                "window#main-window #browser #appcontent .browserStack browser"
-            )
-            selenium.switch_to.frame(browser)
-            browser = selenium.find_element_by_css_selector(
-                "#addons-page #html-view-browser"
-            )
-            selenium.switch_to.frame(browser)
-            selenium.find_element_by_css_selector(".more-options-button").click()
-            options = selenium.find_element_by_css_selector(
-                ".more-options-menu addon-options"
-            )
-            panel_list = options.find_element_by_tag_name("panel-list")
-            els = panel_list.find_elements_by_tag_name("panel-item")
-            assert els[0].is_enabled
-            selenium.execute_script(
-                """
-                let element = arguments[0].shadowRoot
-                element.querySelector("button").click()
-            """,
-                els[0],
-            )
+
+    selenium.execute_script(
+        """
+            const { AddonManager } = ChromeUtils.import(
+            "resource://gre/modules/AddonManager.jsm"
+            );
+
+            async function callit(add_on) {
+                let addon = await AddonManager.getAddonByID(add_on);
+                console.log(add_on)
+                await addon.disable();
+            }
+            callit(arguments[0]);
+        """, list(addon_ids.keys())[0])
     toolbar = ToolBar(selenium)
     for item in toolbar.toolbar_items:
         if list(addon_ids)[0] not in item._id:
@@ -208,7 +189,6 @@ def test_experiment_remains_disabled_after_user_disables_it(
         else:
             raise AssertionError("Extension is Found")
     selenium.quit()
-
     # Start firefox again with new selenium driver
     # Build new Firefox Instance with appropriate profile and binary
     if pytestconfig.getoption("--run-update-test"):
