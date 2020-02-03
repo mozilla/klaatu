@@ -27,16 +27,12 @@ if __name__ == "__main__":
     if int(download_day) < 6:
         if int(current_month) < 10:
             download_month = f"0{int(current_month) - 1}"
-        download_dir = (
-            f"{base_url}/pub/firefox/nightly/{today.year}/{download_month}/"
-        )
+        download_dir = f"{base_url}/pub/firefox/nightly/{today.year}/{download_month}/"
         html = requests.get(download_dir)
 
         soup = BeautifulSoup(html.text, "html.parser")
         page_link = soup.find_all(
-            href=re.compile(
-                f"{today.year}-{download_month}-28.*-mozilla-central"
-            )
+            href=re.compile(f"{today.year}-{download_month}-28.*-mozilla-central")
         )
     else:
         download_dir = f"{base_url}/pub/firefox/nightly/{today.year}/{download_month}/"
