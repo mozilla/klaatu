@@ -7,7 +7,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     MOZ_HEADLESS=1 \
     LC_ALL=C.UTF-8 \
     LANG=C.UTF-8 \
-    FIREFOX_VERSION=73.0.2 \
+    FIREFOX_VERSION=73.0 \
     GECKODRIVER_VERSION=0.26.0
 
 # Install requirements to install tools
