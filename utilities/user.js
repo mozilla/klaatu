@@ -11,4 +11,4 @@ user_pref("toolkit.telemetry.initDelay", 1);
 user_pref("toolkit.telemetry.minSubsessionLength", 0);
 user_pref("datareporting.policy.dataSubmissionEnabled", true);
 user_pref("toolkit.telemetry.log.dump", true);
-user_pref("oolkit.telemetry.testing.disableFuzzingDelay", true);
+user_pref("toolkit.telemetry.testing.disableFuzzingDelay", true);

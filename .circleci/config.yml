@@ -76,10 +76,10 @@ jobs:
       - checkout
       - restore_cache:
           key: klaatu-test-{{ checksum "Pipfile.lock" }}
-      - run: 
+      - run:
           name: Build docker image
           command: docker build -t klaatu:latest .
-      - run: 
+      - run:
           name: Run tests
           command: |
             set -ex
