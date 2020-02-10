@@ -133,17 +133,17 @@ workflows:
                only: /.*/
              branches:
                ignore: /.*/
-      - weekly-test-build:
-          triggers:
-            - schedule:
-                cron: "0 0 * * 0"
-                filters:
-                  branches:
-                    only:
-                      - master
-          jobs:
-            - build-deploy
       - lint
       - test-current-nightly
       - test-old-nightly
       - test-release-firefox
+  weekly-test-and-build:
+    triggers:
+      - schedule:
+          cron: "0 0 * * 0"
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - build-deploy
