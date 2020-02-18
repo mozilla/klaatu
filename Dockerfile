@@ -49,7 +49,7 @@ RUN wget --no-verbose -O /tmp/firefox.tar.bz2 $FIREFOX_DOWNLOAD_URL \
     && ln -fs /opt/firefox-nightly/firefox /usr/bin/firefox
 
 # Install Tox
-RUN pip3 install setuptools tox
+RUN pip3 install tox
 
 # Copy all files to the container
 COPY . /code
