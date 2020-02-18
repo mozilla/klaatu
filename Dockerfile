@@ -18,8 +18,8 @@ RUN dependencies=' \
         firefox \
         python3.7 \
         python3-pip \
-        python-setuptools \
-        python-wheel \
+        python3-setuptools \
+        python3-wheel \
         sudo \
         wget \
         dconf-tools \
