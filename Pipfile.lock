@@ -289,10 +289,9 @@
         },
         "selenium": {
             "hashes": [
-                "sha256:49d9b3bc156b795b94b06ae4e65dcd9c454b8e5f29624f2a117f02e3020ce411",
-                "sha256:fcddc25a170c7170325bf8154b0d4c1be25a750a96ce373f7bedbb0999d33aa0"
+                "sha256:aa5533a7e3db9c85660bce22458ae3ccf8cd2d12e5c4e4ae434ed804c55d57a4"
             ],
-            "version": "==4.0.0a3"
+            "version": "==4.0.0a5"
         },
         "six": {
             "hashes": [
