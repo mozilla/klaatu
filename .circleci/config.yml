@@ -146,4 +146,8 @@ workflows:
               only:
                 - master
     jobs:
-      - build-deploy
+      - build-deploy:
+          requires:
+            - test-current-nightly
+            - test-old-nightly
+            - test-release-firefox
