@@ -71,7 +71,10 @@ def test_experiment_does_not_drastically_slow_firefox(
 def test_experiment_shows_on_support_page(selenium: typing.Any, addon_ids: dict):
     """Experiment should show on about:support page."""
     selenium.get("about:support")
-    extensions = selenium.find_element_by_id("extensions-tbody")
+    try:
+        extensions = selenium.find_element_by_id("extensions-tbody")
+    except NoSuchElementException:
+        extensions = selenium.find_element_by_id("addons-tbody")
     items = extensions.find_elements_by_css_selector("tr > td")
     for item in items:
         if list(addon_ids)[0] not in item.text:
