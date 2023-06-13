@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  klaatu:
+    build: .
+    volumes:
+      - ./test_experiments:/code/test_experiments
+      - ./tests:/code/tests
+    links:
+      - ping-server
+  ping-server:
+    image: ping-server:latest
+    ports:
+      - "5000:5000"
