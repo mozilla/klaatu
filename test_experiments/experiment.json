@@ -1,0 +1,72 @@
+{
+    "appId": "firefox-desktop",
+    "appName": "firefox_desktop",
+    "application": "firefox-desktop",
+    "arguments": {},
+    "branches": [
+        {
+        "feature": {
+            "enabled": false,
+            "featureId": "this-is-included-for-desktop-pre-95-support",
+            "value": {}
+        },
+        "features": [
+            {
+            "enabled": true,
+            "featureId": "pocketNewtab",
+            "value": {}
+            }
+        ],
+        "ratio": 1,
+        "slug": "control-11"
+        },
+        {
+        "feature": {
+            "enabled": false,
+            "featureId": "this-is-included-for-desktop-pre-95-support",
+            "value": {}
+        },
+        "features": [
+            {
+            "enabled": true,
+            "featureId": "pocketNewtab",
+            "value": {
+                "fourCardLayout": true,
+                "newFooterSection": false
+            }
+            }
+        ],
+        "ratio": 1,
+        "slug": "treatment-a-11"
+        }
+    ],
+    "bucketConfig": {
+        "count": 3000,
+        "namespace": "firefox-desktop-pocketNewtab-nightly-13",
+        "randomizationUnit": "normandy_id",
+        "start": 0,
+        "total": 10000
+    },
+    "channel": "nightly",
+    "endDate": null,
+    "enrollmentEndDate": null,
+    "featureIds": [
+        "pocketNewtab"
+    ],
+    "featureValidationOptOut": false,
+    "id": "advanced-experiment",
+    "isEnrollmentPaused": false,
+    "isRollout": false,
+    "localizations": null,
+    "outcomes": [],
+    "probeSets": [],
+    "proposedDuration": 21,
+    "proposedEnrollment": 10,
+    "referenceBranch": "control-11",
+    "schemaVersion": "1.12.0",
+    "slug": "advanced-experiment",
+    "startDate": null,
+    "targeting": "(browserSettings.update.channel == \"nightly\") && ((experiment.slug in activeExperiments) || ((os.isMac) && (version|versionCompare('110.!') >= 0) && (locale in ['en-US']) && (region in ['RO'])))",
+    "userFacingDescription": "test",
+    "userFacingName": "advanced experiment"
+}

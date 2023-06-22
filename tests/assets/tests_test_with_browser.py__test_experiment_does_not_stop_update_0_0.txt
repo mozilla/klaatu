@@ -1,0 +1,276 @@
+1683912487366	geckodriver	INFO	Listening on 127.0.0.1:55879
+1683912487952	geckodriver::browser	DEBUG	Backing up prefs to "/code/utilities/klaatu-profile-disable-test/user.geckodriver_backup_1"
+1683912487955	mozrunner::runner	INFO	Running command: MOZ_CRASHREPORTER="1" MOZ_CRASHREPORTER_NO_REPORT="1" MOZ_CRASHREPORTER_SHUTDOWN="1" MOZ_NO_REMOTE="1" "/cod ... es/klaatu-profile-disable-test" "-headless" "--remote-debugging-port" "59525" "--remote-allow-hosts" "localhost" "-no-remote"
+1683912487955	geckodriver::marionette	DEBUG	Waiting 60s to connect to browser on 127.0.0.1
+1683912487956	geckodriver::marionette	TRACE	Retrying in 100ms
+*** You are running in headless mode.
+1683912488013	Toolkit.Telemetry	TRACE	TelemetryController::observe - profile-after-change notified.
+1683912488013	Toolkit.Telemetry	TRACE	TelemetryController::setupTelemetry
+1683912488013	Toolkit.Telemetry	TRACE	TelemetryReportingPolicy::setup
+1683912488013	Toolkit.Telemetry	CONFIG	TelemetryController::enableTelemetryRecording - canRecordBase:true, canRecordExtended: true
+1683912488013	Toolkit.Telemetry	TRACE	TelemetrySession::earlyInit
+1683912488015	Toolkit.Telemetry	TRACE	UpdatePing::init - enabled: true
+1683912488015	Toolkit.Telemetry	TRACE	TelemetryEnvironment::constructor
+[GFX1-]: glxtest: libpci missing
+[GFX1-]: glxtest: Unable to open a connection to the X server
+[GFX1-]: No GPUs detected via PCI
+
+1683912488026	Toolkit.Telemetry	TRACE	TelemetryEnvironment::_getGFXData - Only one display adapter detected.
+1683912488027	Toolkit.Telemetry	TRACE	TelemetryEnvironment::_updateSearchEngine - ignoring early call
+1683912488027	Toolkit.Telemetry	TRACE	TelemetryEnvironment::_updateAddons
+1683912488028	Toolkit.Telemetry	TRACE	TelemetryEnvironment::registerChangeListener for CrashAnnotator
+1683912488031	RemoteAgent	DEBUG	WebDriver BiDi enabled
+1683912488031	RemoteAgent	DEBUG	CDP enabled
+1683912488031	Marionette	INFO	Marionette enabled
+1683912488031	Marionette	TRACE	Received observer notification final-ui-startup
+1683912488032	Marionette	INFO	Listening on port 2828
+1683912488032	Marionette	DEBUG	Marionette is listening
+1683912488032	RemoteAgent	TRACE	Received observer notification final-ui-startup
+1683912488052	Toolkit.Telemetry	TRACE	TelemetryEnvironment::_updateAddons: addons differ
+1683912488056	RemoteAgent	TRACE	Available local IP addresses: 127.0.0.1, [::1]
+WebDriver BiDi listening on ws://127.0.0.1:59525
+1683912488057	CDP	DEBUG	Waiting for initial application window
+1683912488104	Marionette	DEBUG	Accepted connection 0 from 127.0.0.1:55040
+1683912488111	geckodriver::marionette	DEBUG	Connection to Marionette established on 127.0.0.1:2828.
+1683912488131	Marionette	DEBUG	0 -> [0,1,"WebDriver:NewSession",{"acceptInsecureCerts":true,"browserName":"firefox","pageLoadStrategy":"normal"}]
+1683912488131	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+1683912488132	Marionette	DEBUG	Waiting for initial application window
+1683912488586	Toolkit.Telemetry	TRACE	TelemetryEnvironment::observe - Topic gmp-provider-registered
+1683912488614	Toolkit.Telemetry	TRACE	TelemetryEnvironment::observe - aTopic: compositor:created, aData: null
+1683912488622	Toolkit.Telemetry	TRACE	TelemetryController::observe - content-process-ready-for-script notified.
+1683912488622	Toolkit.Telemetry	CONFIG	TelemetryController::enableTelemetryRecording - canRecordBase:true, canRecordExtended: true
+1683912488647	Toolkit.Telemetry	TRACE	TelemetrySession::observe - xul-window-visible notified.
+[GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
+console.error: ({})
+1683912488745	Toolkit.Telemetry	TRACE	TelemetryEnvironment::observe - aTopic: sessionstore-windows-restored, aData: null
+1683912488746	Toolkit.Telemetry	ERROR	TelemetryEnvironment::_isDefaultBrowser - Could not determine if default browser: [Exception... "ServiceManager::GetService returned failure code:"  nsresult: "0x80570016 (NS_ERROR_XPC_GS_RETURNED_FAILURE)"  location: "JS frame :: resource://gre/modules/XPCOMUtils.sys.mjs :: defineLazyServiceGetter/< :: line 137"  data: no] Stack trace: defineLazyServiceGetter/<()@resource://gre/modules/XPCOMUtils.sys.mjs:137
+get()@resource:///modules/ShellService.sys.mjs:551
+isDefaultBrowser()@resource:///modules/ShellService.sys.mjs:125
+isDefault()@resource://gre/modules/TelemetryEnvironment.sys.mjs:1527
+_isDefaultBrowser()@resource://gre/modules/TelemetryEnvironment.sys.mjs:1549
+_updateDefaultBrowser()@resource://gre/modules/TelemetryEnvironment.sys.mjs:1574
+observe()@resource://gre/modules/TelemetryEnvironment.sys.mjs:1396
+initializeWindow()@resource:///modules/sessionstore/SessionStore.sys.mjs:1705
+onBeforeBrowserWindowShown/<()@resource:///modules/sessionstore/SessionStore.sys.mjs:1883
+1683912488746	Toolkit.Telemetry	TRACE	TelemetrySession::observe - sessionstore-windows-restored notified.
+1683912488746	Toolkit.Telemetry	TRACE	TelemetrySession::gatherStartup
+1683912488793	Toolkit.Telemetry	TRACE	TelemetryEnvironment::setExperimentActive - id: optin-advanced-experiment, branch: control-11
+1683912488793	Toolkit.Telemetry	TRACE	TelemetryEnvironment::_onEnvironmentChange for experiment-annotation-changed
+1683912488793	Toolkit.Telemetry	DEBUG	TelemetryEnvironment::_onEnvironmentChange - calling CrashAnnotator
+console.debug: RSLoader: 
+  Registered update timer
+console.debug: RSLoader: 
+  Updating recipes
+1683912488800	Toolkit.Telemetry	TRACE	TelemetryController::observe - content-process-ready-for-script notified.
+1683912488800	Toolkit.Telemetry	CONFIG	TelemetryController::enableTelemetryRecording - canRecordBase:true, canRecordExtended: true
+1683912488838	Toolkit.Telemetry	TRACE	TelemetryController::observe - content-process-ready-for-script notified.
+1683912488838	Toolkit.Telemetry	CONFIG	TelemetryController::enableTelemetryRecording - canRecordBase:true, canRecordExtended: true
+1683912488861	Toolkit.Telemetry	TRACE	TelemetryEnvironment::observe - aTopic: distribution-customization-complete, aData: null
+1683912488913	Toolkit.Telemetry	TRACE	ClientID::_doLoadClientID
+1683912488913	Toolkit.Telemetry	TRACE	ClientID::_doLoadClientID: Client IDs loaded from state.
+1683912489128	Toolkit.Telemetry	TRACE	TelemetryEnvironment::_updateAddons
+1683912489134	Toolkit.Telemetry	TRACE	TelemetryEnvironment::_updateAddons: addons differ
+1683912489134	Toolkit.Telemetry	TRACE	TelemetryEnvironment::_startWatchingPrefs - [object Map]
+1683912489139	Toolkit.Telemetry	TRACE	TelemetryEnvironment::_onEnvironmentChange for system-info
+1683912489139	Toolkit.Telemetry	DEBUG	TelemetryEnvironment::_onEnvironmentChange - calling CrashAnnotator
+1683912489140	Toolkit.Telemetry	TRACE	TelemetrySend::setup
+1683912489140	Toolkit.Telemetry	TRACE	TelemetryStorage::_scanPendingPings
+1683912489140	Toolkit.Telemetry	TRACE	TelemetryStorage::_migrateAppDataPings
+1683912489140	Toolkit.Telemetry	TRACE	TelemetryStorage::_iterateAppDataPings
+1683912489145	Toolkit.Telemetry	INFO	TelemetrySend::_checkPendingPings - pending ping count: 3
+1683912489145	Toolkit.Telemetry	TRACE	TelemetryStorage::_enforcePendingPingsQuota
+1683912489145	Toolkit.Telemetry	TRACE	TelemetrySend::Scheduler::triggerSendingPings - active send task: false, immediately: true
+1683912489145	Toolkit.Telemetry	TRACE	TelemetrySend::Scheduler::_doSendTask iteration
+1683912489145	Toolkit.Telemetry	TRACE	TelemetrySend::Scheduler::_doSendTask - pending: 3, current: 0
+1683912489145	Toolkit.Telemetry	TRACE	TelemetrySend::Scheduler::_doSendTask - can send - pending: 3, current: 0
+1683912489145	Toolkit.Telemetry	TRACE	TelemetrySend::Scheduler::_doSendTask - triggering sending of 3 pings now, 0 pings waiting
+1683912489145	Toolkit.Telemetry	TRACE	TelemetrySend::sendPersistedPings
+1683912489145	Toolkit.Telemetry	TRACE	TelemetrySend::sendPersistedPings - sending 3 pings
+1683912489145	Toolkit.Telemetry	TRACE	TelemetryStorage::loadPendingPing - id: 679da052-639f-4595-b406-2542075fa643
+1683912489145	Toolkit.Telemetry	TRACE	TelemetryStorage::loadPendingPing - id: 92c53bbf-b8dd-4bb9-8bf5-a4e93c39cc4b
+1683912489146	Toolkit.Telemetry	TRACE	TelemetryStorage::loadPendingPing - id: 837f7341-a7d3-4f0a-8e4c-c421d540643d
+1683912489146	Toolkit.Telemetry	TRACE	TelemetrySession::delayedInit
+1683912489146	Toolkit.Telemetry	TRACE	TelemetryStorage::_popAndPerformQueuedOperation - Performing queued operation.
+1683912489146	Toolkit.Telemetry	TRACE	TelemetryStorage::_popAndPerformQueuedOperation - Performing queued operation.
+1683912489146	Toolkit.Telemetry	TRACE	TelemetrySend::_doPing - server: http://ping-server:5000, persisted: true, id: 679da052-639f-4595-b406-2542075fa643
+1683912489149	Toolkit.Telemetry	TRACE	TelemetrySend::_doPing - server: http://ping-server:5000, persisted: true, id: 92c53bbf-b8dd-4bb9-8bf5-a4e93c39cc4b
+1683912489156	Toolkit.Telemetry	TRACE	TelemetrySend::_doPing - server: http://ping-server:5000, persisted: true, id: 837f7341-a7d3-4f0a-8e4c-c421d540643d
+1683912489158	Toolkit.Telemetry	INFO	TelemetrySend::_doPing - successfully loaded, status: 200
+1683912489158	Toolkit.Telemetry	TRACE	TelemetrySend::_onPingRequestFinished - success: true, persisted: true
+1683912489158	Toolkit.Telemetry	TRACE	TelemetryStorage::removePendingPing - deleting ping with id: 679da052-639f-4595-b406-2542075fa643, path: /code/utilities/klaatu-profile-disable-test/saved-telemetry-pings/679da052-639f-4595-b406-2542075fa643
+1683912489163	Toolkit.Telemetry	INFO	TelemetrySend::_doPing - successfully loaded, status: 200
+1683912489163	Toolkit.Telemetry	TRACE	TelemetrySend::_onPingRequestFinished - success: true, persisted: true
+1683912489163	Toolkit.Telemetry	TRACE	TelemetryStorage::removePendingPing - deleting ping with id: 837f7341-a7d3-4f0a-8e4c-c421d540643d, path: /code/utilities/klaatu-profile-disable-test/saved-telemetry-pings/837f7341-a7d3-4f0a-8e4c-c421d540643d
+1683912489164	Toolkit.Telemetry	INFO	TelemetrySend::_doPing - successfully loaded, status: 200
+1683912489164	Toolkit.Telemetry	TRACE	TelemetrySend::_onPingRequestFinished - success: true, persisted: true
+1683912489164	Toolkit.Telemetry	TRACE	TelemetryStorage::removePendingPing - deleting ping with id: 92c53bbf-b8dd-4bb9-8bf5-a4e93c39cc4b, path: /code/utilities/klaatu-profile-disable-test/saved-telemetry-pings/92c53bbf-b8dd-4bb9-8bf5-a4e93c39cc4b
+1683912489164	Toolkit.Telemetry	TRACE	TelemetrySend::Scheduler::_doSendTask - bailing out after sending, shutdown: false, pendingPingCount: 0
+1683912489176	Toolkit.Telemetry	TRACE	TelemetryStorage::loadPingfile - unreadable ping /code/utilities/klaatu-profile-disable-test/datareporting/aborted-session-ping: NotFoundError: Could not open the file at /code/utilities/klaatu-profile-disable-test/datareporting/aborted-session-ping No traceback available
+1683912489177	Toolkit.Telemetry	TRACE	TelemetryStorage::loadAbortedSessionPing - no such file
+1683912489177	Toolkit.Telemetry	TRACE	TelemetryController::checkAbortedSessionPing - found aborted-session ping: false
+1683912489177	Toolkit.Telemetry	TRACE	TelemetrySession::_saveAbortedSessionPing
+1683912489177	Toolkit.Telemetry	TRACE	TelemetrySession::getSessionPayload - reason: aborted-session, clearSubsession: false
+1683912489177	Toolkit.Telemetry	TRACE	TelemetrySession::assemblePayloadWithMeasurements - reason: aborted-session, submitting subsession data: true
+1683912489179	Toolkit.Telemetry	TRACE	TelemetryController::saveAbortedSessionPing
+1683912489179	Toolkit.Telemetry	TRACE	TelemetryController::assemblePing - Type main, aOptions {"addClientId":true,"addEnvironment":true}
+1683912489180	Toolkit.Telemetry	TRACE	TelemetryStorage::saveAbortedSessionPing - ping path: /code/utilities/klaatu-profile-disable-test/datareporting/aborted-session-ping
+1683912489181	Toolkit.Telemetry	TRACE	TelemetryStorage::_popAndPerformQueuedOperation - Performing queued operation.
+1683912489181	Toolkit.Telemetry	TRACE	TelemetryStorage::savePingToFile - path: /code/utilities/klaatu-profile-disable-test/datareporting/aborted-session-ping
+1683912489181	Toolkit.Telemetry	TRACE	TelemetryEnvironment::registerChangeListener for TelemetrySession::onEnvironmentChange
+1683912489182	Toolkit.Telemetry	TRACE	TelemetryScheduler::init
+1683912489182	Toolkit.Telemetry	TRACE	TelemetryScheduler::_rescheduleTimeout - isUserIdle: false
+1683912489182	Toolkit.Telemetry	TRACE	TelemetryScheduler::_rescheduleTimeout - scheduling next tick for Fri May 12 2023 17:28:39 GMT+0000 (Coordinated Universal Time)
+1683912489182	Toolkit.Telemetry	TRACE	TelemetryStorage::cleanArchiveTask
+1683912489182	Toolkit.Telemetry	TRACE	TelemetryStorage::removeFHRDatabase
+1683912489182	Toolkit.Telemetry	TRACE	TelemetryEventPing::::Starting up.
+1683912489183	Toolkit.Telemetry	TRACE	TelemetryStorage::_purgeOldPings
+1683912489183	Toolkit.Telemetry	TRACE	TelemetryStorage::_scanArchive
+1683912489183	Toolkit.Telemetry	TRACE	TelemetryStorage::_scanArchive - checking in subdir: /code/utilities/klaatu-profile-disable-test/datareporting/archived/2023-05
+1683912489192	Toolkit.Telemetry	TRACE	TelemetryStorage::_enforceArchiveQuota
+1683912489221	Marionette	TRACE	Received observer notification browser-idle-startup-tasks-finished
+1683912489221	RemoteAgent	TRACE	Received observer notification browser-idle-startup-tasks-finished
+1683912489223	RemoteAgent	TRACE	[3] ProgressListener Start: expectNavigation=false resolveWhenStarted=false unloadTimeout=200 waitForExplicitStart=false
+1683912489223	RemoteAgent	TRACE	[3] ProgressListener Setting unload timer (200ms)
+1683912489223	RemoteAgent	TRACE	[3] Document already finished loading: about:blank
+1683912489223	RemoteAgent	TRACE	[3] ProgressListener Stop: has error=false
+DevTools listening on ws://127.0.0.1:59525/devtools/browser/8eeb5c90-c516-49df-8067-9e3c98df1e85
+1683912489226	Marionette	DEBUG	0 <- [1,1,null,{"sessionId":"bae7bd3d-3ee1-4039-801d-186622e7d9f9","capabilities":{"browserName":"firefox","browserVersion":"114.0a1","platformName":"linux","acceptInsecureCerts":true,"pageLoadStrategy":"normal","setWindowRect":true,"timeouts":{"implicit":0,"pageLoad":300000,"script":30000},"strictFileInteractability":false,"unhandledPromptBehavior":"dismiss and notify","moz:accessibilityChecks":false,"moz:buildID":"20230506092548","moz:debuggerAddress":"127.0.0.1:59525","moz:headless":true,"moz:platformVersion":"5.15.90.1-microsoft-standard-WSL2","moz:processID":13994,"moz:profile":"/code/utilities/klaatu-profile-disable-test","moz:shutdownTimeout":60000,"moz:useNonSpecCompliantPointerOrigin":false,"moz:webdriverClick":true,"moz:windowless":false,"proxy":{}}}]
+1683912489227	webdriver::server	DEBUG	<- 200 OK {"value":{"sessionId":"bae7bd3d-3ee1-4039-801d-186622e7d9f9","capabilities":{"acceptInsecureCerts":true,"browserNam ... ctability":false,"timeouts":{"implicit":0,"pageLoad":300000,"script":30000},"unhandledPromptBehavior":"dismiss and notify"}}}
+1683912489228	webdriver::server	DEBUG	-> GET /session/bae7bd3d-3ee1-4039-801d-186622e7d9f9/moz/context 
+1683912489513	Marionette	DEBUG	0 -> [0,2,"Marionette:GetContext",{}]
+1683912489513	Marionette	DEBUG	0 <- [1,2,null,{"value":"content"}]
+1683912489514	Toolkit.Telemetry	TRACE	TelemetryController::observe - content-process-ready-for-script notified.
+1683912489514	Toolkit.Telemetry	CONFIG	TelemetryController::enableTelemetryRecording - canRecordBase:true, canRecordExtended: true
+1683912489516	webdriver::server	DEBUG	<- 200 OK {"value":"content"}
+1683912489518	webdriver::server	DEBUG	-> POST /session/bae7bd3d-3ee1-4039-801d-186622e7d9f9/moz/context {"context": "chrome"}
+1683912489523	Marionette	DEBUG	0 -> [0,3,"Marionette:SetContext",{"value":"chrome"}]
+1683912489523	Marionette	DEBUG	0 <- [1,3,null,{"value":null}]
+1683912489524	webdriver::server	DEBUG	<- 200 OK {"value":null}
+1683912489525	webdriver::server	DEBUG	-> POST /session/bae7bd3d-3ee1-4039-801d-186622e7d9f9/execute/sync {"script": "\n        const ExperimentManager = ChromeUtil ... && (region in ['RO'])))\", \"userFacingDescription\": \"test\", \"userFacingName\": \"advanced experiment\"}", "control-11"]}
+1683912489526	Marionette	DEBUG	0 -> [0,4,"WebDriver:ExecuteScript",{"args":["{\"appId\": \"firefox-desktop\", \"appName\": \"firefox_desktop\", \"application\": \"firefox-desktop\", \"arguments\": {}, \"branches\": [{\" ...  && (locale in ['en-US']) && (region in ['RO'])))\", \"userFacingDescription\": \"test\", \"userFacingName\": \"advanced experiment\"}","control-11"],"script":"\n        const ExperimentManager = ChromeUtils.import(\"resource://nimbus/lib/ExperimentManager.jsm\");\n        const branchSlu ... ecipe.branches.find(b => b.slug == branchSlug);\n        ExperimentManager.ExperimentManager.forceEnroll(recipe, branch);\n    "}]
+1683912489527	RemoteAgent	TRACE	WebDriverProcessData actor created for PID 13994
+1683912489527	Marionette	TRACE	[1] MarionetteCommands actor created for window id 2
+console.debug: ExperimentManager: 
+  Existing experiment found for the same feature pocketNewtab, unenrolling.
+1683912489529	Toolkit.Telemetry	TRACE	TelemetryEnvironment::setExperimentInactive
+1683912489529	Toolkit.Telemetry	TRACE	TelemetryEnvironment::_onEnvironmentChange for experiment-annotation-changed
+1683912489529	Toolkit.Telemetry	DEBUG	TelemetryEnvironment::_onEnvironmentChange - calling CrashAnnotator
+1683912489530	Toolkit.Telemetry	DEBUG	TelemetryEnvironment::_onEnvironmentChange - calling TelemetrySession::onEnvironmentChange
+1683912489530	Toolkit.Telemetry	TRACE	TelemetrySession::_onEnvironmentChange: experiment-annotation-changed
+1683912489530	Toolkit.Telemetry	TRACE	TelemetrySession::getSessionPayload - reason: environment-change, clearSubsession: true
+1683912489530	Toolkit.Telemetry	TRACE	TelemetrySession::assemblePayloadWithMeasurements - reason: environment-change, submitting subsession data: true
+1683912489532	Toolkit.Telemetry	TRACE	TelemetryStorage::_popAndPerformQueuedOperation - Performing queued operation.
+1683912489532	Toolkit.Telemetry	TRACE	TelemetryScheduler::rescheduleDailyPing
+1683912489532	Toolkit.Telemetry	TRACE	TelemetrySession::_saveAbortedSessionPing
+1683912489533	Toolkit.Telemetry	TRACE	TelemetryController::saveAbortedSessionPing
+1683912489534	Toolkit.Telemetry	TRACE	TelemetryController::assemblePing - Type main, aOptions {"addClientId":true,"addEnvironment":true}
+1683912489535	Toolkit.Telemetry	TRACE	TelemetryStorage::saveAbortedSessionPing - ping path: /code/utilities/klaatu-profile-disable-test/datareporting/aborted-session-ping
+1683912489535	Toolkit.Telemetry	TRACE	TelemetryController::submitExternalPing - type: main, aOptions: {"addClientId":true,"addEnvironment":true,"overrideEnvironment":{"build":{"applicationId":"{ec8030f7-c20a-464f-9b0e-13a3a9e97384}","applicationName":"Firefox","architecture":"x86-64","buildId":"20230506092548","version":"114.0a1","vendor":"Mozilla","displayVersion":"114.0a1","platformVersion":"114.0a1","xpcomAbi":"x86_64-gcc3","updaterAvailable":true},"partner":{"distributionId":null,"distributionVersion":null,"partnerId":null,"distributor":null,"distributorChannel":null,"partnerNames":[]},"system":{"memoryMB":31948,"virtualMaxMB":null,"cpu":{"count":20,"cores":10,"vendor":"GenuineIntel","name":"12th Gen Intel(R) Core(TM) i9-12900HK","family":6,"model":154,"stepping":3,"l2cacheKB":1280,"l3cacheKB":24576,"speedMHz":0,"extensions":["hasMMX","hasSSE","hasSSE2","hasSSE3","hasSSSE3","hasSSE4_1","hasSSE4_2","hasAVX","hasAVX2","hasAES"]},"os":{"name":"Linux","version":"5.15.90.1-microsoft-standard-WSL2","locale":"en-US-posix"},"hdd":{"profile":{"model":null,"revision":null,"type":null},"binary":{"model":null,"revision":null,"type":null},"system":{"model":null,"revision":null,"type":null}},"gfx":{"D2DEnabled":null,"DWriteEnabled":null,"ContentBackend":"Skia","Headless":true,"EmbeddedInFirefoxReality":null,"adapters":[{"description":"See failure log","vendorID":null,"deviceID":null,"subsysID":null,"RAM":0,"driver":null,"driverVendor":null,"driverVersion":null,"driverDate":null,"GPUActive":true}],"monitors":[{"screenWidth":1366,"screenHeight":768}],"features":{"compositor":"webrender_software","hwCompositing":{"status":"blocked:FEATURE_FAILURE_COMP_HEADLESSMODE"},"gpuProcess":{"status":"unused"},"webrender":{"status":"unavailable-no-hw-compositing"},"wrCompositor":{"status":"blocklisted:FEATURE_FAILURE_GLXTEST_FAILED"},"openglCompositing":{"status":"unavailable:FEATURE_FAILURE_OPENGL_NEED_HWCOMP"},"omtp":{"status":"unused"}}},"appleModelId":null,"hasWinPackageId":null},"settings":{"blocklistEnabled":true,"e10sEnabled":true,"e10sMultiProcesses":8,"fissionEnabled":true,"telemetryEnabled":true,"locale":"en-US","intl":{"requestedLocales":["en-US"],"availableLocales":["en-US"],"appLocales":["en-US"],"systemLocales":["en-US-posix"],"regionalPrefsLocales":["en-US-posix"],"acceptLanguages":["en-US","en"]},"update":{"channel":"nightly","enabled":true,"autoDownload":true,"background":true},"userPrefs":{"browser.fixup.alternate.enabled":false,"browser.shell.checkDefaultBrowser":false,"browser.search.widget.inNavBar":false,"browser.startup.page":0,"browser.urlbar.autoFill":true,"browser.urlbar.autoFill.adaptiveHistory.enabled":false,"browser.urlbar.dnsResolveSingleWordsAfterSearch":0,"browser.urlbar.quicksuggest.dataCollection.enabled":false,"browser.urlbar.suggest.quicksuggest.nonsponsored":false,"browser.urlbar.suggest.quicksuggest.sponsored":false,"browser.urlbar.suggest.bestmatch":true,"extensions.autoDisableScopes":0,"extensions.enabledScopes":5,"extensions.update.enabled":false,"media.gmp-manager.lastCheck":1683908079,"media.gmp-manager.lastEmptyCheck":1683908079,"network.trr.strict_native_fallback":false,"widget.content.allow-gtk-dark-theme":false,"widget.content.gtk-high-contrast.enabled":true,"xpinstall.signatures.required":false,"nimbus.debug":true},"sandbox":{"effectiveContentProcessLevel":4,"contentWin32kLockdownState":3},"addonCompatibilityCheckEnabled":true,"isDefaultBrowser":null},"profile":{"creationDate":19488,"firstUseDate":19489},"addons":{"activeAddons":{"formautofill@mozilla.org":{"version":"1.0.1","scope":1,"type":"extension","updateDay":19483,"isSystem":true,"isWebExtension":true,"multiprocessCompatible":true,"blocklisted":false,"description":null,"name":"Form Autofill","userDisabled":false,"appDisabled":false,"foreignInstall":false,"hasBinaryComponents":false,"installDay":19483},"pictureinpicture@mozilla.org":{"version":"1.0.0","scope":1,"type":"extension","updateDay":19483,"isSystem":true,"isWebExtension":true,"multiprocessCompatible":true,"blocklisted":false,"description":"Fixes for web compatibility with Picture-in-Picture","name":"Picture-In-Picture","userDisabled":false,"appDisabled":false,"foreignInstall":false,"hasBinaryComponents":false,"installDay":19483},"screenshots@mozilla.org":{"version":"39.0.1","scope":1,"type":"extension","updateDay":19483,"isSystem":true,"isWebExtension":true,"multiprocessCompatible":true,"blocklisted":false,"description":"Take clips and screenshots from the Web and save them temporarily or permanently.","name":"Firefox Screenshots","userDisabled":false,"appDisabled":false,"foreignInstall":false,"hasBinaryComponents":false,"installDay":19483},"webcompat-reporter@mozilla.org":{"version":"1.5.1","scope":1,"type":"extension","updateDay":19483,"isSystem":true,"isWebExtension":true,"multiprocessCompatible":true,"blocklisted":false,"description":"Report site compatibility issues on webcompat.com","name":"WebCompat Reporter","userDisabled":false,"appDisabled":false,"foreignInstall":false,"hasBinaryComponents":false,"installDay":19483},"webcompat@mozilla.org":{"version":"114.0.0","scope":1,"type":"extension","updateDay":19483,"isSystem":true,"isWebExtension":true,"multiprocessCompatible":true,"blocklisted":false,"description":"Urgent post-release fixes for web compatibility.","name":"Web Compatibility Interventions","userDisabled":false,"appDisabled":false,"foreignInstall":false,"hasBinaryComponents":false,"installDay":19483}},"theme":{"id":"default-theme@mozilla.org","blocklisted":false,"description":"Follow the operating system setting for buttons, menus, and windows.","name":"System theme — auto","userDisabled":false,"appDisabled":false,"version":"1.3","scope":4,"foreignInstall":false,"hasBinaryComponents":false,"installDay":19489,"updateDay":19489},"activeGMPlugins":{"gmp-gmpopenh264":{"version":null,"userDisabled":false,"applyBackgroundUpdates":1}}},"experiments":{"optin-advanced-experiment":{"branch":"control-11","type":"nimbus-nimbus","enrollmentId":"947c9810-1096-4cdd-979b-0d072cce11d3"}}},"usePingSender":false}
+1683912489535	Toolkit.Telemetry	TRACE	TelemetryController::assemblePing - Type main, aOptions {"addClientId":true,"addEnvironment":true,"overrideEnvironment":{"build":{"applicationId":"{ec8030f7-c20a-464f-9b0e-13a3a9e97384}","applicationName":"Firefox","architecture":"x86-64","buildId":"20230506092548","version":"114.0a1","vendor":"Mozilla","displayVersion":"114.0a1","platformVersion":"114.0a1","xpcomAbi":"x86_64-gcc3","updaterAvailable":true},"partner":{"distributionId":null,"distributionVersion":null,"partnerId":null,"distributor":null,"distributorChannel":null,"partnerNames":[]},"system":{"memoryMB":31948,"virtualMaxMB":null,"cpu":{"count":20,"cores":10,"vendor":"GenuineIntel","name":"12th Gen Intel(R) Core(TM) i9-12900HK","family":6,"model":154,"stepping":3,"l2cacheKB":1280,"l3cacheKB":24576,"speedMHz":0,"extensions":["hasMMX","hasSSE","hasSSE2","hasSSE3","hasSSSE3","hasSSE4_1","hasSSE4_2","hasAVX","hasAVX2","hasAES"]},"os":{"name":"Linux","version":"5.15.90.1-microsoft-standard-WSL2","locale":"en-US-posix"},"hdd":{"profile":{"model":null,"revision":null,"type":null},"binary":{"model":null,"revision":null,"type":null},"system":{"model":null,"revision":null,"type":null}},"gfx":{"D2DEnabled":null,"DWriteEnabled":null,"ContentBackend":"Skia","Headless":true,"EmbeddedInFirefoxReality":null,"adapters":[{"description":"See failure log","vendorID":null,"deviceID":null,"subsysID":null,"RAM":0,"driver":null,"driverVendor":null,"driverVersion":null,"driverDate":null,"GPUActive":true}],"monitors":[{"screenWidth":1366,"screenHeight":768}],"features":{"compositor":"webrender_software","hwCompositing":{"status":"blocked:FEATURE_FAILURE_COMP_HEADLESSMODE"},"gpuProcess":{"status":"unused"},"webrender":{"status":"unavailable-no-hw-compositing"},"wrCompositor":{"status":"blocklisted:FEATURE_FAILURE_GLXTEST_FAILED"},"openglCompositing":{"status":"unavailable:FEATURE_FAILURE_OPENGL_NEED_HWCOMP"},"omtp":{"status":"unused"}}},"appleModelId":null,"hasWinPackageId":null},"settings":{"blocklistEnabled":true,"e10sEnabled":true,"e10sMultiProcesses":8,"fissionEnabled":true,"telemetryEnabled":true,"locale":"en-US","intl":{"requestedLocales":["en-US"],"availableLocales":["en-US"],"appLocales":["en-US"],"systemLocales":["en-US-posix"],"regionalPrefsLocales":["en-US-posix"],"acceptLanguages":["en-US","en"]},"update":{"channel":"nightly","enabled":true,"autoDownload":true,"background":true},"userPrefs":{"browser.fixup.alternate.enabled":false,"browser.shell.checkDefaultBrowser":false,"browser.search.widget.inNavBar":false,"browser.startup.page":0,"browser.urlbar.autoFill":true,"browser.urlbar.autoFill.adaptiveHistory.enabled":false,"browser.urlbar.dnsResolveSingleWordsAfterSearch":0,"browser.urlbar.quicksuggest.dataCollection.enabled":false,"browser.urlbar.suggest.quicksuggest.nonsponsored":false,"browser.urlbar.suggest.quicksuggest.sponsored":false,"browser.urlbar.suggest.bestmatch":true,"extensions.autoDisableScopes":0,"extensions.enabledScopes":5,"extensions.update.enabled":false,"media.gmp-manager.lastCheck":1683908079,"media.gmp-manager.lastEmptyCheck":1683908079,"network.trr.strict_native_fallback":false,"widget.content.allow-gtk-dark-theme":false,"widget.content.gtk-high-contrast.enabled":true,"xpinstall.signatures.required":false,"nimbus.debug":true},"sandbox":{"effectiveContentProcessLevel":4,"contentWin32kLockdownState":3},"addonCompatibilityCheckEnabled":true,"isDefaultBrowser":null},"profile":{"creationDate":19488,"firstUseDate":19489},"addons":{"activeAddons":{"formautofill@mozilla.org":{"version":"1.0.1","scope":1,"type":"extension","updateDay":19483,"isSystem":true,"isWebExtension":true,"multiprocessCompatible":true,"blocklisted":false,"description":null,"name":"Form Autofill","userDisabled":false,"appDisabled":false,"foreignInstall":false,"hasBinaryComponents":false,"installDay":19483},"pictureinpicture@mozilla.org":{"version":"1.0.0","scope":1,"type":"extension","updateDay":19483,"isSystem":true,"isWebExtension":true,"multiprocessCompatible":true,"blocklisted":false,"description":"Fixes for web compatibility with Picture-in-Picture","name":"Picture-In-Picture","userDisabled":false,"appDisabled":false,"foreignInstall":false,"hasBinaryComponents":false,"installDay":19483},"screenshots@mozilla.org":{"version":"39.0.1","scope":1,"type":"extension","updateDay":19483,"isSystem":true,"isWebExtension":true,"multiprocessCompatible":true,"blocklisted":false,"description":"Take clips and screenshots from the Web and save them temporarily or permanently.","name":"Firefox Screenshots","userDisabled":false,"appDisabled":false,"foreignInstall":false,"hasBinaryComponents":false,"installDay":19483},"webcompat-reporter@mozilla.org":{"version":"1.5.1","scope":1,"type":"extension","updateDay":19483,"isSystem":true,"isWebExtension":true,"multiprocessCompatible":true,"blocklisted":false,"description":"Report site compatibility issues on webcompat.com","name":"WebCompat Reporter","userDisabled":false,"appDisabled":false,"foreignInstall":false,"hasBinaryComponents":false,"installDay":19483},"webcompat@mozilla.org":{"version":"114.0.0","scope":1,"type":"extension","updateDay":19483,"isSystem":true,"isWebExtension":true,"multiprocessCompatible":true,"blocklisted":false,"description":"Urgent post-release fixes for web compatibility.","name":"Web Compatibility Interventions","userDisabled":false,"appDisabled":false,"foreignInstall":false,"hasBinaryComponents":false,"installDay":19483}},"theme":{"id":"default-theme@mozilla.org","blocklisted":false,"description":"Follow the operating system setting for buttons, menus, and windows.","name":"System theme — auto","userDisabled":false,"appDisabled":false,"version":"1.3","scope":4,"foreignInstall":false,"hasBinaryComponents":false,"installDay":19489,"updateDay":19489},"activeGMPlugins":{"gmp-gmpopenh264":{"version":null,"userDisabled":false,"applyBackgroundUpdates":1}}},"experiments":{"optin-advanced-experiment":{"branch":"control-11","type":"nimbus-nimbus","enrollmentId":"947c9810-1096-4cdd-979b-0d072cce11d3"}}},"usePingSender":false}
+1683912489536	Toolkit.Telemetry	TRACE	TelemetryController::submitExternalPing - ping assembled, id: ddbab79f-775e-4639-9989-fcefb610e7e5
+1683912489537	Toolkit.Telemetry	TRACE	TelemetrySend::submitPing - ping id: ddbab79f-775e-4639-9989-fcefb610e7e5, options: {"usePingSender":false}
+1683912489537	Toolkit.Telemetry	TRACE	TelemetrySend::submitPing - can send pings, trying to send now
+1683912489537	Toolkit.Telemetry	TRACE	TelemetrySend::Scheduler::triggerSendingPings - active send task: false, immediately: true
+1683912489537	Toolkit.Telemetry	TRACE	TelemetrySend::Scheduler::_doSendTask iteration
+1683912489537	Toolkit.Telemetry	TRACE	TelemetrySend::Scheduler::_doSendTask - pending: 0, current: 1
+1683912489537	Toolkit.Telemetry	TRACE	TelemetrySend::Scheduler::_doSendTask - can send - pending: 0, current: 1
+1683912489537	Toolkit.Telemetry	TRACE	TelemetrySend::Scheduler::_doSendTask - triggering sending of 0 pings now, 0 pings waiting
+1683912489537	Toolkit.Telemetry	TRACE	TelemetrySend::_doPing - server: http://ping-server:5000, persisted: false, id: ddbab79f-775e-4639-9989-fcefb610e7e5
+1683912489541	Toolkit.Telemetry	TRACE	TelemetryEnvironment::observe - aTopic: nsPref:changed, aData: nimbus.syncdatastore.pocketNewtab
+console.debug: ExperimentManager: 
+  Recipe unenrolled: optin-advanced-experiment
+1683912489542	Toolkit.Telemetry	TRACE	TelemetryEnvironment::observe - aTopic: nsPref:changed, aData: nimbus.syncdatastore.pocketNewtab
+1683912489543	Toolkit.Telemetry	TRACE	TelemetryEnvironment::setExperimentActive - id: optin-advanced-experiment, branch: control-11
+1683912489543	Toolkit.Telemetry	TRACE	TelemetryEnvironment::_onEnvironmentChange for experiment-annotation-changed
+1683912489543	Toolkit.Telemetry	DEBUG	TelemetryEnvironment::_onEnvironmentChange - calling CrashAnnotator
+1683912489543	Toolkit.Telemetry	DEBUG	TelemetryEnvironment::_onEnvironmentChange - calling TelemetrySession::onEnvironmentChange
+1683912489543	Toolkit.Telemetry	TRACE	TelemetrySession::_onEnvironmentChange: experiment-annotation-changed
+1683912489543	Toolkit.Telemetry	TRACE	TelemetrySession::getSessionPayload - reason: environment-change, clearSubsession: true
+1683912489543	Toolkit.Telemetry	TRACE	TelemetrySession::assemblePayloadWithMeasurements - reason: environment-change, submitting subsession data: true
+1683912489544	Toolkit.Telemetry	TRACE	TelemetryScheduler::rescheduleDailyPing
+1683912489544	Toolkit.Telemetry	TRACE	TelemetrySession::_saveAbortedSessionPing
+1683912489545	Toolkit.Telemetry	TRACE	TelemetryController::saveAbortedSessionPing
+1683912489545	Toolkit.Telemetry	TRACE	TelemetryController::assemblePing - Type main, aOptions {"addClientId":true,"addEnvironment":true}
+1683912489545	Toolkit.Telemetry	TRACE	TelemetryStorage::saveAbortedSessionPing - ping path: /code/utilities/klaatu-profile-disable-test/datareporting/aborted-session-ping
+1683912489545	Toolkit.Telemetry	TRACE	TelemetryController::submitExternalPing - type: main, aOptions: {"addClientId":true,"addEnvironment":true,"overrideEnvironment":{"build":{"applicationId":"{ec8030f7-c20a-464f-9b0e-13a3a9e97384}","applicationName":"Firefox","architecture":"x86-64","buildId":"20230506092548","version":"114.0a1","vendor":"Mozilla","displayVersion":"114.0a1","platformVersion":"114.0a1","xpcomAbi":"x86_64-gcc3","updaterAvailable":true},"partner":{"distributionId":null,"distributionVersion":null,"partnerId":null,"distributor":null,"distributorChannel":null,"partnerNames":[]},"system":{"memoryMB":31948,"virtualMaxMB":null,"cpu":{"count":20,"cores":10,"vendor":"GenuineIntel","name":"12th Gen Intel(R) Core(TM) i9-12900HK","family":6,"model":154,"stepping":3,"l2cacheKB":1280,"l3cacheKB":24576,"speedMHz":0,"extensions":["hasMMX","hasSSE","hasSSE2","hasSSE3","hasSSSE3","hasSSE4_1","hasSSE4_2","hasAVX","hasAVX2","hasAES"]},"os":{"name":"Linux","version":"5.15.90.1-microsoft-standard-WSL2","locale":"en-US-posix"},"hdd":{"profile":{"model":null,"revision":null,"type":null},"binary":{"model":null,"revision":null,"type":null},"system":{"model":null,"revision":null,"type":null}},"gfx":{"D2DEnabled":null,"DWriteEnabled":null,"ContentBackend":"Skia","Headless":true,"EmbeddedInFirefoxReality":null,"adapters":[{"description":"See failure log","vendorID":null,"deviceID":null,"subsysID":null,"RAM":0,"driver":null,"driverVendor":null,"driverVersion":null,"driverDate":null,"GPUActive":true}],"monitors":[{"screenWidth":1366,"screenHeight":768}],"features":{"compositor":"webrender_software","hwCompositing":{"status":"blocked:FEATURE_FAILURE_COMP_HEADLESSMODE"},"gpuProcess":{"status":"unused"},"webrender":{"status":"unavailable-no-hw-compositing"},"wrCompositor":{"status":"blocklisted:FEATURE_FAILURE_GLXTEST_FAILED"},"openglCompositing":{"status":"unavailable:FEATURE_FAILURE_OPENGL_NEED_HWCOMP"},"omtp":{"status":"unused"}}},"appleModelId":null,"hasWinPackageId":null},"settings":{"blocklistEnabled":true,"e10sEnabled":true,"e10sMultiProcesses":8,"fissionEnabled":true,"telemetryEnabled":true,"locale":"en-US","intl":{"requestedLocales":["en-US"],"availableLocales":["en-US"],"appLocales":["en-US"],"systemLocales":["en-US-posix"],"regionalPrefsLocales":["en-US-posix"],"acceptLanguages":["en-US","en"]},"update":{"channel":"nightly","enabled":true,"autoDownload":true,"background":true},"userPrefs":{"browser.fixup.alternate.enabled":false,"browser.shell.checkDefaultBrowser":false,"browser.search.widget.inNavBar":false,"browser.startup.page":0,"browser.urlbar.autoFill":true,"browser.urlbar.autoFill.adaptiveHistory.enabled":false,"browser.urlbar.dnsResolveSingleWordsAfterSearch":0,"browser.urlbar.quicksuggest.dataCollection.enabled":false,"browser.urlbar.suggest.quicksuggest.nonsponsored":false,"browser.urlbar.suggest.quicksuggest.sponsored":false,"browser.urlbar.suggest.bestmatch":true,"extensions.autoDisableScopes":0,"extensions.enabledScopes":5,"extensions.update.enabled":false,"media.gmp-manager.lastCheck":1683908079,"media.gmp-manager.lastEmptyCheck":1683908079,"network.trr.strict_native_fallback":false,"widget.content.allow-gtk-dark-theme":false,"widget.content.gtk-high-contrast.enabled":true,"xpinstall.signatures.required":false,"nimbus.debug":true},"sandbox":{"effectiveContentProcessLevel":4,"contentWin32kLockdownState":3},"addonCompatibilityCheckEnabled":true,"isDefaultBrowser":null},"profile":{"creationDate":19488,"firstUseDate":19489},"addons":{"activeAddons":{"formautofill@mozilla.org":{"version":"1.0.1","scope":1,"type":"extension","updateDay":19483,"isSystem":true,"isWebExtension":true,"multiprocessCompatible":true,"blocklisted":false,"description":null,"name":"Form Autofill","userDisabled":false,"appDisabled":false,"foreignInstall":false,"hasBinaryComponents":false,"installDay":19483},"pictureinpicture@mozilla.org":{"version":"1.0.0","scope":1,"type":"extension","updateDay":19483,"isSystem":true,"isWebExtension":true,"multiprocessCompatible":true,"blocklisted":false,"description":"Fixes for web compatibility with Picture-in-Picture","name":"Picture-In-Picture","userDisabled":false,"appDisabled":false,"foreignInstall":false,"hasBinaryComponents":false,"installDay":19483},"screenshots@mozilla.org":{"version":"39.0.1","scope":1,"type":"extension","updateDay":19483,"isSystem":true,"isWebExtension":true,"multiprocessCompatible":true,"blocklisted":false,"description":"Take clips and screenshots from the Web and save them temporarily or permanently.","name":"Firefox Screenshots","userDisabled":false,"appDisabled":false,"foreignInstall":false,"hasBinaryComponents":false,"installDay":19483},"webcompat-reporter@mozilla.org":{"version":"1.5.1","scope":1,"type":"extension","updateDay":19483,"isSystem":true,"isWebExtension":true,"multiprocessCompatible":true,"blocklisted":false,"description":"Report site compatibility issues on webcompat.com","name":"WebCompat Reporter","userDisabled":false,"appDisabled":false,"foreignInstall":false,"hasBinaryComponents":false,"installDay":19483},"webcompat@mozilla.org":{"version":"114.0.0","scope":1,"type":"extension","updateDay":19483,"isSystem":true,"isWebExtension":true,"multiprocessCompatible":true,"blocklisted":false,"description":"Urgent post-release fixes for web compatibility.","name":"Web Compatibility Interventions","userDisabled":false,"appDisabled":false,"foreignInstall":false,"hasBinaryComponents":false,"installDay":19483}},"theme":{"id":"default-theme@mozilla.org","blocklisted":false,"description":"Follow the operating system setting for buttons, menus, and windows.","name":"System theme — auto","userDisabled":false,"appDisabled":false,"version":"1.3","scope":4,"foreignInstall":false,"hasBinaryComponents":false,"installDay":19489,"updateDay":19489},"activeGMPlugins":{"gmp-gmpopenh264":{"version":null,"userDisabled":false,"applyBackgroundUpdates":1}}},"experiments":{}},"usePingSender":false}
+1683912489545	Toolkit.Telemetry	TRACE	TelemetryController::assemblePing - Type main, aOptions {"addClientId":true,"addEnvironment":true,"overrideEnvironment":{"build":{"applicationId":"{ec8030f7-c20a-464f-9b0e-13a3a9e97384}","applicationName":"Firefox","architecture":"x86-64","buildId":"20230506092548","version":"114.0a1","vendor":"Mozilla","displayVersion":"114.0a1","platformVersion":"114.0a1","xpcomAbi":"x86_64-gcc3","updaterAvailable":true},"partner":{"distributionId":null,"distributionVersion":null,"partnerId":null,"distributor":null,"distributorChannel":null,"partnerNames":[]},"system":{"memoryMB":31948,"virtualMaxMB":null,"cpu":{"count":20,"cores":10,"vendor":"GenuineIntel","name":"12th Gen Intel(R) Core(TM) i9-12900HK","family":6,"model":154,"stepping":3,"l2cacheKB":1280,"l3cacheKB":24576,"speedMHz":0,"extensions":["hasMMX","hasSSE","hasSSE2","hasSSE3","hasSSSE3","hasSSE4_1","hasSSE4_2","hasAVX","hasAVX2","hasAES"]},"os":{"name":"Linux","version":"5.15.90.1-microsoft-standard-WSL2","locale":"en-US-posix"},"hdd":{"profile":{"model":null,"revision":null,"type":null},"binary":{"model":null,"revision":null,"type":null},"system":{"model":null,"revision":null,"type":null}},"gfx":{"D2DEnabled":null,"DWriteEnabled":null,"ContentBackend":"Skia","Headless":true,"EmbeddedInFirefoxReality":null,"adapters":[{"description":"See failure log","vendorID":null,"deviceID":null,"subsysID":null,"RAM":0,"driver":null,"driverVendor":null,"driverVersion":null,"driverDate":null,"GPUActive":true}],"monitors":[{"screenWidth":1366,"screenHeight":768}],"features":{"compositor":"webrender_software","hwCompositing":{"status":"blocked:FEATURE_FAILURE_COMP_HEADLESSMODE"},"gpuProcess":{"status":"unused"},"webrender":{"status":"unavailable-no-hw-compositing"},"wrCompositor":{"status":"blocklisted:FEATURE_FAILURE_GLXTEST_FAILED"},"openglCompositing":{"status":"unavailable:FEATURE_FAILURE_OPENGL_NEED_HWCOMP"},"omtp":{"status":"unused"}}},"appleModelId":null,"hasWinPackageId":null},"settings":{"blocklistEnabled":true,"e10sEnabled":true,"e10sMultiProcesses":8,"fissionEnabled":true,"telemetryEnabled":true,"locale":"en-US","intl":{"requestedLocales":["en-US"],"availableLocales":["en-US"],"appLocales":["en-US"],"systemLocales":["en-US-posix"],"regionalPrefsLocales":["en-US-posix"],"acceptLanguages":["en-US","en"]},"update":{"channel":"nightly","enabled":true,"autoDownload":true,"background":true},"userPrefs":{"browser.fixup.alternate.enabled":false,"browser.shell.checkDefaultBrowser":false,"browser.search.widget.inNavBar":false,"browser.startup.page":0,"browser.urlbar.autoFill":true,"browser.urlbar.autoFill.adaptiveHistory.enabled":false,"browser.urlbar.dnsResolveSingleWordsAfterSearch":0,"browser.urlbar.quicksuggest.dataCollection.enabled":false,"browser.urlbar.suggest.quicksuggest.nonsponsored":false,"browser.urlbar.suggest.quicksuggest.sponsored":false,"browser.urlbar.suggest.bestmatch":true,"extensions.autoDisableScopes":0,"extensions.enabledScopes":5,"extensions.update.enabled":false,"media.gmp-manager.lastCheck":1683908079,"media.gmp-manager.lastEmptyCheck":1683908079,"network.trr.strict_native_fallback":false,"widget.content.allow-gtk-dark-theme":false,"widget.content.gtk-high-contrast.enabled":true,"xpinstall.signatures.required":false,"nimbus.debug":true},"sandbox":{"effectiveContentProcessLevel":4,"contentWin32kLockdownState":3},"addonCompatibilityCheckEnabled":true,"isDefaultBrowser":null},"profile":{"creationDate":19488,"firstUseDate":19489},"addons":{"activeAddons":{"formautofill@mozilla.org":{"version":"1.0.1","scope":1,"type":"extension","updateDay":19483,"isSystem":true,"isWebExtension":true,"multiprocessCompatible":true,"blocklisted":false,"description":null,"name":"Form Autofill","userDisabled":false,"appDisabled":false,"foreignInstall":false,"hasBinaryComponents":false,"installDay":19483},"pictureinpicture@mozilla.org":{"version":"1.0.0","scope":1,"type":"extension","updateDay":19483,"isSystem":true,"isWebExtension":true,"multiprocessCompatible":true,"blocklisted":false,"description":"Fixes for web compatibility with Picture-in-Picture","name":"Picture-In-Picture","userDisabled":false,"appDisabled":false,"foreignInstall":false,"hasBinaryComponents":false,"installDay":19483},"screenshots@mozilla.org":{"version":"39.0.1","scope":1,"type":"extension","updateDay":19483,"isSystem":true,"isWebExtension":true,"multiprocessCompatible":true,"blocklisted":false,"description":"Take clips and screenshots from the Web and save them temporarily or permanently.","name":"Firefox Screenshots","userDisabled":false,"appDisabled":false,"foreignInstall":false,"hasBinaryComponents":false,"installDay":19483},"webcompat-reporter@mozilla.org":{"version":"1.5.1","scope":1,"type":"extension","updateDay":19483,"isSystem":true,"isWebExtension":true,"multiprocessCompatible":true,"blocklisted":false,"description":"Report site compatibility issues on webcompat.com","name":"WebCompat Reporter","userDisabled":false,"appDisabled":false,"foreignInstall":false,"hasBinaryComponents":false,"installDay":19483},"webcompat@mozilla.org":{"version":"114.0.0","scope":1,"type":"extension","updateDay":19483,"isSystem":true,"isWebExtension":true,"multiprocessCompatible":true,"blocklisted":false,"description":"Urgent post-release fixes for web compatibility.","name":"Web Compatibility Interventions","userDisabled":false,"appDisabled":false,"foreignInstall":false,"hasBinaryComponents":false,"installDay":19483}},"theme":{"id":"default-theme@mozilla.org","blocklisted":false,"description":"Follow the operating system setting for buttons, menus, and windows.","name":"System theme — auto","userDisabled":false,"appDisabled":false,"version":"1.3","scope":4,"foreignInstall":false,"hasBinaryComponents":false,"installDay":19489,"updateDay":19489},"activeGMPlugins":{"gmp-gmpopenh264":{"version":null,"userDisabled":false,"applyBackgroundUpdates":1}}},"experiments":{}},"usePingSender":false}
+1683912489545	Toolkit.Telemetry	TRACE	TelemetryController::submitExternalPing - ping assembled, id: 99bad466-6d9c-40fb-aed6-de8b887f30f3
+1683912489546	Toolkit.Telemetry	TRACE	TelemetrySend::submitPing - ping id: 99bad466-6d9c-40fb-aed6-de8b887f30f3, options: {"usePingSender":false}
+1683912489546	Toolkit.Telemetry	TRACE	TelemetrySend::submitPing - can send pings, trying to send now
+1683912489546	Toolkit.Telemetry	TRACE	TelemetrySend::Scheduler::triggerSendingPings - active send task: true, immediately: true
+console.debug: ExperimentManager: 
+  New experiment started: optin-advanced-experiment, control-11
+1683912489547	Toolkit.Telemetry	TRACE	TelemetryStorage::_popAndPerformQueuedOperation - Performing queued operation.
+1683912489547	Toolkit.Telemetry	TRACE	TelemetryStorage::savePingToFile - path: /code/utilities/klaatu-profile-disable-test/datareporting/aborted-session-ping
+1683912489547	Toolkit.Telemetry	TRACE	TelemetryStorage::savePingToFile - path: /code/utilities/klaatu-profile-disable-test/datareporting/archived/2023-05/1683912489536.ddbab79f-775e-4639-9989-fcefb610e7e5.main.jsonlz4
+1683912489548	Toolkit.Telemetry	INFO	TelemetrySend::_doPing - successfully loaded, status: 200
+1683912489548	Toolkit.Telemetry	TRACE	TelemetrySend::_onPingRequestFinished - success: true, persisted: false
+1683912489548	Toolkit.Telemetry	TRACE	TelemetrySend::Scheduler::_doSendTask - had no send failures, resetting backoff timer
+1683912489548	Toolkit.Telemetry	TRACE	TelemetrySend::Scheduler::_doSendTask - waiting for next send opportunity, timeout is 59989
+1683912489548	Toolkit.Telemetry	TRACE	TelemetryStorage::savePingToFile - path: /code/utilities/klaatu-profile-disable-test/datareporting/archived/2023-05/1683912489545.99bad466-6d9c-40fb-aed6-de8b887f30f3.main.jsonlz4
+1683912489549	Toolkit.Telemetry	TRACE	TelemetryStorage::_popAndPerformQueuedOperation - Performing queued operation.
+1683912489549	Toolkit.Telemetry	TRACE	TelemetryStorage::_popAndPerformQueuedOperation - Performing queued operation.
+1683912489549	Toolkit.Telemetry	TRACE	TelemetryStorage::savePingToFile - path: /code/utilities/klaatu-profile-disable-test/datareporting/aborted-session-ping
+1683912489549	Marionette	DEBUG	0 <- [1,4,null,{"value":null}]
+1683912489550	webdriver::server	DEBUG	<- 200 OK {"value":null}
+1683912489551	webdriver::server	DEBUG	-> POST /session/bae7bd3d-3ee1-4039-801d-186622e7d9f9/moz/context {"context": "content"}
+1683912489552	Marionette	DEBUG	0 -> [0,5,"Marionette:SetContext",{"value":"content"}]
+1683912489552	Marionette	DEBUG	0 <- [1,5,null,{"value":null}]
+1683912489552	webdriver::server	DEBUG	<- 200 OK {"value":null}
+1683912489554	Toolkit.Telemetry	TRACE	TelemetryController::observe - content-process-ready-for-script notified.
+1683912489555	Toolkit.Telemetry	CONFIG	TelemetryController::enableTelemetryRecording - canRecordBase:true, canRecordExtended: true
+1683912489582	webdriver::server	DEBUG	-> POST /session/bae7bd3d-3ee1-4039-801d-186622e7d9f9/url {"url": "about:profiles"}
+1683912489583	Marionette	DEBUG	0 -> [0,6,"WebDriver:Navigate",{"url":"about:profiles"}]
+1683912489589	Marionette	TRACE	[3] Received event beforeunload for about:blank
+1683912489598	Marionette	TRACE	Remoteness change detected. Set new top-level browsing context to 13
+1683912489608	Marionette	TRACE	[13] Received event beforeunload for about:blank
+1683912489608	Marionette	TRACE	[13] Received event pagehide for about:blank
+1683912489623	Toolkit.Telemetry	TRACE	TelemetryController::observe - content-process-ready-for-script notified.
+1683912489623	Toolkit.Telemetry	CONFIG	TelemetryController::enableTelemetryRecording - canRecordBase:true, canRecordExtended: true
+1683912489628	Marionette	TRACE	[13] Received event DOMContentLoaded for about:profiles
+1683912489635	Marionette	TRACE	[13] Received event pageshow for about:profiles
+1683912489635	Marionette	DEBUG	0 <- [1,6,null,{"value":null}]
+1683912489635	webdriver::server	DEBUG	<- 200 OK {"value":null}
+1683912489636	webdriver::server	DEBUG	-> GET /session/bae7bd3d-3ee1-4039-801d-186622e7d9f9/moz/context 
+1683912489637	Marionette	DEBUG	0 -> [0,7,"Marionette:GetContext",{}]
+1683912489637	Marionette	DEBUG	0 <- [1,7,null,{"value":"content"}]
+1683912489637	webdriver::server	DEBUG	<- 200 OK {"value":"content"}
+1683912489638	webdriver::server	DEBUG	-> POST /session/bae7bd3d-3ee1-4039-801d-186622e7d9f9/moz/context {"context": "chrome"}
+1683912489638	Marionette	DEBUG	0 -> [0,8,"Marionette:SetContext",{"value":"chrome"}]
+1683912489638	Marionette	DEBUG	0 <- [1,8,null,{"value":null}]
+1683912489638	webdriver::server	DEBUG	<- 200 OK {"value":null}
+1683912489639	webdriver::server	DEBUG	-> GET /session/bae7bd3d-3ee1-4039-801d-186622e7d9f9/moz/context 
+1683912489639	Marionette	DEBUG	0 -> [0,9,"Marionette:GetContext",{}]
+1683912489639	Marionette	DEBUG	0 <- [1,9,null,{"value":"chrome"}]
+1683912489640	webdriver::server	DEBUG	<- 200 OK {"value":"chrome"}
+1683912489640	webdriver::server	DEBUG	-> POST /session/bae7bd3d-3ee1-4039-801d-186622e7d9f9/moz/context {"context": "chrome"}
+1683912489641	Marionette	DEBUG	0 -> [0,10,"Marionette:SetContext",{"value":"chrome"}]
+1683912489641	Marionette	DEBUG	0 <- [1,10,null,{"value":null}]
+1683912489641	webdriver::server	DEBUG	<- 200 OK {"value":null}
+1683912489642	webdriver::server	DEBUG	-> POST /session/bae7bd3d-3ee1-4039-801d-186622e7d9f9/element {"using": "css selector", "value": "[id=\"PanelUI-menu-button\"]"}
+1683912489642	Marionette	DEBUG	0 -> [0,11,"WebDriver:FindElement",{"using":"css selector","value":"[id=\"PanelUI-menu-button\"]"}]
+1683912489643	Marionette	DEBUG	0 <- [1,11,null,{"value":{"element-6066-11e4-a52e-4f735466cecf":"eafff967-0351-49e2-a874-82a37de16c2b"}}]
+1683912489644	webdriver::server	DEBUG	<- 200 OK {"value":{"element-6066-11e4-a52e-4f735466cecf":"eafff967-0351-49e2-a874-82a37de16c2b"}}
+1683912489645	webdriver::server	DEBUG	-> POST /session/bae7bd3d-3ee1-4039-801d-186622e7d9f9/element/eafff967-0351-49e2-a874-82a37de16c2b/click {"id": "eafff967-0351-49e2-a874-82a37de16c2b"}
+1683912489646	Marionette	DEBUG	0 -> [0,12,"WebDriver:ElementClick",{"id":"eafff967-0351-49e2-a874-82a37de16c2b"}]
+1683912489781	Toolkit.Telemetry	TRACE	TelemetryEnvironment::observe - aTopic: nsPref:changed, aData: dom.push.userAgentID
+1683912489903	Marionette	TRACE	Canceled page load listener because no navigation has been detected
+1683912489903	Marionette	DEBUG	0 <- [1,12,null,{"value":null}]
+1683912489904	webdriver::server	DEBUG	<- 200 OK {"value":null}
+1683912489905	webdriver::server	DEBUG	-> POST /session/bae7bd3d-3ee1-4039-801d-186622e7d9f9/element {"using": "css selector", "value": "#appMenu-popup #appMenu-multiView #appMenu-protonMainView #appMenu-proton-update-banner"}
+1683912489905	Marionette	DEBUG	0 -> [0,13,"WebDriver:FindElement",{"using":"css selector","value":"#appMenu-popup #appMenu-multiView #appMenu-protonMainView #appMenu-proton-update-banner"}]
+1683912489906	Marionette	DEBUG	0 <- [1,13,null,{"value":{"element-6066-11e4-a52e-4f735466cecf":"675b02b9-1fd1-4cbd-a761-1a0237fe59ba"}}]
+1683912489906	webdriver::server	DEBUG	<- 200 OK {"value":{"element-6066-11e4-a52e-4f735466cecf":"675b02b9-1fd1-4cbd-a761-1a0237fe59ba"}}
+1683912489907	webdriver::server	DEBUG	-> POST /session/bae7bd3d-3ee1-4039-801d-186622e7d9f9/moz/context {"context": "chrome"}
+1683912489907	Marionette	DEBUG	0 -> [0,14,"Marionette:SetContext",{"value":"chrome"}]
+1683912489907	Marionette	DEBUG	0 <- [1,14,null,{"value":null}]
+1683912489907	webdriver::server	DEBUG	<- 200 OK {"value":null}
+1683912489908	webdriver::server	DEBUG	-> POST /session/bae7bd3d-3ee1-4039-801d-186622e7d9f9/moz/context {"context": "content"}
+1683912489908	Marionette	DEBUG	0 -> [0,15,"Marionette:SetContext",{"value":"content"}]
+1683912489908	Marionette	DEBUG	0 <- [1,15,null,{"value":null}]
+1683912489908	webdriver::server	DEBUG	<- 200 OK {"value":null}
+1683912489909	webdriver::server	DEBUG	-> POST /session/bae7bd3d-3ee1-4039-801d-186622e7d9f9/element {"using": "css selector", "value": "#appMenu-popup #appMenu-multiView #appMenu-protonMainView #appMenu-proton-update-banner"}
+1683912489909	Marionette	DEBUG	0 -> [0,16,"WebDriver:FindElement",{"using":"css selector","value":"#appMenu-popup #appMenu-multiView #appMenu-protonMainView #appMenu-proton-update-banner"}]
+1683912489909	Marionette	TRACE	[13] MarionetteCommands actor created for window id 31
+1683912489910	Marionette	DEBUG	0 <- [1,16,{"error":"no such element","message":"Unable to locate element: #appMenu-popup #appMenu-multiView #appMenu-protonMainView #appMenu-proton-update-banner","stacktrace":"RemoteError@chrome://remote/content/shared/RemoteError.sys.mjs:8:8\nWebDriverError@chrome://remote/content/shared/webdriver/Er ... ote/content/shared/webdriver/Errors.sys.mjs:395:5\nelement.find/</<@chrome://remote/content/marionette/element.sys.mjs:134:16\n"},null]
+1683912489910	webdriver::server	DEBUG	<- 404 Not Found {"value":{"error":"no such element","message":"Unable to locate element: #appMenu-popup #appMenu-multiView # ... ontent/shared/webdriver/Errors.sys.mjs:395:5\nelement.find/</<@chrome://remote/content/marionette/element.sys.mjs:134:16\n"}}

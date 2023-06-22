@@ -1,0 +1,416 @@
+1683909196651	geckodriver	INFO	Listening on 127.0.0.1:46845
+1683909197174	geckodriver::browser	DEBUG	Backing up prefs to "/code/utilities/klaatu-profile-disable-test/user.geckodriver_backup"
+1683909197178	mozrunner::runner	INFO	Running command: MOZ_CRASHREPORTER="1" MOZ_CRASHREPORTER_NO_REPORT="1" MOZ_CRASHREPORTER_SHUTDOWN="1" MOZ_NO_REMOTE="1" "/cod ... es/klaatu-profile-disable-test" "-headless" "--remote-debugging-port" "54935" "--remote-allow-hosts" "localhost" "-no-remote"
+1683909197178	geckodriver::marionette	DEBUG	Waiting 60s to connect to browser on 127.0.0.1
+1683909197178	geckodriver::marionette	TRACE	Retrying in 100ms
+*** You are running in headless mode.
+1683909197232	Toolkit.Telemetry	TRACE	TelemetryController::observe - profile-after-change notified.
+1683909197232	Toolkit.Telemetry	TRACE	TelemetryController::setupTelemetry
+1683909197232	Toolkit.Telemetry	TRACE	TelemetryReportingPolicy::setup
+1683909197232	Toolkit.Telemetry	CONFIG	TelemetryController::enableTelemetryRecording - canRecordBase:true, canRecordExtended: true
+1683909197232	Toolkit.Telemetry	TRACE	TelemetrySession::earlyInit
+1683909197233	Toolkit.Telemetry	TRACE	UpdatePing::init - enabled: true
+1683909197234	Toolkit.Telemetry	TRACE	TelemetryEnvironment::constructor
+[GFX1-]: glxtest: libpci missing
+[GFX1-]: glxtest: Unable to open a connection to the X server
+[GFX1-]: No GPUs detected via PCI
+
+1683909197243	Toolkit.Telemetry	TRACE	TelemetryEnvironment::_getGFXData - Only one display adapter detected.
+1683909197244	Toolkit.Telemetry	TRACE	TelemetryEnvironment::_updateSearchEngine - ignoring early call
+1683909197244	Toolkit.Telemetry	TRACE	TelemetryEnvironment::_updateAddons
+1683909197245	Toolkit.Telemetry	TRACE	TelemetryEnvironment::registerChangeListener for CrashAnnotator
+1683909197247	RemoteAgent	DEBUG	WebDriver BiDi enabled
+1683909197247	RemoteAgent	DEBUG	CDP enabled
+1683909197247	Marionette	INFO	Marionette enabled
+1683909197248	Marionette	TRACE	Received observer notification final-ui-startup
+1683909197248	Marionette	INFO	Listening on port 2828
+1683909197248	Marionette	DEBUG	Marionette is listening
+1683909197248	RemoteAgent	TRACE	Received observer notification final-ui-startup
+1683909197266	Toolkit.Telemetry	TRACE	TelemetryEnvironment::_updateAddons: addons differ
+1683909197270	RemoteAgent	TRACE	Available local IP addresses: 127.0.0.1, [::1]
+WebDriver BiDi listening on ws://127.0.0.1:54935
+1683909197271	CDP	DEBUG	Waiting for initial application window
+1683909197687	Toolkit.Telemetry	TRACE	TelemetryEnvironment::observe - Topic gmp-provider-registered
+1683909197716	Marionette	DEBUG	Accepted connection 0 from 127.0.0.1:34658
+1683909197719	Toolkit.Telemetry	TRACE	TelemetryEnvironment::observe - aTopic: compositor:created, aData: null
+1683909197720	geckodriver::marionette	DEBUG	Connection to Marionette established on 127.0.0.1:2828.
+1683909197722	Toolkit.Telemetry	TRACE	TelemetryController::observe - content-process-ready-for-script notified.
+1683909197723	Toolkit.Telemetry	CONFIG	TelemetryController::enableTelemetryRecording - canRecordBase:true, canRecordExtended: true
+1683909197728	Marionette	DEBUG	0 -> [0,1,"WebDriver:NewSession",{"acceptInsecureCerts":true,"browserName":"firefox","pageLoadStrategy":"normal"}]
+1683909197729	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+1683909197729	Marionette	DEBUG	Waiting for initial application window
+1683909197736	Toolkit.Telemetry	TRACE	TelemetrySession::observe - xul-window-visible notified.
+[GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
+console.error: ({})
+1683909197786	Toolkit.Telemetry	TRACE	TelemetryEnvironment::observe - aTopic: sessionstore-windows-restored, aData: null
+1683909197787	Toolkit.Telemetry	ERROR	TelemetryEnvironment::_isDefaultBrowser - Could not determine if default browser: [Exception... "ServiceManager::GetService returned failure code:"  nsresult: "0x80570016 (NS_ERROR_XPC_GS_RETURNED_FAILURE)"  location: "JS frame :: resource://gre/modules/XPCOMUtils.sys.mjs :: defineLazyServiceGetter/< :: line 137"  data: no] Stack trace: defineLazyServiceGetter/<()@resource://gre/modules/XPCOMUtils.sys.mjs:137
+get()@resource:///modules/ShellService.sys.mjs:551
+isDefaultBrowser()@resource:///modules/ShellService.sys.mjs:125
+isDefault()@resource://gre/modules/TelemetryEnvironment.sys.mjs:1527
+_isDefaultBrowser()@resource://gre/modules/TelemetryEnvironment.sys.mjs:1549
+_updateDefaultBrowser()@resource://gre/modules/TelemetryEnvironment.sys.mjs:1574
+observe()@resource://gre/modules/TelemetryEnvironment.sys.mjs:1396
+initializeWindow()@resource:///modules/sessionstore/SessionStore.sys.mjs:1705
+onBeforeBrowserWindowShown/<()@resource:///modules/sessionstore/SessionStore.sys.mjs:1883
+1683909197787	Toolkit.Telemetry	TRACE	TelemetrySession::observe - sessionstore-windows-restored notified.
+1683909197787	Toolkit.Telemetry	TRACE	TelemetrySession::gatherStartup
+1683909197831	Toolkit.Telemetry	TRACE	TelemetryEnvironment::setExperimentActive - id: optin-advanced-experiment, branch: control-11
+1683909197831	Toolkit.Telemetry	TRACE	TelemetryEnvironment::_onEnvironmentChange for experiment-annotation-changed
+1683909197831	Toolkit.Telemetry	DEBUG	TelemetryEnvironment::_onEnvironmentChange - calling CrashAnnotator
+console.debug: RSLoader: 
+  Registered update timer
+console.debug: RSLoader: 
+  Updating recipes
+1683909197867	Toolkit.Telemetry	TRACE	TelemetryController::observe - content-process-ready-for-script notified.
+1683909197867	Toolkit.Telemetry	CONFIG	TelemetryController::enableTelemetryRecording - canRecordBase:true, canRecordExtended: true
+1683909197876	Toolkit.Telemetry	TRACE	TelemetryController::observe - content-process-ready-for-script notified.
+1683909197877	Toolkit.Telemetry	CONFIG	TelemetryController::enableTelemetryRecording - canRecordBase:true, canRecordExtended: true
+1683909197892	Toolkit.Telemetry	TRACE	TelemetryEnvironment::observe - aTopic: distribution-customization-complete, aData: null
+1683909197906	Toolkit.Telemetry	TRACE	ClientID::_doLoadClientID
+1683909197906	Toolkit.Telemetry	TRACE	ClientID::_doLoadClientID: Client IDs loaded from state.
+1683909198009	Toolkit.Telemetry	TRACE	TelemetryEnvironment::_updateAddons
+1683909198012	Toolkit.Telemetry	TRACE	TelemetryEnvironment::_updateAddons: addons differ
+1683909198013	Toolkit.Telemetry	TRACE	TelemetryEnvironment::_startWatchingPrefs - [object Map]
+1683909198110	Marionette	TRACE	Received observer notification browser-idle-startup-tasks-finished
+1683909198110	RemoteAgent	TRACE	Received observer notification browser-idle-startup-tasks-finished
+1683909198112	RemoteAgent	TRACE	[3] ProgressListener Start: expectNavigation=false resolveWhenStarted=false unloadTimeout=200 waitForExplicitStart=false
+1683909198112	RemoteAgent	TRACE	[3] ProgressListener Setting unload timer (200ms)
+1683909198112	RemoteAgent	TRACE	[3] Document already finished loading: about:blank
+1683909198112	RemoteAgent	TRACE	[3] ProgressListener Stop: has error=false
+DevTools listening on ws://127.0.0.1:54935/devtools/browser/85627f74-32a3-49f4-aa36-15e2e2eaca41
+1683909198116	Marionette	DEBUG	0 <- [1,1,null,{"sessionId":"f39df4cc-2dd2-4211-a447-b19c03ea11e6","capabilities":{"browserName":"firefox","browserVersion":"114.0a1","platformName":"linux","acceptInsecureCerts":true,"pageLoadStrategy":"normal","setWindowRect":true,"timeouts":{"implicit":0,"pageLoad":300000,"script":30000},"strictFileInteractability":false,"unhandledPromptBehavior":"dismiss and notify","moz:accessibilityChecks":false,"moz:buildID":"20230506092548","moz:debuggerAddress":"127.0.0.1:54935","moz:headless":true,"moz:platformVersion":"5.15.90.1-microsoft-standard-WSL2","moz:processID":3585,"moz:profile":"/code/utilities/klaatu-profile-disable-test","moz:shutdownTimeout":60000,"moz:useNonSpecCompliantPointerOrigin":false,"moz:webdriverClick":true,"moz:windowless":false,"proxy":{}}}]
+1683909198117	webdriver::server	DEBUG	<- 200 OK {"value":{"sessionId":"f39df4cc-2dd2-4211-a447-b19c03ea11e6","capabilities":{"acceptInsecureCerts":true,"browserNam ... ctability":false,"timeouts":{"implicit":0,"pageLoad":300000,"script":30000},"unhandledPromptBehavior":"dismiss and notify"}}}
+1683909198118	webdriver::server	DEBUG	-> GET /session/f39df4cc-2dd2-4211-a447-b19c03ea11e6/moz/context 
+1683909198119	Marionette	DEBUG	0 -> [0,2,"Marionette:GetContext",{}]
+1683909198119	Marionette	DEBUG	0 <- [1,2,null,{"value":"content"}]
+1683909198119	webdriver::server	DEBUG	<- 200 OK {"value":"content"}
+1683909198120	webdriver::server	DEBUG	-> POST /session/f39df4cc-2dd2-4211-a447-b19c03ea11e6/moz/context {"context": "chrome"}
+1683909198120	Marionette	DEBUG	0 -> [0,3,"Marionette:SetContext",{"value":"chrome"}]
+1683909198120	Marionette	DEBUG	0 <- [1,3,null,{"value":null}]
+1683909198120	webdriver::server	DEBUG	<- 200 OK {"value":null}
+1683909198121	webdriver::server	DEBUG	-> POST /session/f39df4cc-2dd2-4211-a447-b19c03ea11e6/execute/sync {"script": "\n        const ExperimentManager = ChromeUtil ... && (region in ['RO'])))\", \"userFacingDescription\": \"test\", \"userFacingName\": \"advanced experiment\"}", "control-11"]}
+1683909198122	Marionette	DEBUG	0 -> [0,4,"WebDriver:ExecuteScript",{"args":["{\"appId\": \"firefox-desktop\", \"appName\": \"firefox_desktop\", \"application\": \"firefox-desktop\", \"arguments\": {}, \"branches\": [{\" ...  && (locale in ['en-US']) && (region in ['RO'])))\", \"userFacingDescription\": \"test\", \"userFacingName\": \"advanced experiment\"}","control-11"],"script":"\n        const ExperimentManager = ChromeUtils.import(\"resource://nimbus/lib/ExperimentManager.jsm\");\n        const branchSlu ... ecipe.branches.find(b => b.slug == branchSlug);\n        ExperimentManager.ExperimentManager.forceEnroll(recipe, branch);\n    "}]
+1683909198123	RemoteAgent	TRACE	WebDriverProcessData actor created for PID 3585
+1683909198123	Marionette	TRACE	[1] MarionetteCommands actor created for window id 2
+console.debug: ExperimentManager: 
+  Existing experiment found for the same feature pocketNewtab, unenrolling.
+1683909198126	Toolkit.Telemetry	TRACE	TelemetryEnvironment::setExperimentInactive
+1683909198126	Toolkit.Telemetry	TRACE	TelemetryEnvironment::_onEnvironmentChange for experiment-annotation-changed
+1683909198126	Toolkit.Telemetry	DEBUG	TelemetryEnvironment::_onEnvironmentChange - calling CrashAnnotator
+1683909198127	Toolkit.Telemetry	TRACE	TelemetryEnvironment::observe - aTopic: nsPref:changed, aData: nimbus.syncdatastore.pocketNewtab
+console.debug: ExperimentManager: 
+  Recipe unenrolled: optin-advanced-experiment
+1683909198128	Toolkit.Telemetry	TRACE	TelemetryEnvironment::observe - aTopic: nsPref:changed, aData: nimbus.syncdatastore.pocketNewtab
+1683909198128	Toolkit.Telemetry	TRACE	TelemetryEnvironment::setExperimentActive - id: optin-advanced-experiment, branch: control-11
+1683909198129	Toolkit.Telemetry	TRACE	TelemetryEnvironment::_onEnvironmentChange for experiment-annotation-changed
+1683909198129	Toolkit.Telemetry	DEBUG	TelemetryEnvironment::_onEnvironmentChange - calling CrashAnnotator
+console.debug: ExperimentManager: 
+  New experiment started: optin-advanced-experiment, control-11
+1683909198130	Marionette	DEBUG	0 <- [1,4,null,{"value":null}]
+1683909198130	webdriver::server	DEBUG	<- 200 OK {"value":null}
+1683909198131	webdriver::server	DEBUG	-> POST /session/f39df4cc-2dd2-4211-a447-b19c03ea11e6/moz/context {"context": "content"}
+1683909198132	Marionette	DEBUG	0 -> [0,5,"Marionette:SetContext",{"value":"content"}]
+1683909198132	Marionette	DEBUG	0 <- [1,5,null,{"value":null}]
+1683909198133	webdriver::server	DEBUG	<- 200 OK {"value":null}
+1683909198412	Toolkit.Telemetry	TRACE	TelemetryEnvironment::observe - aTopic: nsPref:changed, aData: dom.push.userAgentID
+1683909198434	Toolkit.Telemetry	TRACE	TelemetryEnvironment::_onEnvironmentChange for system-info
+1683909198434	Toolkit.Telemetry	DEBUG	TelemetryEnvironment::_onEnvironmentChange - calling CrashAnnotator
+1683909198435	Toolkit.Telemetry	TRACE	TelemetrySend::setup
+1683909198438	Toolkit.Telemetry	TRACE	TelemetryStorage::_scanPendingPings
+1683909198438	Toolkit.Telemetry	TRACE	TelemetryStorage::_migrateAppDataPings
+1683909198438	Toolkit.Telemetry	TRACE	TelemetryStorage::_iterateAppDataPings
+1683909198453	Toolkit.Telemetry	INFO	TelemetrySend::_checkPendingPings - pending ping count: 8
+1683909198453	Toolkit.Telemetry	TRACE	TelemetryStorage::_enforcePendingPingsQuota
+1683909198453	Toolkit.Telemetry	TRACE	TelemetrySend::Scheduler::triggerSendingPings - active send task: false, immediately: true
+1683909198453	Toolkit.Telemetry	TRACE	TelemetrySend::Scheduler::_doSendTask iteration
+1683909198453	Toolkit.Telemetry	TRACE	TelemetrySend::Scheduler::_doSendTask - pending: 8, current: 0
+1683909198453	Toolkit.Telemetry	TRACE	TelemetrySend::Scheduler::_doSendTask - can send - pending: 8, current: 0
+1683909198453	Toolkit.Telemetry	TRACE	TelemetrySend::Scheduler::_doSendTask - triggering sending of 8 pings now, 0 pings waiting
+1683909198453	Toolkit.Telemetry	TRACE	TelemetrySend::sendPersistedPings
+1683909198453	Toolkit.Telemetry	TRACE	TelemetrySend::sendPersistedPings - sending 8 pings
+1683909198453	Toolkit.Telemetry	TRACE	TelemetryStorage::loadPendingPing - id: 6589bdd8-9e0e-429a-9649-fb63b921c8fc
+1683909198454	Toolkit.Telemetry	TRACE	TelemetryStorage::loadPendingPing - id: 1389f1e2-a97e-48ac-ac33-0a35541081f1
+1683909198454	Toolkit.Telemetry	TRACE	TelemetryStorage::loadPendingPing - id: b6debc0c-f6fc-4118-825e-fa452fdc91a3
+1683909198454	Toolkit.Telemetry	TRACE	TelemetryStorage::loadPendingPing - id: e380561e-bdf4-4bbc-b63f-21e33496bdcd
+1683909198454	Toolkit.Telemetry	TRACE	TelemetryStorage::loadPendingPing - id: 72a3dcec-42d3-4022-b322-5aee5f47b89c
+1683909198454	Toolkit.Telemetry	TRACE	TelemetryStorage::loadPendingPing - id: f438e665-4b28-4415-a91b-a03893378e5b
+1683909198454	Toolkit.Telemetry	TRACE	TelemetryStorage::loadPendingPing - id: 45165302-e15f-4be4-998d-f2b60da0056f
+1683909198454	Toolkit.Telemetry	TRACE	TelemetryStorage::loadPendingPing - id: 0a1b8472-9238-4f40-b75c-d45e1003a1c6
+1683909198454	Toolkit.Telemetry	TRACE	TelemetrySession::delayedInit
+1683909198454	Toolkit.Telemetry	TRACE	TelemetryStorage::_popAndPerformQueuedOperation - Performing queued operation.
+1683909198455	Toolkit.Telemetry	TRACE	TelemetryStorage::_popAndPerformQueuedOperation - Performing queued operation.
+1683909198455	Toolkit.Telemetry	TRACE	TelemetrySend::_doPing - server: http://ping-server:5000, persisted: true, id: 6589bdd8-9e0e-429a-9649-fb63b921c8fc
+1683909198457	Toolkit.Telemetry	TRACE	TelemetrySend::_doPing - server: http://ping-server:5000, persisted: true, id: 1389f1e2-a97e-48ac-ac33-0a35541081f1
+1683909198462	Toolkit.Telemetry	TRACE	TelemetrySend::_doPing - server: http://ping-server:5000, persisted: true, id: b6debc0c-f6fc-4118-825e-fa452fdc91a3
+1683909198470	Toolkit.Telemetry	TRACE	TelemetrySend::_doPing - server: http://ping-server:5000, persisted: true, id: e380561e-bdf4-4bbc-b63f-21e33496bdcd
+1683909198471	Toolkit.Telemetry	TRACE	TelemetrySend::_doPing - server: http://ping-server:5000, persisted: true, id: 72a3dcec-42d3-4022-b322-5aee5f47b89c
+1683909198471	Toolkit.Telemetry	TRACE	TelemetryController::observe - content-process-ready-for-script notified.
+1683909198471	Toolkit.Telemetry	CONFIG	TelemetryController::enableTelemetryRecording - canRecordBase:true, canRecordExtended: true
+1683909198472	Toolkit.Telemetry	TRACE	TelemetrySend::_doPing - server: http://ping-server:5000, persisted: true, id: f438e665-4b28-4415-a91b-a03893378e5b
+1683909198473	Toolkit.Telemetry	TRACE	TelemetrySend::_doPing - server: http://ping-server:5000, persisted: true, id: 45165302-e15f-4be4-998d-f2b60da0056f
+1683909198478	Toolkit.Telemetry	TRACE	TelemetrySend::_doPing - server: http://ping-server:5000, persisted: true, id: 0a1b8472-9238-4f40-b75c-d45e1003a1c6
+1683909198482	Toolkit.Telemetry	TRACE	TelemetryController::observe - content-process-ready-for-script notified.
+1683909198483	Toolkit.Telemetry	CONFIG	TelemetryController::enableTelemetryRecording - canRecordBase:true, canRecordExtended: true
+1683909198485	Toolkit.Telemetry	INFO	TelemetrySend::_doPing - successfully loaded, status: 200
+1683909198485	Toolkit.Telemetry	TRACE	TelemetrySend::_onPingRequestFinished - success: true, persisted: true
+1683909198485	Toolkit.Telemetry	TRACE	TelemetryStorage::removePendingPing - deleting ping with id: 6589bdd8-9e0e-429a-9649-fb63b921c8fc, path: /code/utilities/klaatu-profile-disable-test/saved-telemetry-pings/6589bdd8-9e0e-429a-9649-fb63b921c8fc
+1683909198485	Toolkit.Telemetry	INFO	TelemetrySend::_doPing - successfully loaded, status: 200
+1683909198485	Toolkit.Telemetry	TRACE	TelemetrySend::_onPingRequestFinished - success: true, persisted: true
+1683909198485	Toolkit.Telemetry	TRACE	TelemetryStorage::removePendingPing - deleting ping with id: 1389f1e2-a97e-48ac-ac33-0a35541081f1, path: /code/utilities/klaatu-profile-disable-test/saved-telemetry-pings/1389f1e2-a97e-48ac-ac33-0a35541081f1
+1683909198487	Toolkit.Telemetry	INFO	TelemetrySend::_doPing - successfully loaded, status: 200
+1683909198487	Toolkit.Telemetry	TRACE	TelemetrySend::_onPingRequestFinished - success: true, persisted: true
+1683909198487	Toolkit.Telemetry	TRACE	TelemetryStorage::removePendingPing - deleting ping with id: b6debc0c-f6fc-4118-825e-fa452fdc91a3, path: /code/utilities/klaatu-profile-disable-test/saved-telemetry-pings/b6debc0c-f6fc-4118-825e-fa452fdc91a3
+1683909198487	Toolkit.Telemetry	INFO	TelemetrySend::_doPing - successfully loaded, status: 200
+1683909198487	Toolkit.Telemetry	TRACE	TelemetrySend::_onPingRequestFinished - success: true, persisted: true
+1683909198487	Toolkit.Telemetry	TRACE	TelemetryStorage::removePendingPing - deleting ping with id: e380561e-bdf4-4bbc-b63f-21e33496bdcd, path: /code/utilities/klaatu-profile-disable-test/saved-telemetry-pings/e380561e-bdf4-4bbc-b63f-21e33496bdcd
+1683909198488	Toolkit.Telemetry	INFO	TelemetrySend::_doPing - successfully loaded, status: 200
+1683909198488	Toolkit.Telemetry	TRACE	TelemetrySend::_onPingRequestFinished - success: true, persisted: true
+1683909198488	Toolkit.Telemetry	TRACE	TelemetryStorage::removePendingPing - deleting ping with id: 72a3dcec-42d3-4022-b322-5aee5f47b89c, path: /code/utilities/klaatu-profile-disable-test/saved-telemetry-pings/72a3dcec-42d3-4022-b322-5aee5f47b89c
+1683909198488	Toolkit.Telemetry	INFO	TelemetrySend::_doPing - successfully loaded, status: 200
+1683909198488	Toolkit.Telemetry	TRACE	TelemetrySend::_onPingRequestFinished - success: true, persisted: true
+1683909198488	Toolkit.Telemetry	TRACE	TelemetryStorage::removePendingPing - deleting ping with id: f438e665-4b28-4415-a91b-a03893378e5b, path: /code/utilities/klaatu-profile-disable-test/saved-telemetry-pings/f438e665-4b28-4415-a91b-a03893378e5b
+1683909198488	Toolkit.Telemetry	INFO	TelemetrySend::_doPing - successfully loaded, status: 200
+1683909198488	Toolkit.Telemetry	TRACE	TelemetrySend::_onPingRequestFinished - success: true, persisted: true
+1683909198488	Toolkit.Telemetry	TRACE	TelemetryStorage::removePendingPing - deleting ping with id: 45165302-e15f-4be4-998d-f2b60da0056f, path: /code/utilities/klaatu-profile-disable-test/saved-telemetry-pings/45165302-e15f-4be4-998d-f2b60da0056f
+1683909198489	Toolkit.Telemetry	WARN	TelemetryStorage::_enforcePendingPingsQuota - Unable to find the size of ping 72a3dcec-42d3-4022-b322-5aee5f47b89c
+1683909198489	Toolkit.Telemetry	WARN	TelemetryStorage::_enforcePendingPingsQuota - Unable to find the size of ping f438e665-4b28-4415-a91b-a03893378e5b
+1683909198489	Toolkit.Telemetry	WARN	TelemetryStorage::_enforcePendingPingsQuota - Unable to find the size of ping 45165302-e15f-4be4-998d-f2b60da0056f
+1683909198489	Toolkit.Telemetry	INFO	TelemetrySend::_doPing - successfully loaded, status: 200
+1683909198490	Toolkit.Telemetry	TRACE	TelemetrySend::_onPingRequestFinished - success: true, persisted: true
+1683909198490	Toolkit.Telemetry	TRACE	TelemetryStorage::removePendingPing - deleting ping with id: 0a1b8472-9238-4f40-b75c-d45e1003a1c6, path: /code/utilities/klaatu-profile-disable-test/saved-telemetry-pings/0a1b8472-9238-4f40-b75c-d45e1003a1c6
+1683909198490	Toolkit.Telemetry	TRACE	TelemetrySend::Scheduler::_doSendTask - bailing out after sending, shutdown: false, pendingPingCount: 0
+1683909198499	Toolkit.Telemetry	TRACE	TelemetryController::observe - content-process-ready-for-script notified.
+1683909198499	Toolkit.Telemetry	CONFIG	TelemetryController::enableTelemetryRecording - canRecordBase:true, canRecordExtended: true
+1683909198501	Toolkit.Telemetry	TRACE	TelemetryStorage::loadPingfile - unreadable ping /code/utilities/klaatu-profile-disable-test/datareporting/aborted-session-ping: NotFoundError: Could not open the file at /code/utilities/klaatu-profile-disable-test/datareporting/aborted-session-ping No traceback available
+1683909198501	Toolkit.Telemetry	TRACE	TelemetryStorage::loadAbortedSessionPing - no such file
+1683909198501	Toolkit.Telemetry	TRACE	TelemetryController::checkAbortedSessionPing - found aborted-session ping: false
+1683909198501	Toolkit.Telemetry	TRACE	TelemetrySession::_saveAbortedSessionPing
+1683909198501	Toolkit.Telemetry	TRACE	TelemetrySession::getSessionPayload - reason: aborted-session, clearSubsession: false
+1683909198501	Toolkit.Telemetry	TRACE	TelemetrySession::assemblePayloadWithMeasurements - reason: aborted-session, submitting subsession data: true
+1683909198503	Toolkit.Telemetry	TRACE	TelemetryController::saveAbortedSessionPing
+1683909198503	Toolkit.Telemetry	TRACE	TelemetryController::assemblePing - Type main, aOptions {"addClientId":true,"addEnvironment":true}
+1683909198504	Toolkit.Telemetry	TRACE	TelemetryStorage::saveAbortedSessionPing - ping path: /code/utilities/klaatu-profile-disable-test/datareporting/aborted-session-ping
+1683909198504	Toolkit.Telemetry	TRACE	TelemetryStorage::_popAndPerformQueuedOperation - Performing queued operation.
+1683909198504	Toolkit.Telemetry	TRACE	TelemetryStorage::savePingToFile - path: /code/utilities/klaatu-profile-disable-test/datareporting/aborted-session-ping
+1683909198507	Toolkit.Telemetry	TRACE	TelemetryEnvironment::registerChangeListener for TelemetrySession::onEnvironmentChange
+1683909198508	Toolkit.Telemetry	TRACE	TelemetryScheduler::init
+1683909198508	Toolkit.Telemetry	TRACE	TelemetryScheduler::_rescheduleTimeout - isUserIdle: false
+1683909198508	Toolkit.Telemetry	TRACE	TelemetryScheduler::_rescheduleTimeout - scheduling next tick for Fri May 12 2023 16:33:48 GMT+0000 (Coordinated Universal Time)
+1683909198508	Toolkit.Telemetry	TRACE	TelemetryStorage::cleanArchiveTask
+1683909198508	Toolkit.Telemetry	TRACE	TelemetryStorage::removeFHRDatabase
+1683909198509	Toolkit.Telemetry	TRACE	TelemetryEventPing::::Starting up.
+1683909198509	Toolkit.Telemetry	TRACE	TelemetryStorage::_purgeOldPings
+1683909198509	Toolkit.Telemetry	TRACE	TelemetryStorage::_scanArchive
+1683909198509	Toolkit.Telemetry	TRACE	TelemetryStorage::_scanArchive - checking in subdir: /code/utilities/klaatu-profile-disable-test/datareporting/archived/2023-05
+1683909198520	Toolkit.Telemetry	TRACE	TelemetryStorage::_enforceArchiveQuota
+JavaScript error: resource://gre/modules/XULStore.sys.mjs, line 60: Error: Can't find profile directory.
+1683909202411	Toolkit.Telemetry	TRACE	TelemetrySession::observe - user-interaction-inactive notified.
+1683909203180	webdriver::server	DEBUG	-> GET /session/f39df4cc-2dd2-4211-a447-b19c03ea11e6/moz/context 
+1683909203181	Marionette	DEBUG	0 -> [0,6,"Marionette:GetContext",{}]
+1683909203181	Marionette	DEBUG	0 <- [1,6,null,{"value":"content"}]
+1683909203181	webdriver::server	DEBUG	<- 200 OK {"value":"content"}
+1683909203182	webdriver::server	DEBUG	-> POST /session/f39df4cc-2dd2-4211-a447-b19c03ea11e6/moz/context {"context": "chrome"}
+1683909203183	Marionette	DEBUG	0 -> [0,7,"Marionette:SetContext",{"value":"chrome"}]
+1683909203183	Marionette	DEBUG	0 <- [1,7,null,{"value":null}]
+1683909203183	webdriver::server	DEBUG	<- 200 OK {"value":null}
+1683909203184	webdriver::server	DEBUG	-> POST /session/f39df4cc-2dd2-4211-a447-b19c03ea11e6/execute/sync {"script": "\n                    const { RemoteSettings } ... eSettings.pollChanges();\n                    RemoteSettingsExperimentLoader.updateRecipes();\n                ", "args": []}
+1683909203184	Marionette	DEBUG	0 -> [0,8,"WebDriver:ExecuteScript",{"args":[],"script":"\n                    const { RemoteSettings } = ChromeUtils.import(\n                        \"resource://services-settings/rem ...            RemoteSettings.pollChanges();\n                    RemoteSettingsExperimentLoader.updateRecipes();\n                "}]
+1683909203186	Marionette	DEBUG	0 <- [1,8,null,{"value":null}]
+1683909203186	webdriver::server	DEBUG	<- 200 OK {"value":null}
+1683909203187	webdriver::server	DEBUG	-> POST /session/f39df4cc-2dd2-4211-a447-b19c03ea11e6/moz/context {"context": "content"}
+1683909203187	Marionette	DEBUG	0 -> [0,9,"Marionette:SetContext",{"value":"content"}]
+1683909203187	Marionette	DEBUG	0 <- [1,9,null,{"value":null}]
+1683909203187	webdriver::server	DEBUG	<- 200 OK {"value":null}
+console.error: (new TypeError("NetworkError: Network request failed", "resource://services-settings/Utils.sys.mjs", 229))
+1683909203456	Toolkit.Telemetry	TRACE	TelemetryEnvironment::observe - aTopic: browser-search-service, aData: init-complete
+1683909203456	Toolkit.Telemetry	TRACE	TelemetryEnvironment::_updateSearchEngine - isInitialized: true
+1683909204465	Toolkit.Telemetry	TRACE	TelemetryEnvironment::observe - aTopic: browser-search-service, aData: write-prevented-when-settings-unchanged
+1683909204466	Toolkit.Telemetry	TRACE	TelemetryEnvironment::observe - aTopic: browser-search-service, aData: write-settings-to-disk-complete
+1683909207820	Toolkit.Telemetry	TRACE	TelemetryReportingPolicy::_shouldNotify - User already notified or bypassing the policy.
+console.error: (new TypeError("NetworkError: Network request failed", "resource://services-settings/Utils.sys.mjs", 229))
+console.error: (new TypeError("NetworkError: Network request failed", "resource://services-settings/Utils.sys.mjs", 229))
+console.error: (new TypeError("NetworkError: Network request failed", "resource://services-settings/Utils.sys.mjs", 229))
+console.error: (new TypeError("NetworkError: Network request failed", "resource://services-settings/Utils.sys.mjs", 229))
+console.error: BroadcastService: 
+  receivedBroadcastMessage: handler for
+  remote-settings/monitor_changes
+  threw error:
+  Message: Error: Polling for changes failed: NetworkError: Network request failed.
+  Stack:
+    remoteSettingsFunction/remoteSettings.pollChanges@resource://services-settings/remote-settings.sys.mjs:324:13
+
+console.debug: RSLoader: 
+  Error getting recipes from remote settings.
+console.error: (new TypeError("NetworkError: Network request failed", "resource://services-settings/Utils.sys.mjs", 229))
+console.error: "Received empty top sites configuration!"
+JavaScript error: resource://services-settings/remote-settings.sys.mjs, line 324: Error: Polling for changes failed: NetworkError: Network request failed.
+1683909209722	Toolkit.Telemetry	TRACE	TelemetryEnvironment::observe - aTopic: nsPref:changed, aData: app.update.lastUpdateTime.rs-experiment-loader-timer
+console.error: (new TypeError("NetworkError: Network request failed", "resource://services-settings/Utils.sys.mjs", 229))
+console.error: (new TypeError("NetworkError: Network request failed", "resource://services-settings/Utils.sys.mjs", 229))
+console.error: (new TypeError("NetworkError: Network request failed", "resource://services-settings/Utils.sys.mjs", 229))
+console.error: (new TypeError("NetworkError: Network request failed", "resource://services-settings/Utils.sys.mjs", 229))
+console.error: (new TypeError("NetworkError: Network request failed", "resource://services-settings/Utils.sys.mjs", 229))
+1683909215852	Toolkit.Telemetry	TRACE	TelemetryEnvironment::observe - aTopic: nsPref:changed, aData: privacy.restrict3rdpartystorage.url_decorations
+1683909215852	Toolkit.Telemetry	TRACE	TelemetryEnvironment::observe - aTopic: nsPref:changed, aData: privacy.restrict3rdpartystorage.url_decorations
+1683909215854	Toolkit.Telemetry	TRACE	TelemetryEnvironment::observe - aTopic: browser-search-service, aData: settings-update-complete
+console.error: (new TypeError("NetworkError: Network request failed", "resource://services-settings/Utils.sys.mjs", 229))
+1683909227229	Toolkit.Telemetry	TRACE	TelemetryEnvironment::observe - aTopic: nsPref:changed, aData: app.update.lastUpdateTime.recipe-client-addon-run
+1683909227229	Toolkit.Telemetry	TRACE	TelemetryEnvironment::observe - aTopic: nsPref:changed, aData: app.update.lastUpdateTime.rs-experiment-loader-timer
+console.debug: RSLoader: 
+  Updating recipes with trigger timer
+1683909227810	Toolkit.Telemetry	TRACE	TelemetryEnvironment::observe - aTopic: nsPref:changed, aData: toolkit.startup.last_success
+console.error: (new TypeError("NetworkError: Network request failed", "resource://services-settings/Utils.sys.mjs", 229))
+1683909228338	Toolkit.Telemetry	TRACE	TelemetryScheduler::_onSchedulerTick - dispatchOnIdle: false
+1683909228338	Toolkit.Telemetry	TRACE	TelemetryScheduler::_schedulerTickLogic
+1683909228338	Toolkit.Telemetry	TRACE	TelemetryScheduler::_isDailyPingDue - already sent one today
+1683909228338	Toolkit.Telemetry	TRACE	TelemetryScheduler::_isPeriodicPingDue - already sent one today
+1683909228338	Toolkit.Telemetry	TRACE	TelemetryScheduler::_schedulerTickLogic - No ping due.
+1683909228338	Toolkit.Telemetry	TRACE	TelemetryScheduler::_rescheduleTimeout - isUserIdle: false
+1683909228338	Toolkit.Telemetry	TRACE	TelemetryScheduler::_rescheduleTimeout - scheduling next tick for Fri May 12 2023 16:34:18 GMT+0000 (Coordinated Universal Time)
+1683909228338	Toolkit.Telemetry	TRACE	TelemetryEventPing::::_submitPing
+1683909228339	Toolkit.Telemetry	TRACE	TelemetryController::submitExternalPing - type: event, aOptions: {"addClientId":true,"addEnvironment":true,"usePingSender":false}
+1683909228339	Toolkit.Telemetry	TRACE	TelemetryController::assemblePing - Type event, aOptions {"addClientId":true,"addEnvironment":true,"usePingSender":false}
+1683909228339	Toolkit.Telemetry	TRACE	TelemetryController::submitExternalPing - ping assembled, id: 9da1dee7-fb6a-414a-a819-6da8ee5b1fab
+1683909228340	Toolkit.Telemetry	TRACE	TelemetrySend::submitPing - ping id: 9da1dee7-fb6a-414a-a819-6da8ee5b1fab, options: {"usePingSender":false}
+1683909228340	Toolkit.Telemetry	TRACE	TelemetrySend::submitPing - can send pings, trying to send now
+1683909228340	Toolkit.Telemetry	TRACE	TelemetrySend::Scheduler::triggerSendingPings - active send task: false, immediately: true
+1683909228340	Toolkit.Telemetry	TRACE	TelemetrySend::Scheduler::_doSendTask iteration
+1683909228340	Toolkit.Telemetry	TRACE	TelemetrySend::Scheduler::_doSendTask - pending: 0, current: 1
+1683909228340	Toolkit.Telemetry	TRACE	TelemetrySend::Scheduler::_doSendTask - can send - pending: 0, current: 1
+1683909228340	Toolkit.Telemetry	TRACE	TelemetrySend::Scheduler::_doSendTask - triggering sending of 0 pings now, 0 pings waiting
+1683909228340	Toolkit.Telemetry	TRACE	TelemetrySend::_doPing - server: http://ping-server:5000, persisted: false, id: 9da1dee7-fb6a-414a-a819-6da8ee5b1fab
+1683909228341	Toolkit.Telemetry	TRACE	TelemetryStorage::savePingToFile - path: /code/utilities/klaatu-profile-disable-test/datareporting/archived/2023-05/1683909228339.9da1dee7-fb6a-414a-a819-6da8ee5b1fab.event.jsonlz4
+1683909228346	Toolkit.Telemetry	INFO	TelemetrySend::_doPing - successfully loaded, status: 200
+1683909228346	Toolkit.Telemetry	TRACE	TelemetrySend::_onPingRequestFinished - success: true, persisted: false
+1683909228346	Toolkit.Telemetry	TRACE	TelemetrySend::Scheduler::_doSendTask - bailing out after sending, shutdown: false, pendingPingCount: 0
+console.error: (new TypeError("NetworkError: Network request failed", "resource://services-settings/Utils.sys.mjs", 229))
+console.error: (new TypeError("NetworkError: Network request failed", "resource://services-settings/Utils.sys.mjs", 229))
+console.debug: RSLoader: 
+  Error getting recipes from remote settings.
+console.error: (new TypeError("NetworkError: Network request failed", "resource://services-settings/Utils.sys.mjs", 229))
+1683909258356	Toolkit.Telemetry	TRACE	TelemetryScheduler::_onSchedulerTick - dispatchOnIdle: false
+1683909258356	Toolkit.Telemetry	TRACE	TelemetryScheduler::_schedulerTickLogic
+1683909258356	Toolkit.Telemetry	TRACE	TelemetryScheduler::_isDailyPingDue - already sent one today
+1683909258356	Toolkit.Telemetry	TRACE	TelemetryScheduler::_isPeriodicPingDue - already sent one today
+1683909258356	Toolkit.Telemetry	TRACE	TelemetryScheduler::_schedulerTickLogic - No ping due.
+1683909258356	Toolkit.Telemetry	TRACE	TelemetryScheduler::_rescheduleTimeout - isUserIdle: false
+1683909258356	Toolkit.Telemetry	TRACE	TelemetryScheduler::_rescheduleTimeout - scheduling next tick for Fri May 12 2023 16:34:48 GMT+0000 (Coordinated Universal Time)
+1683909258356	Toolkit.Telemetry	TRACE	TelemetryEventPing::::_submitPing
+1683909258356	Toolkit.Telemetry	TRACE	TelemetryController::submitExternalPing - type: event, aOptions: {"addClientId":true,"addEnvironment":true,"usePingSender":false}
+1683909258356	Toolkit.Telemetry	TRACE	TelemetryController::assemblePing - Type event, aOptions {"addClientId":true,"addEnvironment":true,"usePingSender":false}
+1683909258357	Toolkit.Telemetry	TRACE	TelemetryController::submitExternalPing - ping assembled, id: 95406ea8-7aae-4acd-976b-6106e774f218
+1683909258357	Toolkit.Telemetry	TRACE	TelemetrySend::submitPing - ping id: 95406ea8-7aae-4acd-976b-6106e774f218, options: {"usePingSender":false}
+1683909258357	Toolkit.Telemetry	TRACE	TelemetrySend::submitPing - can send pings, trying to send now
+1683909258357	Toolkit.Telemetry	TRACE	TelemetrySend::Scheduler::triggerSendingPings - active send task: false, immediately: true
+1683909258357	Toolkit.Telemetry	TRACE	TelemetrySend::Scheduler::_doSendTask iteration
+1683909258357	Toolkit.Telemetry	TRACE	TelemetrySend::Scheduler::_doSendTask - pending: 0, current: 1
+1683909258357	Toolkit.Telemetry	TRACE	TelemetrySend::Scheduler::_doSendTask - can send - pending: 0, current: 1
+1683909258357	Toolkit.Telemetry	TRACE	TelemetrySend::Scheduler::_doSendTask - triggering sending of 0 pings now, 0 pings waiting
+1683909258357	Toolkit.Telemetry	TRACE	TelemetrySend::_doPing - server: http://ping-server:5000, persisted: false, id: 95406ea8-7aae-4acd-976b-6106e774f218
+1683909258358	Toolkit.Telemetry	TRACE	TelemetryStorage::savePingToFile - path: /code/utilities/klaatu-profile-disable-test/datareporting/archived/2023-05/1683909258356.95406ea8-7aae-4acd-976b-6106e774f218.event.jsonlz4
+1683909258375	Toolkit.Telemetry	INFO	TelemetrySend::_doPing - successfully loaded, status: 200
+1683909258375	Toolkit.Telemetry	TRACE	TelemetrySend::_onPingRequestFinished - success: true, persisted: false
+1683909258375	Toolkit.Telemetry	TRACE	TelemetrySend::Scheduler::_doSendTask - bailing out after sending, shutdown: false, pendingPingCount: 0
+1683909288296	Toolkit.Telemetry	TRACE	TelemetryScheduler::_onSchedulerTick - dispatchOnIdle: false
+1683909288296	Toolkit.Telemetry	TRACE	TelemetryScheduler::_schedulerTickLogic
+1683909288296	Toolkit.Telemetry	TRACE	TelemetryScheduler::_isDailyPingDue - already sent one today
+1683909288297	Toolkit.Telemetry	TRACE	TelemetryScheduler::_isPeriodicPingDue - already sent one today
+1683909288297	Toolkit.Telemetry	TRACE	TelemetryScheduler::_schedulerTickLogic - No ping due.
+1683909288297	Toolkit.Telemetry	TRACE	TelemetryScheduler::_rescheduleTimeout - isUserIdle: false
+1683909288297	Toolkit.Telemetry	TRACE	TelemetryScheduler::_rescheduleTimeout - scheduling next tick for Fri May 12 2023 16:35:18 GMT+0000 (Coordinated Universal Time)
+1683909288297	Toolkit.Telemetry	TRACE	TelemetryEventPing::::_submitPing
+1683909288297	Toolkit.Telemetry	TRACE	TelemetryEventPing::::not sending event ping due to lack of events
+1683909318402	Toolkit.Telemetry	TRACE	TelemetryScheduler::_onSchedulerTick - dispatchOnIdle: false
+1683909318402	Toolkit.Telemetry	TRACE	TelemetryScheduler::_schedulerTickLogic
+1683909318402	Toolkit.Telemetry	TRACE	TelemetryScheduler::_isDailyPingDue - already sent one today
+1683909318402	Toolkit.Telemetry	TRACE	TelemetryScheduler::_isPeriodicPingDue - already sent one today
+1683909318402	Toolkit.Telemetry	TRACE	TelemetryScheduler::_schedulerTickLogic - No ping due.
+1683909318402	Toolkit.Telemetry	TRACE	TelemetryScheduler::_rescheduleTimeout - isUserIdle: false
+1683909318402	Toolkit.Telemetry	TRACE	TelemetryScheduler::_rescheduleTimeout - scheduling next tick for Fri May 12 2023 16:35:48 GMT+0000 (Coordinated Universal Time)
+1683909318402	Toolkit.Telemetry	TRACE	TelemetryEventPing::::_submitPing
+1683909318403	Toolkit.Telemetry	TRACE	TelemetryEventPing::::not sending event ping due to lack of events
+1683909346627	Toolkit.Telemetry	TRACE	TelemetryEnvironment::observe - aTopic: nsPref:changed, aData: app.update.lastUpdateTime.rs-experiment-loader-timer
+1683909346627	Toolkit.Telemetry	TRACE	TelemetryEnvironment::observe - aTopic: nsPref:changed, aData: app.update.lastUpdateTime.recipe-client-addon-run
+console.debug: RSLoader: 
+  Updating recipes with trigger timer
+1683909348734	Toolkit.Telemetry	TRACE	TelemetryScheduler::_onSchedulerTick - dispatchOnIdle: false
+1683909348734	Toolkit.Telemetry	TRACE	TelemetryScheduler::_schedulerTickLogic
+1683909348734	Toolkit.Telemetry	TRACE	TelemetryScheduler::_isDailyPingDue - already sent one today
+1683909348735	Toolkit.Telemetry	TRACE	TelemetryScheduler::_isPeriodicPingDue - already sent one today
+1683909348735	Toolkit.Telemetry	TRACE	TelemetryScheduler::_schedulerTickLogic - No ping due.
+1683909348735	Toolkit.Telemetry	TRACE	TelemetryScheduler::_rescheduleTimeout - isUserIdle: false
+1683909348735	Toolkit.Telemetry	TRACE	TelemetryScheduler::_rescheduleTimeout - scheduling next tick for Fri May 12 2023 16:36:18 GMT+0000 (Coordinated Universal Time)
+1683909348735	Toolkit.Telemetry	TRACE	TelemetryEventPing::::_submitPing
+1683909348735	Toolkit.Telemetry	TRACE	TelemetryEventPing::::not sending event ping due to lack of events
+console.error: (new TypeError("NetworkError: Network request failed", "resource://services-settings/Utils.sys.mjs", 229))
+console.debug: RSLoader: 
+  Error getting recipes from remote settings.
+console.error: (new TypeError("NetworkError: Network request failed", "resource://services-settings/Utils.sys.mjs", 229))
+console.error: (new TypeError("NetworkError: Network request failed", "resource://services-settings/Utils.sys.mjs", 229))
+1683909378651	Toolkit.Telemetry	TRACE	TelemetryScheduler::_onSchedulerTick - dispatchOnIdle: false
+1683909378651	Toolkit.Telemetry	TRACE	TelemetryScheduler::_schedulerTickLogic
+1683909378651	Toolkit.Telemetry	TRACE	TelemetryScheduler::_isDailyPingDue - already sent one today
+1683909378651	Toolkit.Telemetry	TRACE	TelemetryScheduler::_isPeriodicPingDue - already sent one today
+1683909378651	Toolkit.Telemetry	TRACE	TelemetryScheduler::_schedulerTickLogic - No ping due.
+1683909378651	Toolkit.Telemetry	TRACE	TelemetryScheduler::_rescheduleTimeout - isUserIdle: false
+1683909378651	Toolkit.Telemetry	TRACE	TelemetryScheduler::_rescheduleTimeout - scheduling next tick for Fri May 12 2023 16:36:48 GMT+0000 (Coordinated Universal Time)
+1683909378651	Toolkit.Telemetry	TRACE	TelemetryEventPing::::_submitPing
+1683909378651	Toolkit.Telemetry	TRACE	TelemetryController::submitExternalPing - type: event, aOptions: {"addClientId":true,"addEnvironment":true,"usePingSender":false}
+1683909378651	Toolkit.Telemetry	TRACE	TelemetryController::assemblePing - Type event, aOptions {"addClientId":true,"addEnvironment":true,"usePingSender":false}
+1683909378652	Toolkit.Telemetry	TRACE	TelemetryController::submitExternalPing - ping assembled, id: 5bb8caa3-788d-4f9c-ae08-caca12461cbc
+1683909378652	Toolkit.Telemetry	TRACE	TelemetrySend::submitPing - ping id: 5bb8caa3-788d-4f9c-ae08-caca12461cbc, options: {"usePingSender":false}
+1683909378652	Toolkit.Telemetry	TRACE	TelemetrySend::submitPing - can send pings, trying to send now
+1683909378652	Toolkit.Telemetry	TRACE	TelemetrySend::Scheduler::triggerSendingPings - active send task: false, immediately: true
+1683909378652	Toolkit.Telemetry	TRACE	TelemetrySend::Scheduler::_doSendTask iteration
+1683909378652	Toolkit.Telemetry	TRACE	TelemetrySend::Scheduler::_doSendTask - pending: 0, current: 1
+1683909378652	Toolkit.Telemetry	TRACE	TelemetrySend::Scheduler::_doSendTask - can send - pending: 0, current: 1
+1683909378652	Toolkit.Telemetry	TRACE	TelemetrySend::Scheduler::_doSendTask - triggering sending of 0 pings now, 0 pings waiting
+1683909378652	Toolkit.Telemetry	TRACE	TelemetrySend::_doPing - server: http://ping-server:5000, persisted: false, id: 5bb8caa3-788d-4f9c-ae08-caca12461cbc
+1683909378654	Toolkit.Telemetry	TRACE	TelemetryStorage::savePingToFile - path: /code/utilities/klaatu-profile-disable-test/datareporting/archived/2023-05/1683909378651.5bb8caa3-788d-4f9c-ae08-caca12461cbc.event.jsonlz4
+1683909378673	Toolkit.Telemetry	INFO	TelemetrySend::_doPing - successfully loaded, status: 200
+1683909378673	Toolkit.Telemetry	TRACE	TelemetrySend::_onPingRequestFinished - success: true, persisted: false
+1683909378673	Toolkit.Telemetry	TRACE	TelemetrySend::Scheduler::_doSendTask - bailing out after sending, shutdown: false, pendingPingCount: 0
+1683909408570	Toolkit.Telemetry	TRACE	TelemetryScheduler::_onSchedulerTick - dispatchOnIdle: false
+1683909408570	Toolkit.Telemetry	TRACE	TelemetryScheduler::_schedulerTickLogic
+1683909408570	Toolkit.Telemetry	TRACE	TelemetryScheduler::_isDailyPingDue - already sent one today
+1683909408570	Toolkit.Telemetry	TRACE	TelemetryScheduler::_isPeriodicPingDue - already sent one today
+1683909408570	Toolkit.Telemetry	TRACE	TelemetryScheduler::_schedulerTickLogic - No ping due.
+1683909408571	Toolkit.Telemetry	TRACE	TelemetryScheduler::_rescheduleTimeout - isUserIdle: false
+1683909408571	Toolkit.Telemetry	TRACE	TelemetryScheduler::_rescheduleTimeout - scheduling next tick for Fri May 12 2023 16:37:18 GMT+0000 (Coordinated Universal Time)
+1683909408571	Toolkit.Telemetry	TRACE	TelemetryEventPing::::_submitPing
+1683909408571	Toolkit.Telemetry	TRACE	TelemetryEventPing::::not sending event ping due to lack of events
+1683909438456	Toolkit.Telemetry	TRACE	TelemetryScheduler::_onSchedulerTick - dispatchOnIdle: false
+1683909438456	Toolkit.Telemetry	TRACE	TelemetryScheduler::_schedulerTickLogic
+1683909438456	Toolkit.Telemetry	TRACE	TelemetryScheduler::_isDailyPingDue - already sent one today
+1683909438456	Toolkit.Telemetry	TRACE	TelemetryScheduler::_isPeriodicPingDue - already sent one today
+1683909438456	Toolkit.Telemetry	TRACE	TelemetryScheduler::_schedulerTickLogic - No ping due.
+1683909438456	Toolkit.Telemetry	TRACE	TelemetryScheduler::_rescheduleTimeout - isUserIdle: false
+1683909438456	Toolkit.Telemetry	TRACE	TelemetryScheduler::_rescheduleTimeout - scheduling next tick for Fri May 12 2023 16:37:48 GMT+0000 (Coordinated Universal Time)
+1683909438456	Toolkit.Telemetry	TRACE	TelemetryEventPing::::_submitPing
+1683909438456	Toolkit.Telemetry	TRACE	TelemetryEventPing::::not sending event ping due to lack of events
+1683909467749	Toolkit.Telemetry	TRACE	TelemetryEnvironment::observe - aTopic: nsPref:changed, aData: app.update.lastUpdateTime.rs-experiment-loader-timer
+1683909467749	Toolkit.Telemetry	TRACE	TelemetryEnvironment::observe - aTopic: nsPref:changed, aData: app.update.lastUpdateTime.recipe-client-addon-run
+console.debug: RSLoader: 
+  Updating recipes with trigger timer
+1683909468350	Toolkit.Telemetry	TRACE	TelemetryScheduler::_onSchedulerTick - dispatchOnIdle: false
+1683909468350	Toolkit.Telemetry	TRACE	TelemetryScheduler::_schedulerTickLogic
+1683909468350	Toolkit.Telemetry	TRACE	TelemetryScheduler::_isDailyPingDue - already sent one today
+1683909468350	Toolkit.Telemetry	TRACE	TelemetryScheduler::_isPeriodicPingDue - already sent one today
+1683909468350	Toolkit.Telemetry	TRACE	TelemetryScheduler::_schedulerTickLogic - No ping due.
+1683909468350	Toolkit.Telemetry	TRACE	TelemetryScheduler::_rescheduleTimeout - isUserIdle: false
+1683909468350	Toolkit.Telemetry	TRACE	TelemetryScheduler::_rescheduleTimeout - scheduling next tick for Fri May 12 2023 16:38:18 GMT+0000 (Coordinated Universal Time)
+1683909468350	Toolkit.Telemetry	TRACE	TelemetryEventPing::::_submitPing
+1683909468350	Toolkit.Telemetry	TRACE	TelemetryEventPing::::not sending event ping due to lack of events
+console.error: (new TypeError("NetworkError: Network request failed", "resource://services-settings/Utils.sys.mjs", 229))
+console.debug: RSLoader: 
+  Error getting recipes from remote settings.
+console.error: (new TypeError("NetworkError: Network request failed", "resource://services-settings/Utils.sys.mjs", 229))
+console.error: (new TypeError("NetworkError: Network request failed", "resource://services-settings/Utils.sys.mjs", 229))
+1683909496664	Toolkit.Telemetry	TRACE	TelemetryScheduler::observe - aTopic: idle
+1683909496664	Toolkit.Telemetry	TRACE	TelemetryScheduler::_onSchedulerTick - dispatchOnIdle: false
+1683909496664	Toolkit.Telemetry	TRACE	TelemetryScheduler::_schedulerTickLogic
+1683909496664	Toolkit.Telemetry	TRACE	TelemetryScheduler::_isDailyPingDue - already sent one today
+1683909496664	Toolkit.Telemetry	TRACE	TelemetryScheduler::_isPeriodicPingDue - already sent one today
+1683909496664	Toolkit.Telemetry	TRACE	TelemetryScheduler::_schedulerTickLogic - No ping due.
+1683909496664	Toolkit.Telemetry	TRACE	TelemetryScheduler::_rescheduleTimeout - isUserIdle: true
+1683909496664	Toolkit.Telemetry	TRACE	TelemetryScheduler::_rescheduleTimeout - scheduling next tick for Fri May 12 2023 17:38:16 GMT+0000 (Coordinated Universal Time)
