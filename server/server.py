@@ -26,7 +26,6 @@ def allowed_file(filename):
 
 @app.route("/test_results", methods=["POST"])
 def test_results():
-    # request_data = request.get_json()
     request_file = request.files["file"]
     if request_file and allowed_file(request_file.filename):
         filename = secure_filename(request_file.filename)
