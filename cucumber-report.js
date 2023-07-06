@@ -1,13 +1,14 @@
 const report = require("multiple-cucumber-html-reporter");
 const fs = require("fs");
 
+var today = new Date();
+
 report.generate({
   jsonDir: "/home/b4hand/projects/mozilla/klaatu/tests",
   reportPath: "./cucumber-report",
   metadata: {
     browser: {
-      name: "firefox",
-      version: "110",
+      name: "Firefox",
     },
     device: "Local test machine",
     platform: {
@@ -19,11 +20,10 @@ report.generate({
   customData: {
     title: "Run info",
     data: [
-      { label: "Project", value: "Custom project" },
+      { label: "Project", value: "Klaatu Test Report" },
       { label: "Release", value: "1.2.3" },
       { label: "Cycle", value: "B11221.34321" },
-      { label: "Execution Start Time", value: "Nov 19th 2017, 02:31 PM EST" },
-      { label: "Execution End Time", value: "Nov 19th 2017, 02:56 PM EST" },
+      { label: "Execution Start Time", value: today },
     ],
   },
 });
