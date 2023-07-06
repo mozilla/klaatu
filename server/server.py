@@ -13,7 +13,7 @@ from werkzeug.utils import secure_filename
 
 
 URLS = []
-ALLOWED_EXTENSIONS = set(["html"])
+ALLOWED_EXTENSIONS = set(["html", "htm"])
 
 path = Path("files")
 path.mkdir(exist_ok=True)
@@ -31,7 +31,6 @@ def allowed_file(filename):
 
 @app.route("/test_results", methods=["POST", "GET"])
 def test_results():
-    filename = "index.html"
     request_file = request.files["file"]
     if request.method == "POST":
         if request_file and allowed_file(request_file.filename):
@@ -39,11 +38,10 @@ def test_results():
             request_file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
             resp = jsonify({"message": "File successfully uploaded"})
             resp.status_code = 201
+        return resp
     elif request.method == "GET":
         item = send_from_directory(os.path.join(app.config["UPLOAD_FOLDER"]), filename)
-
         return item
-    return resp
 
 
 @app.route(
@@ -86,7 +84,7 @@ def run():
     os.chdir(test_location)
     command = "pipenv run pytest"
     subprocess.Popen(
-        command, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT
+        command, shell=True
     )
     resp = jsonify("Success")
     resp.status_code = 200

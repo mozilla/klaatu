@@ -1,10 +1,10 @@
 const report = require("multiple-cucumber-html-reporter");
 const fs = require("fs");
 
-var today = new Date();
+const today = new Date();
 
 report.generate({
-  jsonDir: "/home/b4hand/projects/mozilla/klaatu/tests",
+  jsonDir: "klaatu/tests",
   reportPath: "./cucumber-report",
   metadata: {
     browser: {

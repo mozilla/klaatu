@@ -8,4 +8,4 @@ RUN pip install flask
 
 ENTRYPOINT [ "python" ]
 
-CMD [ "klaatu_server.py" ]
+CMD [ "server.py" ]
