@@ -1,1 +1,6 @@
-__pychache__
+__pycache__
+cucumber-report
+utilities/__pycache__
+tests/scenarios/__pycache__
+tests/assets
+test_experiments/
