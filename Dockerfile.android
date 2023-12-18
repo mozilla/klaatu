@@ -1,0 +1,38 @@
+
+FROM python:3.11.3-alpine
+
+ENV PYTEST_ARGS="" \
+    EXPERIMENT_SLUG=experiment_slug 
+
+# Install requirements to install tools
+RUN dependencies=' \
+        bzip2 \
+        ca-certificates \
+        curl \
+        sudo \
+        wget \
+        build-base \
+        gcc \
+        git \
+        bash \
+        android-tools \
+    ' \
+    && set -x \
+    && apk update && apk add --no-cache $dependencies
+
+# Install nimbus-cli
+RUN curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/mozilla/application-services/main/install-nimbus-cli.sh | sh
+
+# Install pipenv
+RUN pip install pipenv
+
+# Clone tests
+RUN git clone https://github.com/mozilla-mobile/firefox-android.git --depth 1
+
+WORKDIR /firefox-android/fenix/app/src/androidTest/java/org/mozilla/fenix/experimentintegration
+
+RUN pipenv install
+
+RUN pipenv run python generate_smoke_tests.py
+
+CMD [ "sh", "-c", "pipenv run pytest --experiment ${EXPERIMENT_SLUG} ${PYTEST_ARGS}" ]
