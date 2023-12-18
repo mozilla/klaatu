@@ -1,0 +1,23 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+version: "3"
+
+services:
+  klaatu-android:
+    build: 
+      dockerfile: Dockerfile.android
+    environment:
+      - ANDROID_ADB_SERVER_ADDRESS=host.docker.internal
+    volumes:
+      - ./test_experiments:/code/test_experiments
+      - ./tests:/code/tests
+    links:
+      - ping-server
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  ping-server:
+    image: ping-server:latest
+    ports:
+      - "5000:5000"
