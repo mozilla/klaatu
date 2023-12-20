@@ -1,13 +1,13 @@
 # Klaatu for Android
 
-The preferred method of running the android tests are using the provided docker image. The steps below outline how that can be done.
+The preferred method of running the Android tests are using the provided docker image. The steps below outline how that can be done.
 
 ## Docker
 
-Close your android studio instance if it is running. Navigate to your `platform-tools` folder where `adb` is located and run the following command:
+Close your Android Studio instance if it is running. Navigate to your `platform-tools` folder where `adb` is located and run the following command:
 
 ```sh
-./adb.exe -a nodaemon server start
+./adb -a nodaemon server start
 ```
 This will start adb as a server. You can now open Android Studio and start an emulator, or you can start an emulator in another terminal as follows:
 
