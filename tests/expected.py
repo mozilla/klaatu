@@ -1,6 +1,11 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
 """Expected classes for Webdriver Wait."""
 
 import typing
+
 from selenium.webdriver.common.by import By
 
 
@@ -10,7 +15,14 @@ class firefox_update_banner_is_found(object):
     def __call__(self, driver: typing.Any) -> typing.Any:
         with driver.context(driver.CONTEXT_CHROME):
             driver.find_element(By.ID, "PanelUI-menu-button").click()
-            element = driver.find_element(By.CSS_SELECTOR, "#appMenu-popup #appMenu-multiView #appMenu-protonMainView #appMenu-proton-update-banner")
+            element = driver.find_element(
+                By.CSS_SELECTOR,
+                """
+                    #appMenu-popup #appMenu-multiView
+                    #appMenu-protonMainView
+                    #appMenu-proton-update-banner
+                """,
+            )
             if element is not None:
                 return True
             else:
@@ -23,7 +35,14 @@ class firefox_update_banner_is_invisible(object):
     def __call__(self, driver: typing.Any) -> typing.Any:
         with driver.context(driver.CONTEXT_CHROME):
             driver.find_element(By.ID, "PanelUI-menu-button").click()
-            element = driver.find_element(By.CSS_SELECTOR, "#appMenu-popup #appMenu-multiView #appMenu-protonMainView #appMenu-proton-update-banner")
+            element = driver.find_element(
+                By.CSS_SELECTOR,
+                """
+                    #appMenu-popup #appMenu-multiView
+                    #appMenu-protonMainView
+                    #appMenu-proton-update-banner
+                """,
+            )
             if element.is_displayed():
                 return False
             else:

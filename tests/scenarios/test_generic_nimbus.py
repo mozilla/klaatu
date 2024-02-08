@@ -2,21 +2,15 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-import pytest
-import requests
-from pytest_bdd import scenario, given, then
-
-from tests.expected import (
-    firefox_update_banner_is_found,
-    firefox_update_banner_is_invisible,
-)
+from pytest_bdd import given, scenario, then
 
 
 @scenario(
     "../features/generic_nimbus.feature",
     "The browser will enroll into the requested branch",
 )
-def test_experiment_enrolls_into_correct_branch(): ...
+def test_experiment_enrolls_into_correct_branch():
+    pass
 
 
 @given("Firefox is launched enrolled in an Experiment")
