@@ -1,3 +1,7 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
 import os
 from pathlib import Path
 import requests
@@ -49,10 +53,10 @@ def fixture_enroll_experiment(
     request: typing.Any,
     selenium: typing.Any,
     variables: dict,
-    check_ping_for_experiment: object
+    check_ping_for_experiment: object,
 ) -> typing.Any:
     """Fixture to enroll into an experiment"""
-    experiment_branch = request.config.getoption("--experiment-branch")    
+    experiment_branch = request.config.getoption("--experiment-branch")
     if experiment_branch == "":
         pytest.raises("The experiment branch must be declared")
     script = f"""
@@ -66,7 +70,10 @@ def fixture_enroll_experiment(
 
     with selenium.context(selenium.CONTEXT_CHROME):
         selenium.execute_script(script, json.dumps(variables), experiment_branch)
-    assert check_ping_for_experiment(f"optin-{variables['slug']}"), "Experiment not found in telemetry"
+    assert (
+        check_ping_for_experiment(f"optin-{variables['slug']}") is not None
+    ), "Experiment not found in telemetry"
+
 
 @pytest.fixture(name="experiment_slug")
 def fixture_experiment_slug(variables: dict) -> typing.Any:
@@ -81,23 +88,23 @@ def setup_profile(pytestconfig: typing.Any, request: typing.Any) -> typing.Any:
             Path("utilities/klaatu-profile-old-base").absolute(),
             Path("utilities/klaatu-profile").absolute(),
             dirs_exist_ok=True,
-            ignore_dangling_symlinks=True
+            ignore_dangling_symlinks=True,
         )
         return f'{Path("utilities/klaatu-profile").absolute()}'
-    if request.node.get_closest_marker("reuse_profile") and not request.config.getoption(
-        "--run-update-test"
-    ):
+    if request.node.get_closest_marker(
+        "reuse_profile"
+    ) and not request.config.getoption("--run-update-test"):
         if request.config.getoption("--run-firefox-release"):
             shutil.copytree(
                 Path("utilities/klaatu-profile-release-firefox-base").absolute(),
                 Path("utilities/klaatu-profile-release-firefox").absolute(),
-                dirs_exist_ok=True
+                dirs_exist_ok=True,
             )
             return f'{os.path.abspath("utilities/klaatu-profile-release-firefox")}'
         shutil.copytree(
             Path("utilities/klaatu-profile-current-base").absolute(),
             Path("utilities/klaatu-profile-current-nightly").absolute(),
-            dirs_exist_ok=True
+            dirs_exist_ok=True,
         )
         return f'{Path("utilities/klaatu-profile-current-nightly").absolute()}'
 
@@ -111,37 +118,37 @@ def firefox_options(
 ) -> typing.Any:
     """Setup Firefox"""
     firefox_options.log.level = "trace"
-    if request.config.getoption("--run-update-test"):
-        # if request.node.get_closest_marker(
-        #     "update_test"
-        # ):  # disable test needs different firefox
-        #     binary = Path(
-        #         "utilities/firefox-old-nightly-disable-test/firefox/firefox-bin"
-        #     ).absolute()
-        #     firefox_options.binary = f"{binary}"
-        #     firefox_options.add_argument("-profile")
-        #     firefox_options.add_argument(
-        #         f'{Path("utilities/klaatu-profile-disable-test").absolute()}'
-        #     )
-        # else:
-        binary = Path(
-            "utilities/firefox-old-nightly/firefox/firefox-bin"
-        ).absolute()
-        firefox_options.binary = f"{binary}"
-        firefox_options.add_argument("-profile")
-        firefox_options.add_argument(setup_profile)
-    if request.config.getoption("--run-firefox-release"):
-        binary = Path("utilities/firefox-release/firefox/firefox-bin").absolute()
-        firefox_options.binary = f"{binary}"
-    if request.node.get_closest_marker("reuse_profile") and not request.config.getoption(
-        "--run-update-test"
-    ):
-        firefox_options.add_argument("-profile")
-        firefox_options.add_argument(setup_profile)
+    # if request.config.getoption("--run-update-test"):
+    #     # if request.node.get_closest_marker(
+    #     #     "update_test"
+    #     # ):  # disable test needs different firefox
+    #     #     binary = Path(
+    #     #         "utilities/firefox-old-nightly-disable-test/firefox/firefox-bin"
+    #     #     ).absolute()
+    #     #     firefox_options.binary = f"{binary}"
+    #     #     firefox_options.add_argument("-profile")
+    #     #     firefox_options.add_argument(
+    #     #         f'{Path("utilities/klaatu-profile-disable-test").absolute()}'
+    #     #     )
+    #     # else:
+    #     binary = Path(
+    #         "utilities/firefox-old-nightly/firefox/firefox-bin"
+    #     ).absolute()
+    #     firefox_options.binary = f"{binary}"
+    #     firefox_options.add_argument("-profile")
+    #     firefox_options.add_argument(setup_profile)
+    # if request.config.getoption("--run-firefox-release"):
+    #     binary = Path("utilities/firefox-release/firefox/firefox-bin").absolute()
+    #     firefox_options.binary = f"{binary}"
+    # if request.node.get_closest_marker("reuse_profile") and not request.config.getoption(
+    #     "--run-update-test"
+    # ):
+    #     firefox_options.add_argument("-profile")
+    #     firefox_options.add_argument(setup_profile)
     firefox_options.set_preference("extensions.install.requireBuiltInCerts", False)
     firefox_options.log.level = "trace"
     firefox_options.set_preference("browser.cache.disk.smart_size.enabled", False)
-    firefox_options.set_preference("toolkit.telemetry.server", "http://ping-server:5000")
+    firefox_options.set_preference("toolkit.telemetry.server", "http://localhost:5000")
     firefox_options.set_preference("telemetry.fog.test.localhost_port", -1)
     firefox_options.set_preference("toolkit.telemetry.initDelay", 1)
     firefox_options.set_preference("ui.popup.disable_autohide", True)
@@ -156,7 +163,9 @@ def firefox_options(
     firefox_options.set_preference("toolkit.telemetry.log.level", "Trace")
     firefox_options.set_preference("toolkit.telemetry.log.dump", True)
     firefox_options.set_preference("toolkit.telemetry.send.overrideOfficialCheck", True)
-    firefox_options.set_preference("toolkit.telemetry.testing.disableFuzzingDelay", True)
+    firefox_options.set_preference(
+        "toolkit.telemetry.testing.disableFuzzingDelay", True
+    )
     firefox_options.set_preference("nimbus.debug", True)
     firefox_options.set_preference("app.normandy.run_interval_seconds", 30)
     firefox_options.set_preference(
@@ -182,7 +191,9 @@ def firefox_options(
     firefox_options.set_preference("messaging-system.log", "debug")
     firefox_options.set_preference("toolkit.telemetry.scheduler.tickInterval", 30)
     firefox_options.set_preference("toolkit.telemetry.collectInterval", 1)
-    firefox_options.set_preference("toolkit.telemetry.eventping.minimumFrequency", 30000)
+    firefox_options.set_preference(
+        "toolkit.telemetry.eventping.minimumFrequency", 30000
+    )
     firefox_options.set_preference("toolkit.telemetry.unified", True)
     firefox_options.set_preference("allowServerURLOverride", True)
     firefox_options.set_preference("browser.aboutConfig.showWarning", False)
@@ -190,7 +201,7 @@ def firefox_options(
     yield firefox_options
 
     # Delete old pings
-    requests.delete("http://ping-server:5000/pings")
+    requests.delete("http://localhost:5000/pings")
 
     # Remove old profile
     if (
@@ -248,8 +259,7 @@ def fixture_check_ping_for_experiment(trigger_experiment_loader):
         control = True
         timeout = time.time() + 60 * 5
         while control and time.time() < timeout:
-            data = requests.get("http://ping-server:5000/pings").json()
-            # print(data)
+            data = requests.get("http://localhost:5000/pings").json()
             try:
                 experiments_data = [
                     item["environment"]["experiments"]
@@ -261,13 +271,10 @@ def fixture_check_ping_for_experiment(trigger_experiment_loader):
             else:
                 for item in experiments_data:
                     if experiment in item:
-                        return True
+                        return item[experiment]
                 time.sleep(5)
                 trigger_experiment_loader()
         else:
             return False
 
     return _check_ping_for_experiment
-
-# tox -e exp-tests -- -k test_experiment_does_not_drastically_slow_firefox --experiment-branch=control-11 --run-update-test
-# tox -e exp-tests -- -k test_experiment_does_not_stop_update --experiment-branch=control-11 --run-update-test --html=tests/report.html

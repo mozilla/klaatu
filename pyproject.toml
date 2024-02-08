@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "klaatu"
+version = "0.1.0"
+description = ""
+authors = ["Benjamin Forehand Jr <bforehand@mozilla.com>"]
+license = "Mozilla Public License Version 2.0"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pydocstyle = "^6.3.0"
+selenium = "^4.17.2"
+pytest-bdd = "^7.0.1"
+pytest-firefox = "^0.1.1"
+pytest-selenium = "^4.1.0"
+black = "^24.1.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
