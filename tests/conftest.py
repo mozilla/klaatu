@@ -2,17 +2,15 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+import json
 import os
-from pathlib import Path
-import requests
 import shutil
 import time
 import typing
-import json
+from pathlib import Path
 
 import pytest
-
-from tests.toolbar import ToolBar
+import requests
 
 
 def pytest_addoption(parser) -> None:
@@ -59,8 +57,10 @@ def fixture_enroll_experiment(
     experiment_branch = request.config.getoption("--experiment-branch")
     if experiment_branch == "":
         pytest.raises("The experiment branch must be declared")
-    script = f"""
-        const ExperimentManager = ChromeUtils.import("resource://nimbus/lib/ExperimentManager.jsm");
+    script = """
+        const ExperimentManager = ChromeUtils.import(
+            "resource://nimbus/lib/ExperimentManager.jsm"
+        );
         const branchSlug = arguments[1];
         ExperimentManager.ExperimentManager.store._deleteForTests(arguments[1])
         const recipe = JSON.parse(arguments[0]);
@@ -91,9 +91,9 @@ def setup_profile(pytestconfig: typing.Any, request: typing.Any) -> typing.Any:
             ignore_dangling_symlinks=True,
         )
         return f'{Path("utilities/klaatu-profile").absolute()}'
-    if request.node.get_closest_marker(
-        "reuse_profile"
-    ) and not request.config.getoption("--run-update-test"):
+    if request.node.get_closest_marker("reuse_profile") and not request.config.getoption(
+        "--run-update-test"
+    ):
         if request.config.getoption("--run-firefox-release"):
             shutil.copytree(
                 Path("utilities/klaatu-profile-release-firefox-base").absolute(),
@@ -163,9 +163,7 @@ def firefox_options(
     firefox_options.set_preference("toolkit.telemetry.log.level", "Trace")
     firefox_options.set_preference("toolkit.telemetry.log.dump", True)
     firefox_options.set_preference("toolkit.telemetry.send.overrideOfficialCheck", True)
-    firefox_options.set_preference(
-        "toolkit.telemetry.testing.disableFuzzingDelay", True
-    )
+    firefox_options.set_preference("toolkit.telemetry.testing.disableFuzzingDelay", True)
     firefox_options.set_preference("nimbus.debug", True)
     firefox_options.set_preference("app.normandy.run_interval_seconds", 30)
     firefox_options.set_preference(
@@ -174,9 +172,7 @@ def firefox_options(
     )
     firefox_options.set_preference("services.settings.server", "http://kinto:8888/v1")
     firefox_options.set_preference("datareporting.healthreport.service.enabled", True)
-    firefox_options.set_preference(
-        "datareporting.healthreport.logging.consoleEnabled", True
-    )
+    firefox_options.set_preference("datareporting.healthreport.logging.consoleEnabled", True)
     firefox_options.set_preference("datareporting.healthreport.service.firstRun", True)
     firefox_options.set_preference(
         "datareporting.healthreport.documentServerURI",
@@ -185,15 +181,11 @@ def firefox_options(
     firefox_options.set_preference(
         "app.normandy.api_url", "https://normandy.cdn.mozilla.net/api/v1"
     )
-    firefox_options.set_preference(
-        "app.normandy.user_id", "7ef5ab6d-42d6-4c4e-877d-c3174438050a"
-    )
+    firefox_options.set_preference("app.normandy.user_id", "7ef5ab6d-42d6-4c4e-877d-c3174438050a")
     firefox_options.set_preference("messaging-system.log", "debug")
     firefox_options.set_preference("toolkit.telemetry.scheduler.tickInterval", 30)
     firefox_options.set_preference("toolkit.telemetry.collectInterval", 1)
-    firefox_options.set_preference(
-        "toolkit.telemetry.eventping.minimumFrequency", 30000
-    )
+    firefox_options.set_preference("toolkit.telemetry.eventping.minimumFrequency", 30000)
     firefox_options.set_preference("toolkit.telemetry.unified", True)
     firefox_options.set_preference("allowServerURLOverride", True)
     firefox_options.set_preference("browser.aboutConfig.showWarning", False)
@@ -217,16 +209,14 @@ def firefox_startup_time(firefox: typing.Any) -> typing.Any:
     """Startup with no extension installed"""
     return firefox.selenium.execute_script(
         """
-        perfData = window.performance.timing 
+        perfData = window.performance.timing
         return perfData.loadEventEnd - perfData.navigationStart
         """
     )
 
 
 @pytest.fixture
-def selenium(
-    pytestconfig: typing.Any, selenium: typing.Any, variables: dict
-) -> typing.Any:
+def selenium(pytestconfig: typing.Any, selenium: typing.Any, variables: dict) -> typing.Any:
     """Setup Selenium"""
     return selenium
 

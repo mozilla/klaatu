@@ -1,16 +1,13 @@
-import os
-from pathlib import Path
-import time
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
 import typing
+from pathlib import Path
 
 import pytest
 from selenium import webdriver
-from selenium.common.exceptions import (
-    NoSuchElementException,
-    InvalidElementStateException,
-)
 from selenium.webdriver.common.by import By
-from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
@@ -19,14 +16,13 @@ from tests.expected import (
     firefox_update_banner_is_found,
     firefox_update_banner_is_invisible,
 )
-from tests.toolbar import ToolBar
 
 
 @pytest.mark.nondestructive
 def test_experiment_does_not_stop_startup(selenium: typing.Any):
     """Experiment does not stop browser startup, or prohibit a clean exit."""
     selenium.get("https://www.allizom.org")
-    
+
 
 @pytest.mark.nondestructive
 def test_experiment_does_not_drastically_slow_firefox(
@@ -35,7 +31,7 @@ def test_experiment_does_not_drastically_slow_firefox(
     """Experiment should not slow firefox down by more then 20%."""
     startup = selenium.execute_script(
         """
-        perfData = window.performance.timing 
+        perfData = window.performance.timing
         return perfData.loadEventEnd - perfData.navigationStart
         """
     )
@@ -58,9 +54,7 @@ def test_experiment_shows_on_support_page(selenium: typing.Any, experiment_slug:
 
 
 @pytest.mark.nondestructive
-def test_experiment_shows_on_studies_page(
-    selenium: typing.Any, variables: dict
-):
+def test_experiment_shows_on_studies_page(selenium: typing.Any, variables: dict):
     """Experiment should show on about:studies page."""
     selenium.get("about:studies")
     WebDriverWait(selenium, 60).until(
@@ -261,11 +255,15 @@ def test_experiment_does_not_stop_update(
         WebDriverWait(selenium, 60).until(
             firefox_update_banner_is_found(),
             message="Update banner not found",
-    )
-        
+        )
+
         element = selenium.find_element(
             By.CSS_SELECTOR,
-            "#appMenu-popup #appMenu-multiView #appMenu-protonMainView #appMenu-proton-update-banner"
+            """
+                #appMenu-popup #appMenu-multiView
+                #appMenu-protonMainView
+                #appMenu-proton-update-banner
+            """,
         )
         element.click()
     selenium.quit()
@@ -280,9 +278,7 @@ def test_experiment_does_not_stop_update(
     options.binary_location = f"{binary}"
 
     # Start Firefox and test
-    selenium = webdriver.Firefox(
-        firefox_binary=binary, options=options
-    )
+    selenium = webdriver.Firefox(firefox_binary=binary, options=options)
     selenium.get("https://www.allizom.org")
     WebDriverWait(selenium, 10).until(
         firefox_update_banner_is_invisible(),
