@@ -4,7 +4,6 @@ jobs:
   build-deploy: # build for the master branch
     machine:
       image: ubuntu-2204:2024.01.1
-      docker_layer_caching: true
     working_directory: ~/klaatu
     steps:
       - checkout
@@ -19,7 +18,6 @@ jobs:
   build-release: # build for tags
     machine:
       image: ubuntu-2204:2024.01.1
-      docker_layer_caching: true
     working_directory: ~/klaatu
     steps:
       - checkout
@@ -33,7 +31,7 @@ jobs:
             docker push "mozilla/klaatu:${CIRCLE_TAG}"
   lint:
     docker:
-      - image: cimg/python:3.12
+      - image: cimg/python:3.11
     steps:
       - checkout
       - restore_cache:
