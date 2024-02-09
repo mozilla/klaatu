@@ -2,7 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-FROM ubuntu:lunar
+FROM ubuntu:devel
 
 USER root
 
@@ -11,8 +11,8 @@ ENV DEBIAN_FRONTEND=noninteractive \
     MOZ_HEADLESS=1 \
     LC_ALL=C.UTF-8 \
     LANG=C.UTF-8 \
-    FIREFOX_VERSION=112.0 \
-    GECKODRIVER_VERSION=0.33.0
+    FIREFOX_VERSION=120.0 \
+    GECKODRIVER_VERSION=0.34.0
 
 # Install requirements to install tools
 RUN dependencies=' \
@@ -66,7 +66,8 @@ RUN mv /usr/bin/geckodriver /usr/bin/geckodriver2 \
     && chmod +x /usr/bin/geckodriver
 
 # Install python deps
-RUN pip install -r requirements.txt
+RUN pip install poetry \
+    && poetry install
 
 # Download older firefox nightly
 RUN FIREFOX_OLD_DOWNLOAD_URL=$(python3 utilities/download_old_firefox.py) \

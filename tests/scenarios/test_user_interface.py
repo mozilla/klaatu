@@ -142,7 +142,7 @@ def start_updated_firefox():
     options.binary_location = f"{binary}"
 
     # Start Firefox and test
-    selenium = webdriver.Firefox(firefox_binary=binary, options=options)
+    selenium = webdriver.Firefox(options=options)
     selenium.get("https://www.allizom.org")
     WebDriverWait(selenium, 10).until(
         firefox_update_banner_is_invisible(),
