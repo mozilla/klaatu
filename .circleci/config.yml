@@ -2,7 +2,8 @@ version: 2.1
 
 jobs:
   build-deploy: # build for the master branch
-    machine: true
+    machine:
+      image: ubuntu-2204:2024.01.1
     working_directory: ~/klaatu
     steps:
       - checkout
@@ -15,8 +16,9 @@ jobs:
             docker login -u "${DOCKERHUB_USER}" -p "${DOCKERHUB_PASS}"
             docker push mozilla/klaatu:latest
   build-release: # build for tags
-    machine: true
-    working_directory: ~/redash-ui-tests
+    machine:
+      image: ubuntu-2204:2024.01.1
+    working_directory: ~/klaatu
     steps:
       - checkout
       - run:
@@ -29,90 +31,72 @@ jobs:
             docker push "mozilla/klaatu:${CIRCLE_TAG}"
   lint:
     docker:
-      - image: circleci/python:3.7-browsers
+      - image: cimg/python:3.11
     steps:
       - checkout
       - restore_cache:
-          key: klaatu-lint-{{ checksum "Pipfile.lock" }}
+          key: klaatu-lint-{{ checksum "poetry.lock" }}
       - run:
           name: Install tox
-          command: sudo pip install tox
+          command: pip install tox
       - run:
           name: Lint files
           command: tox -e formatting
-      - run:
-          name: Run type check
-          command: tox -e mypy
       - save_cache:
-          key: klaatu-lint-{{ checksum "Pipfile.lock" }}
+          key: klaatu-lint-{{ checksum "poetry.lock" }}
           paths:
             - .tox
   test-current-nightly:
     working_directory: ~/klaatu
-    machine: true
+    machine:
+      image: ubuntu-2204:2024.01.1
     steps:
       - checkout
-      - restore_cache:
-          key: klaatu-test-{{ checksum "Pipfile.lock" }}
       - run: 
           name: Build docker image
-          command: docker build -t klaatu:latest .
+          command: docker build -t klaatu:latest -f Dockerfile.desktop .
       - run: 
           name: Run tests
           command: |
             set -ex
-            docker run --name "klaatu" klaatu:latest tox -e exp-tests -- --experiment=fixtures/normandy-nextgen-study-example-a@mozilla.org-0.3-signed.xpi --html=test_results/report.html --variables=utilities/test_variables.json --private-browsing-enabled
-            docker cp klaatu:/code/test_results/report.html ./report.html
-      - save_cache:
-          key: klaatu-test-{{ checksum "Pipfile.lock" }}
-          paths:
-            - .tox
+            docker compose up -d
+            docker compose run klaatu tox -e bdd-tests -- --experiment-branch control --variables tests/fixtures/test_experiment.json
       - store_artifacts:
-          path: report.html
+          path: tests/report.html
   test-old-nightly:
     working_directory: ~/klaatu
-    machine: true
+    machine:
+      image: ubuntu-2204:2024.01.1
     steps:
       - checkout
-      - restore_cache:
-          key: klaatu-test-{{ checksum "Pipfile.lock" }}
       - run:
           name: Build docker image
-          command: docker build -t klaatu:latest .
+          command: docker build -t klaatu:latest -f Dockerfile.desktop .
       - run:
           name: Run tests
           command: |
             set -ex
-            docker run --name "klaatu" klaatu:latest tox -e exp-tests -- --experiment=fixtures/normandy-nextgen-study-example-a@mozilla.org-0.3-signed.xpi --html=test_results/report.html --variables=utilities/test_variables.json --run-update-test --private-browsing-enabled
-            docker cp klaatu:/code/test_results/report.html ./report.html
-      - save_cache:
-          key: klaatu-test-{{ checksum "Pipfile.lock" }}
-          paths:
-            - .tox
+            docker compose up -d
+            docker compose run klaatu tox -e bdd-tests -- --experiment-branch control --variables tests/fixtures/test_experiment.json --run-update-test --private-browsing-enabled
       - store_artifacts:
-          path: report.html
+          path: tests/report.html
   test-release-firefox:
     working_directory: ~/klaatu
-    machine: true
+    machine:
+      image: ubuntu-2204:2024.01.1
     steps:
       - checkout
-      - restore_cache:
-          key: klaatu-test-{{ checksum "Pipfile.lock" }}
       - run: 
           name: Build docker image
-          command: docker build -t klaatu:latest .
+          command: docker build -t klaatu:latest -f Dockerfile.desktop .
       - run: 
           name: Run tests
           command: |
             set -ex
-            docker run --name "klaatu" klaatu:latest tox -e exp-tests -- --experiment=fixtures/normandy-nextgen-study-example-a@mozilla.org-0.3-signed.xpi --html=test_results/report.html --variables=utilities/test_variables.json --run-firefox-release --private-browsing-enabled
-            docker cp klaatu:/code/test_results/report.html ./report.html
-      - save_cache:
-          key: klaatu-test-{{ checksum "Pipfile.lock" }}
-          paths:
-            - .tox
+            docker compose up -d
+            docker compose run klaatu tox -e bdd-tests -- --experiment-branch control --variables tests/fixtures/test_experiment.json --run-firefox-release --private-browsing-enabled
       - store_artifacts:
-          path: report.html
+          path: tests/report.html
 workflows:
   version: 2.1
   test_and_lint:

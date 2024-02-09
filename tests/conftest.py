@@ -118,37 +118,33 @@ def firefox_options(
 ) -> typing.Any:
     """Setup Firefox"""
     firefox_options.log.level = "trace"
-    # if request.config.getoption("--run-update-test"):
-    #     # if request.node.get_closest_marker(
-    #     #     "update_test"
-    #     # ):  # disable test needs different firefox
-    #     #     binary = Path(
-    #     #         "utilities/firefox-old-nightly-disable-test/firefox/firefox-bin"
-    #     #     ).absolute()
-    #     #     firefox_options.binary = f"{binary}"
-    #     #     firefox_options.add_argument("-profile")
-    #     #     firefox_options.add_argument(
-    #     #         f'{Path("utilities/klaatu-profile-disable-test").absolute()}'
-    #     #     )
-    #     # else:
-    #     binary = Path(
-    #         "utilities/firefox-old-nightly/firefox/firefox-bin"
-    #     ).absolute()
-    #     firefox_options.binary = f"{binary}"
-    #     firefox_options.add_argument("-profile")
-    #     firefox_options.add_argument(setup_profile)
-    # if request.config.getoption("--run-firefox-release"):
-    #     binary = Path("utilities/firefox-release/firefox/firefox-bin").absolute()
-    #     firefox_options.binary = f"{binary}"
-    # if request.node.get_closest_marker("reuse_profile") and not request.config.getoption(
-    #     "--run-update-test"
-    # ):
-    #     firefox_options.add_argument("-profile")
-    #     firefox_options.add_argument(setup_profile)
+    if request.config.getoption("--run-update-test"):
+        if request.node.get_closest_marker("update_test"):  # disable test needs different firefox
+            binary = Path(
+                "utilities/firefox-old-nightly-disable-test/firefox/firefox-bin"
+            ).absolute()
+            firefox_options.binary = f"{binary}"
+            firefox_options.add_argument("-profile")
+            firefox_options.add_argument(
+                f'{Path("utilities/klaatu-profile-disable-test").absolute()}'
+            )
+        else:
+            binary = Path("utilities/firefox-old-nightly/firefox/firefox-bin").absolute()
+        firefox_options.binary = f"{binary}"
+        firefox_options.add_argument("-profile")
+        firefox_options.add_argument(setup_profile)
+    if request.config.getoption("--run-firefox-release"):
+        binary = Path("utilities/firefox-release/firefox/firefox-bin").absolute()
+        firefox_options.binary = f"{binary}"
+    if request.node.get_closest_marker("reuse_profile") and not request.config.getoption(
+        "--run-update-test"
+    ):
+        firefox_options.add_argument("-profile")
+        firefox_options.add_argument(setup_profile)
     firefox_options.set_preference("extensions.install.requireBuiltInCerts", False)
     firefox_options.log.level = "trace"
     firefox_options.set_preference("browser.cache.disk.smart_size.enabled", False)
-    firefox_options.set_preference("toolkit.telemetry.server", "http://localhost:5000")
+    firefox_options.set_preference("toolkit.telemetry.server", "http://ping-server:5000")
     firefox_options.set_preference("telemetry.fog.test.localhost_port", -1)
     firefox_options.set_preference("toolkit.telemetry.initDelay", 1)
     firefox_options.set_preference("ui.popup.disable_autohide", True)
@@ -193,7 +189,7 @@ def firefox_options(
     yield firefox_options
 
     # Delete old pings
-    requests.delete("http://localhost:5000/pings")
+    requests.delete("http://ping-server:5000/pings")
 
     # Remove old profile
     if (
@@ -249,7 +245,7 @@ def fixture_check_ping_for_experiment(trigger_experiment_loader):
         control = True
         timeout = time.time() + 60 * 5
         while control and time.time() < timeout:
-            data = requests.get("http://localhost:5000/pings").json()
+            data = requests.get("http://ping-server:5000/pings").json()
             try:
                 experiments_data = [
                     item["environment"]["experiments"]

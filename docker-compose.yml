@@ -2,13 +2,14 @@ version: "3"
 
 services:
   klaatu:
-    build: .
+    build:
+      dockerfile: Dockerfile.desktop
     volumes:
       - ./test_experiments:/code/test_experiments
       - ./tests:/code/tests
     links:
       - ping-server
   ping-server:
-    image: ping-server:latest
+    build: ping_server/
     ports:
       - "5000:5000"
