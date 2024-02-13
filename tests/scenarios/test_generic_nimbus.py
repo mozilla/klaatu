@@ -24,6 +24,14 @@ def test_experiment_unenrolls_via_about_studies_page():
     pass
 
 
+@scenario(
+    "../features/generic_nimbus.feature",
+    "The experiment can be unenrolled via opting out from studies",
+)
+def test_experiment_unenrolls_via_opting_out_of_studies():
+    pass
+
+
 @given("Firefox is launched enrolled in an Experiment")
 def selenium(selenium):
     return selenium
@@ -52,3 +60,20 @@ def unenroll_via_studies_page(selenium, variables):
 @then("the telemetry shows it as being unenrolled")
 def check_telemetry_for_unenrollment(variables, telemetry_event_check):
     return telemetry_event_check(experiment=f"optin-{variables['slug']}", event="unenroll")
+
+
+@then("The experiment can be unenrolled via opting out of studies")
+def opt_out_via_about_preferences(selenium, variables):
+    selenium.get("about:preferences")
+    WebDriverWait(selenium, 60).until(
+        EC.visibility_of_element_located((By.CSS_SELECTOR, "#preferences-body")),
+        message="about:preferences page did not load.",
+    )
+    el = selenium.find_element(By.CSS_SELECTOR, "#category-privacy")
+    el.click()
+    WebDriverWait(selenium, 60).until(
+        EC.visibility_of_element_located((By.CSS_SELECTOR, "#browserPrivacyCategory")),
+        message="about:preferences Privacy page did not load.",
+    )
+    check_box = selenium.find_element(By.CSS_SELECTOR, "#optOutStudiesEnabled")
+    check_box.click()

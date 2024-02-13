@@ -15,3 +15,9 @@ Feature: Generic Nimbus smoke tests all pass
         Given Firefox is launched enrolled in an Experiment
         Then The Experiment is unenrolled via the about:studies page
         And the telemetry shows it as being unenrolled
+
+    @smoke
+    Scenario: The experiment can be unenrolled via opting out from studies
+        Given Firefox is launched enrolled in an Experiment
+        Then The experiment can be unenrolled via opting out of studies
+        And the telemetry shows it as being unenrolled
