@@ -264,3 +264,26 @@ def fixture_check_ping_for_experiment(trigger_experiment_loader):
             return False
 
     return _check_ping_for_experiment
+
+
+@pytest.fixture(name="telemetry_event_check")
+def fixture_telemetry_event_check(trigger_experiment_loader):
+    def _telemetry_event_check(experiment=None, event=None):
+        telemetry = requests.get("http://ping-server:5000/pings").json()
+        events = [
+            event["payload"]["events"]["parent"]
+            for event in telemetry
+            if "events" in event["payload"] and "parent" in event["payload"]["events"]
+        ]
+
+        try:
+            for _event in events:
+                for item in _event:
+                    if (experiment and event) in item:
+                        return True
+            raise AssertionError
+        except (AssertionError, TypeError):
+            trigger_experiment_loader()
+            return False
+
+    return _telemetry_event_check
