@@ -9,4 +9,4 @@ Feature: Generic Functionality smoke tests all pass
     Scenario: The browser's URL bar will navigate to the supplied URL
         Given Firefox is launched enrolled in an Experiment
         Then Firefox should still accept a URL into the search bar
-        And The URL should load the webpage sucessfully 
+        And The URL should load the webpage successfully 

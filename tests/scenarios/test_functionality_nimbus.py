@@ -27,11 +27,11 @@ def navigate_to_url(selenium):
     with selenium.context(selenium.CONTEXT_CHROME):
         el = selenium.find_element(By.CSS_SELECTOR, "#urlbar-input")
         el.click()
-        el.send_keys("http://www.allizom.org")
+        el.send_keys("https://www.allizom.org/en-US/")
         el.send_keys(Keys.ENTER)
 
 
-@then("The URL should load the webpage sucessfully")
+@then("The URL should load the webpage successfully")
 def check_url_page_loads_correctly(selenium):
     WebDriverWait(selenium, 60).until(
         EC.visibility_of_element_located((By.CSS_SELECTOR, ".c-navigation-logo-image")),
