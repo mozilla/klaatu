@@ -5,12 +5,14 @@
 import json
 import os
 import shutil
+import sys
 import time
 import typing
 from pathlib import Path
 
 import pytest
 import requests
+from selenium.webdriver import Keys
 
 
 def pytest_addoption(parser) -> None:
@@ -287,3 +289,8 @@ def fixture_telemetry_event_check(trigger_experiment_loader):
             return False
 
     return _telemetry_event_check
+
+
+@pytest.fixture(name="cmd_or_ctrl_button")
+def fixture_cmd_or_ctrl_button():
+    return Keys.COMMAND if sys.platform == "darwin" else Keys.CONTROL
