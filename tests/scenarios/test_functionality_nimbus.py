@@ -84,12 +84,6 @@ def copy_and_paste_string_to_url_bar(selenium, navigate_using_url_bar):
     navigate_using_url_bar(use_clipboard=True)
 
     copied_text = el.text
-    WebDriverWait(selenium, 60).until(
-        EC.presence_of_element_located(
-            (By.CSS_SELECTOR, "body div#searchform div form div div div div div textarea")
-        )
-    )
-    search = selenium.find_element(
-        By.CSS_SELECTOR, "body div#searchform div form div div div div div textarea"
-    )
+    WebDriverWait(selenium, 60).until(EC.title_contains(el.text))
+    search = selenium.find_element(By.CSS_SELECTOR, ".title")
     assert copied_text == search.text
