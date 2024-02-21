@@ -10,3 +10,8 @@ Feature: Generic Functionality smoke tests all pass
         Given Firefox is launched enrolled in an Experiment
         Then Firefox should still accept a URL into the search bar
         And The URL should load the webpage successfully 
+
+    @smoke
+    Scenario: The browser's URL bar will navigate to the supplied string
+        Given Firefox is launched enrolled in an Experiment
+        Then Firefox should still accept a copied string that is sent to the search bar
