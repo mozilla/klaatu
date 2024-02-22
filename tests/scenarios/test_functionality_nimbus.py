@@ -57,6 +57,14 @@ def test_browser_loads_a_new_tab():
     pass
 
 
+@scenario(
+    "../features/generic_functionality.feature",
+    "The browser will allow a new tab to be opened via the keyboard",
+)
+def test_browser_loads_a_new_tab_via_keyboard():
+    pass
+
+
 @given("Firefox is launched enrolled in an Experiment")
 def selenium(selenium):
     return selenium
@@ -104,6 +112,13 @@ def open_a_new_tab(selenium):
     with selenium.context(selenium.CONTEXT_CHROME):
         el = selenium.find_element(By.CSS_SELECTOR, "#tabs-newtab-button")
         el.click()
+
+
+@then("Firefox should be allowed to open a new tab with the keyboard")
+def open_a_new_tab_via_keyboard(cmd_or_ctrl_button, selenium):
+    with selenium.context(selenium.CONTEXT_CHROME):
+        url_bar = selenium.find_element(By.CSS_SELECTOR, "#urlbar-input")
+        url_bar.send_keys(cmd_or_ctrl_button, "t")
 
 
 @then("The tab should open successfully")

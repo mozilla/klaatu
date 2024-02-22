@@ -22,3 +22,10 @@ Feature: Generic Functionality smoke tests all pass
         And Firefox has loaded a webpage
         Then Firefox should be allowed to open a new tab
         And The tab should open successfully
+
+    @smoke
+    Scenario: The browser will allow a new tab to be opened via the keyboard
+        Given Firefox is launched enrolled in an Experiment
+        And Firefox has loaded a webpage
+        Then Firefox should be allowed to open a new tab with the keyboard
+        And The tab should open successfully
