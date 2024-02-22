@@ -15,3 +15,10 @@ Feature: Generic Functionality smoke tests all pass
     Scenario: The browser's URL bar will navigate to the supplied string
         Given Firefox is launched enrolled in an Experiment
         Then Firefox should still accept a copied string that is sent to the search bar
+
+    @smoke
+    Scenario: The browser will allow a new tab to be opened
+        Given Firefox is launched enrolled in an Experiment
+        And Firefox has loaded a webpage
+        Then Firefox should be allowed to open a new tab
+        And The tab should open successfully
