@@ -12,29 +12,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
 
-@pytest.fixture
-def navigate_using_url_bar(selenium, cmd_or_ctrl_button):
-    def _navigate_function(text=None, use_clipboard=False):
-        if not text:
-            text = "https://www.allizom.org/en-US/"
-        with selenium.context(selenium.CONTEXT_CHROME):
-            el = selenium.find_element(By.CSS_SELECTOR, "#urlbar-input")
-            if use_clipboard:
-                ActionChains(selenium).move_to_element(el).pause(1).click().pause(1).key_down(
-                    cmd_or_ctrl_button
-                ).send_keys("v").key_up(cmd_or_ctrl_button).send_keys(Keys.ENTER).perform()
-                return
-            else:
-                el.click()
-                el.send_keys(text)
-                el.send_keys(Keys.ENTER)
-        WebDriverWait(selenium, 60).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, ".loaded"))
-        )
-
-    return _navigate_function
-
-
 @scenario(
     "../features/generic_functionality.feature",
     "The browser's URL bar will navigate to the supplied URL",
