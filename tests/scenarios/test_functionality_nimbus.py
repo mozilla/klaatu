@@ -144,7 +144,10 @@ def install_acholi_language_pack(selenium, request):
 
     add_button_locator = (By.CSS_SELECTOR, "#add")
     addon_installed_locator = (By.CSS_SELECTOR, "#appMenu-addon-installed-notification")
-    add_to_firefox_locator = (By.CSS_SELECTOR, "#addon-install-confirmation-notification .popup-notification-primary-button")
+    add_to_firefox_locator = (
+        By.CSS_SELECTOR,
+        "#addon-install-confirmation-notification .popup-notification-primary-button",
+    )
     browser_dialog_box_locator = (By.CSS_SELECTOR, "#BrowserLanguagesDialog")
     root_dialog_box_locator = (
         By.CSS_SELECTOR,
@@ -163,9 +166,11 @@ def install_acholi_language_pack(selenium, request):
     selenium.find_element(By.CSS_SELECTOR, ".AMInstallButton-button").click()
     with selenium.context(selenium.CONTEXT_CHROME):
         WebDriverWait(selenium, 60).until(EC.element_to_be_clickable(add_to_firefox_locator))
-        time.sleep(5) # need to sleep as the waits sometimes don't work
+        time.sleep(5)  # need to sleep as the waits sometimes don't work
         selenium.find_element(*add_to_firefox_locator).click()
-        WebDriverWait(selenium, 60).until(EC.visibility_of_element_located(addon_installed_locator))
+        WebDriverWait(selenium, 60).until(
+            EC.visibility_of_element_located(addon_installed_locator)
+        )
 
     selenium.get("about:preferences")
     button = selenium.find_element(*language_button_locator)
@@ -185,7 +190,7 @@ def install_acholi_language_pack(selenium, request):
     language_list = menu_list.find_elements(By.CSS_SELECTOR, "menuitem")
     for item in language_list:
         if "Acholi" in item.get_attribute("label"):
-            selenium.execute_script("arguments[0].scrollIntoView(true);", item)  
+            selenium.execute_script("arguments[0].scrollIntoView(true);", item)
             ActionChains(selenium).move_to_element(item).pause(1).click().pause(1).perform()
             break
     WebDriverWait(dialog, 60).until(
@@ -219,4 +224,4 @@ def check_for_localized_firefox(selenium):
         message="Language switch didn't happen",
     )
 
-    #Xvfb :99 -ac -screen 0 800x600x24 -nolisten tcp &
+    # Xvfb :99 -ac -screen 0 800x600x24 -nolisten tcp &
