@@ -199,8 +199,6 @@ def install_acholi_language_pack(selenium, request):
     )
     dialog.find_element(*add_button_locator).click()
 
-    time.sleep(15)  # need to use a hard wait for the langage pack to download
-
 
 @then("Firefox will be correctly localized for the installed language pack")
 def check_for_localized_firefox(selenium):
@@ -217,6 +215,10 @@ def check_for_localized_firefox(selenium):
         if "Acholi" in item.get_attribute("label"):
             ActionChains(selenium).move_to_element(item).pause(1).click().pause(1).perform()
             break
+    """
+    This translates from:
+    Choose the languages used to display menus, messages, and notifications from Firefox.
+    """
     WebDriverWait(selenium, 60).until(
         EC.text_to_be_present_in_element(
             text_locator,
