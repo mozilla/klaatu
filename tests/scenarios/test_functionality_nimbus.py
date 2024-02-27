@@ -5,7 +5,7 @@ import time
 
 import pytest
 from pytest_bdd import given, scenario, then
-from selenium.webdriver import ActionChains, Keys
+from selenium.webdriver import ActionChains
 from selenium.webdriver.common.actions.action_builder import ActionBuilder
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC

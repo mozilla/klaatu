@@ -2,13 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-import pytest
 from pytest_bdd import given, scenario, then
-from selenium.webdriver import ActionChains, Keys
-from selenium.webdriver.common.actions.action_builder import ActionBuilder
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.wait import WebDriverWait
 
 
 @scenario(
