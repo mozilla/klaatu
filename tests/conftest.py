@@ -135,9 +135,6 @@ def firefox_options(
         firefox_options.binary = f"{binary}"
         firefox_options.add_argument("-profile")
         firefox_options.add_argument(setup_profile)
-    if request.config.getoption("--run-firefox-release"):
-        binary = Path("utilities/firefox-release/firefox/firefox-bin").absolute()
-        firefox_options.binary = f"{binary}"
     if request.node.get_closest_marker("reuse_profile") and not request.config.getoption(
         "--run-update-test"
     ):
@@ -187,7 +184,6 @@ def firefox_options(
     firefox_options.set_preference("toolkit.telemetry.unified", True)
     firefox_options.set_preference("allowServerURLOverride", True)
     firefox_options.set_preference("browser.aboutConfig.showWarning", False)
-    firefox_options.add_argument("-headless")
     yield firefox_options
 
     # Delete old pings

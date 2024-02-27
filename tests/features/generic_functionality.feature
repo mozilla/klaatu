@@ -29,3 +29,9 @@ Feature: Generic Functionality smoke tests all pass
         And Firefox has loaded a webpage
         Then Firefox should be allowed to open a new tab with the keyboard
         And The tab should open successfully
+
+    @smoke
+    Scenario: The browser will allow language packs to be installed
+        Given Firefox is launched enrolled in an Experiment
+        Then The user will install a language pack
+        And Firefox will be correctly localized for the installed language pack

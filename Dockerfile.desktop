@@ -2,17 +2,21 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-FROM ubuntu:devel
+FROM ubuntu:mantic
 
 USER root
 
+ARG RESOLUTION="1920x1080x24"
+ARG XARGS=""
+
 # Set env
 ENV DEBIAN_FRONTEND=noninteractive \
-    MOZ_HEADLESS=1 \
     LC_ALL=C.UTF-8 \
     LANG=C.UTF-8 \
-    FIREFOX_VERSION=120.0 \
-    GECKODRIVER_VERSION=0.34.0
+    FIREFOX_VERSION=123.0 \
+    GECKODRIVER_VERSION=0.34.0 \
+    XVFB_RES="${RESOLUTION}" \
+    XVFB_ARGS="${XARGS}" 
 
 # Install requirements to install tools
 RUN dependencies=' \
@@ -33,6 +37,8 @@ RUN dependencies=' \
         libgtk-3-dev \
         libasound2 \
         libdbus-glib-1-dev \
+        xvfb \
+        libgl1-mesa-dri \
     ' \
     && set -x \
     && apt-get -qq update && apt-get -qq install -y software-properties-common \
@@ -44,6 +50,11 @@ ENV VIRTUAL_ENV=/opt/venv
 RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
+# Copy all files to the container
+COPY . /code
+
+WORKDIR /code
+
 # Install Firefox and Geckodriver
 RUN INSTALLER_DOWNLOAD_URL=https://raw.githubusercontent.com/hackebrot/install-firefox/master/install-firefox.sh \
     && curl $INSTALLER_DOWNLOAD_URL -sSf | sh -s -- --firefox $FIREFOX_VERSION --geckodriver $GECKODRIVER_VERSION
@@ -51,15 +62,9 @@ RUN INSTALLER_DOWNLOAD_URL=https://raw.githubusercontent.com/hackebrot/install-f
 # Update to firefox nightly
 ARG FIREFOX_DOWNLOAD_URL=https://download.mozilla.org/?product=firefox-nightly-latest-ssl&lang=en-US&os=linux64
 RUN wget --no-verbose -O /tmp/firefox.tar.bz2 $FIREFOX_DOWNLOAD_URL \
-    && tar -C /opt -xjf /tmp/firefox.tar.bz2 \
-    && rm /tmp/firefox.tar.bz2 \
-    && mv /opt/firefox /opt/firefox-nightly \
-    && ln -fs /opt/firefox-nightly/firefox /usr/bin/firefox
-
-# Copy all files to the container
-COPY . /code
-
-WORKDIR /code
+    && mkdir utilities/firefox-nightly \
+    && tar -C utilities/firefox-nightly -xjf /tmp/firefox.tar.bz2 \
+    && rm /tmp/firefox.tar.bz2
 
 RUN mv /usr/bin/geckodriver /usr/bin/geckodriver2 \
     && mv ./utilities/geckodriver /usr/bin/geckodriver \
@@ -78,17 +83,14 @@ RUN FIREFOX_OLD_DOWNLOAD_URL=$(python3 utilities/download_old_firefox.py) \
     && tar -C utilities/firefox-old-nightly-disable-test -xjf /tmp/firefox_old.tar.bz2 \
     && rm /tmp/firefox_old.tar.bz2
 
-RUN FIREFOX_RELEASE_DOWNLOAD_URL=$(python3 utilities/download_release_firefox.py) \
-    && wget -q -O /tmp/firefox_release.tar.bz2 $FIREFOX_RELEASE_DOWNLOAD_URL \
-    && mkdir utilities/firefox-release \
-    && tar -C utilities/firefox-release -xjf /tmp/firefox_release.tar.bz2
-
 # Create profile used for update tests
 RUN utilities/firefox-old-nightly/firefox/firefox -no-remote -CreateProfile -headless "klaatu-profile-old-base /code/utilities/klaatu-profile-old-base"
 
 RUN utilities/firefox-old-nightly-disable-test/firefox/firefox -no-remote -CreateProfile -headless "klaatu-profile-disable-test /code/utilities/klaatu-profile-disable-test"
 
-RUN utilities/firefox-release/firefox/firefox -no-remote -CreateProfile -headless "klaatu-profile-release-firefox-base /code/utilities/klaatu-profile-release-firefox-base"
+RUN utilities/firefox-nightly/firefox/firefox -no-remote -CreateProfile -headless "klaatu-profile-nightly-firefox /code/utilities/klaatu-profile-nightly-firefox"
+
+RUN firefox -no-remote -CreateProfile -headless "klaatu-profile-release-firefox-base /code/utilities/klaatu-profile-release-firefox-base"
 
 RUN firefox -no-remote -CreateProfile -headless "klaatu-profile-current-base /code/utilities/klaatu-profile-current-base"
 
@@ -100,3 +102,7 @@ RUN cp utilities/user.js utilities/klaatu-profile-current-base
 RUN cp utilities/user.js utilities/klaatu-profile-disable-test
 
 RUN cp utilities/user.js utilities/klaatu-profile-release-firefox-base
+
+RUN sed -i 's/\r$//' xvfb-startup.sh
+
+ENTRYPOINT ["/bin/bash", "xvfb-startup.sh"]

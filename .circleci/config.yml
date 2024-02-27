@@ -46,24 +46,7 @@ jobs:
           key: klaatu-lint-{{ checksum "poetry.lock" }}
           paths:
             - .tox
-  test-current-nightly:
-    working_directory: ~/klaatu
-    machine:
-      image: ubuntu-2204:2024.01.1
-    steps:
-      - checkout
-      - run: 
-          name: Build docker image
-          command: docker build -t klaatu:latest -f Dockerfile.desktop .
-      - run: 
-          name: Run tests
-          command: |
-            set -ex
-            docker compose up -d
-            docker compose run klaatu tox -e bdd-tests -- --experiment-branch control --variables tests/fixtures/test_experiment.json
-      - store_artifacts:
-          path: tests/report.html
-  test-old-nightly:
+  test-nightly:
     working_directory: ~/klaatu
     machine:
       image: ubuntu-2204:2024.01.1
@@ -103,23 +86,20 @@ workflows:
     jobs:
       - build-deploy:
            requires:
-              - test-current-nightly
-              - test-old-nightly
+              - test-nightly
            filters:
              branches:
                only: master
       - build-release:
            requires:
-              - test-current-nightly
-              - test-old-nightly
+              - test-nightly
            filters:
              tags:
                only: /.*/
              branches:
                ignore: /.*/
       - lint
-      - test-current-nightly
-      - test-old-nightly
+      - test-nightly
       - test-release-firefox
   weekly-test-and-build:
     triggers:
@@ -132,9 +112,7 @@ workflows:
     jobs:
       - build-deploy:
           requires:
-            - test-current-nightly
-            - test-old-nightly
+            - test-nightly
             - test-release-firefox
-      - test-current-nightly
-      - test-old-nightly
+      - test-nightly
       - test-release-firefox
