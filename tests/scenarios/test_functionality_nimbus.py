@@ -171,6 +171,7 @@ def install_acholi_language_pack(selenium, request):
         WebDriverWait(selenium, 60).until(
             EC.visibility_of_element_located(addon_installed_locator)
         )
+        selenium.find_element(*addon_installed_locator).click()
 
     selenium.get("about:preferences")
     button = selenium.find_element(*language_button_locator)
@@ -223,5 +224,3 @@ def check_for_localized_firefox(selenium):
         ),
         message="Language switch didn't happen",
     )
-
-    # Xvfb :99 -ac -screen 0 800x600x24 -nolisten tcp &
