@@ -5,34 +5,11 @@ import time
 
 import pytest
 from pytest_bdd import given, scenario, then
-from selenium.webdriver import ActionChains, Keys
+from selenium.webdriver import ActionChains
 from selenium.webdriver.common.actions.action_builder import ActionBuilder
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
-
-
-@pytest.fixture
-def navigate_using_url_bar(selenium, cmd_or_ctrl_button):
-    def _navigate_function(text=None, use_clipboard=False):
-        if not text:
-            text = "https://www.allizom.org/en-US/"
-        with selenium.context(selenium.CONTEXT_CHROME):
-            el = selenium.find_element(By.CSS_SELECTOR, "#urlbar-input")
-            if use_clipboard:
-                ActionChains(selenium).move_to_element(el).pause(1).click().pause(1).key_down(
-                    cmd_or_ctrl_button
-                ).send_keys("v").key_up(cmd_or_ctrl_button).send_keys(Keys.ENTER).perform()
-                return
-            else:
-                el.click()
-                el.send_keys(text)
-                el.send_keys(Keys.ENTER)
-        WebDriverWait(selenium, 60).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, ".loaded"))
-        )
-
-    return _navigate_function
 
 
 @scenario(
@@ -83,13 +60,13 @@ def selenium(selenium):
 
 @given("Firefox has loaded a webpage")
 def load_mozilla_wepage(navigate_using_url_bar, selenium):
-    navigate_using_url_bar()
+    navigate_using_url_bar("https://www.allizom.org/en-US/")
     assert "allizom" in selenium.current_url
 
 
 @then("Firefox should still accept a URL into the search bar")
 def navigate_to_url(navigate_using_url_bar):
-    navigate_using_url_bar()
+    navigate_using_url_bar("https://www.allizom.org/en-US/")
 
 
 @then("The URL should load the webpage successfully")

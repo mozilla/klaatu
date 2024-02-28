@@ -12,7 +12,12 @@ from pathlib import Path
 
 import pytest
 import requests
-from selenium.webdriver import Keys
+from selenium.webdriver import ActionChains, Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.wait import WebDriverWait
+
+PING_SERVER = "http://ping-server:5000"
 
 
 def pytest_addoption(parser) -> None:
@@ -143,7 +148,7 @@ def firefox_options(
     firefox_options.set_preference("extensions.install.requireBuiltInCerts", False)
     firefox_options.log.level = "trace"
     firefox_options.set_preference("browser.cache.disk.smart_size.enabled", False)
-    firefox_options.set_preference("toolkit.telemetry.server", "http://ping-server:5000")
+    firefox_options.set_preference("toolkit.telemetry.server", f"{PING_SERVER}")
     firefox_options.set_preference("telemetry.fog.test.localhost_port", -1)
     firefox_options.set_preference("toolkit.telemetry.initDelay", 1)
     firefox_options.set_preference("ui.popup.disable_autohide", True)
@@ -180,14 +185,14 @@ def firefox_options(
     firefox_options.set_preference("messaging-system.log", "debug")
     firefox_options.set_preference("toolkit.telemetry.scheduler.tickInterval", 30)
     firefox_options.set_preference("toolkit.telemetry.collectInterval", 1)
-    firefox_options.set_preference("toolkit.telemetry.eventping.minimumFrequency", 30000)
+    firefox_options.set_preference("toolkit.telemetry.eventping.minimumFrequency", 30)
     firefox_options.set_preference("toolkit.telemetry.unified", True)
     firefox_options.set_preference("allowServerURLOverride", True)
     firefox_options.set_preference("browser.aboutConfig.showWarning", False)
     yield firefox_options
 
     # Delete old pings
-    requests.delete("http://ping-server:5000/pings")
+    requests.delete(f"{PING_SERVER}/pings")
 
     # Remove old profile
     if (
@@ -243,7 +248,7 @@ def fixture_check_ping_for_experiment(trigger_experiment_loader):
         control = True
         timeout = time.time() + 60 * 5
         while control and time.time() < timeout:
-            data = requests.get("http://ping-server:5000/pings").json()
+            data = requests.get(f"{PING_SERVER}/pings").json()
             try:
                 experiments_data = [
                     item["environment"]["experiments"]
@@ -267,7 +272,7 @@ def fixture_check_ping_for_experiment(trigger_experiment_loader):
 @pytest.fixture(name="telemetry_event_check")
 def fixture_telemetry_event_check(trigger_experiment_loader):
     def _telemetry_event_check(experiment=None, event=None):
-        telemetry = requests.get("http://ping-server:5000/pings").json()
+        telemetry = requests.get(f"{PING_SERVER}/pings").json()
         events = [
             event["payload"]["events"]["parent"]
             for event in telemetry
@@ -290,3 +295,55 @@ def fixture_telemetry_event_check(trigger_experiment_loader):
 @pytest.fixture(name="cmd_or_ctrl_button")
 def fixture_cmd_or_ctrl_button():
     return Keys.COMMAND if sys.platform == "darwin" else Keys.CONTROL
+
+
+@pytest.fixture(name="navigate_using_url_bar")
+def fixture_navigate_using_url_bar(selenium, cmd_or_ctrl_button):
+    def _navigate_function(text=None, use_clipboard=False):
+        if not text:
+            text = "https://www.allizom.org/en-US/"
+        with selenium.context(selenium.CONTEXT_CHROME):
+            el = selenium.find_element(By.CSS_SELECTOR, "#urlbar-input")
+            if use_clipboard:
+                ActionChains(selenium).move_to_element(el).pause(1).click().pause(1).key_down(
+                    cmd_or_ctrl_button
+                ).send_keys("v").key_up(cmd_or_ctrl_button).send_keys(Keys.ENTER).perform()
+                return
+            else:
+                el.click()
+                el.send_keys(text)
+                el.send_keys(Keys.ENTER)
+        WebDriverWait(selenium, 60).until(
+            EC.any_of(
+                EC.presence_of_element_located((By.CSS_SELECTOR, ".loaded")),
+                EC.title_contains(text),
+            )
+        )
+
+    return _navigate_function
+
+
+@pytest.fixture(name="find_ads_search_telemetry")
+def fixture_find_ads_search_telemetry(selenium):
+    def _(ping, ping_data=None):
+        stored_events = []
+        control = True
+        timeout = time.time() + 60 * 5
+
+        while control and time.time() < timeout:
+            telemetry = requests.get(f"{PING_SERVER}/pings").json()
+            for event in telemetry:
+                try:
+                    stored_events.append(event["payload"]["processes"]["parent"]["keyedScalars"])
+                except KeyError:
+                    pass
+                else:
+                    continue
+            for item in stored_events:
+                data = item.get(ping)
+                if data is not None and ping_data == data:
+                    return True
+        else:
+            return False
+
+    return _
