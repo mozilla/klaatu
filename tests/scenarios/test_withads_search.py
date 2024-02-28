@@ -2,7 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-from pytest_bdd import given, scenario, then
+from pytest_bdd import given, parsers, scenario, then
 from selenium.webdriver import ActionChains, Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -22,6 +22,14 @@ def test_telemetry_reports_for_url_bar_searches():
     "Telemetry reports correctly for search bar search events",
 )
 def test_telemetry_reports_for_search_bar_searches():
+    pass
+
+
+@scenario(
+    "../features/withads_search.feature",
+    "Telemetry reports correctly for context menu search events",
+)
+def test_telemetry_reports_for_context_menu_searches():
     pass
 
 
@@ -59,11 +67,20 @@ def search_using_search_bar_to_return_ads(selenium):
         search_bar.send_keys(Keys.ENTER)
 
 
-@then("The browser reports correct telemetry for the search event")
-def check_telemetry_for_with_ads_url_search(find_ads_search_telemetry):
-    find_ads_search_telemetry("browser.search.withads.urlbar", ping_data={"google:tagged": 1})
+@given("The user highlights some text and wants to search for it via the context menu")
+def search_using_context_click_menu(selenium, simplehttpserver):
+    selenium.get("http://localhost:8000")
+    el = selenium.find_element(By.CSS_SELECTOR, "#search-to-return-ads")
+
+    ActionChains(selenium).move_to_element(el).pause(1).double_click(el).pause(1).context_click(
+        el
+    ).perform()
+    with selenium.context(selenium.CONTEXT_CHROME):
+        menu = selenium.find_element(By.CSS_SELECTOR, "#contentAreaContextMenu")
+        menu.find_element(By.CSS_SELECTOR, "#context-searchselect").click()
+    WebDriverWait(selenium, 60).until(EC.number_of_windows_to_be(3))
 
 
-@then("The browser reports correct telemetry for the searchbar event")
-def check_telemetry_for_with_ads_search_bar(find_ads_search_telemetry):
-    find_ads_search_telemetry("browser.search.withads.searchbar", ping_data={"google:tagged": 1})
+@then(parsers.parse("The browser reports correct telemetry for the {search:l} search event"))
+def check_telemetry_for_with_ads_search(find_ads_search_telemetry, search):
+    find_ads_search_telemetry(f"browser.search.withads.{search}", ping_data={"google:tagged": 1})
