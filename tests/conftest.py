@@ -364,7 +364,7 @@ def check_new_tab(selenium):
     assert "about:newtab" in selenium.current_url
 
 
-@given("Firefox is launched enrolled in an Experiment")
-def selenium(selenium):
+@given("Firefox is launched enrolled in an Experiment", target_fixture="selenium")
+def _selenium(selenium):
     selenium.implicitly_wait(5)
     return selenium
