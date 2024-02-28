@@ -16,13 +16,13 @@ scenarios("../features/generic_functionality.feature")
 
 @given("Firefox has loaded a webpage")
 def load_mozilla_wepage(navigate_using_url_bar, selenium):
-    navigate_using_url_bar("https://www.allizom.org/en-US/")
+    navigate_using_url_bar("http://localhost:8000")
     assert "allizom" in selenium.current_url
 
 
 @then("Firefox should still accept a URL into the search bar")
 def navigate_to_url(navigate_using_url_bar):
-    navigate_using_url_bar("https://www.allizom.org/en-US/")
+    navigate_using_url_bar("http://localhost:8000")
 
 
 @then("The URL should load the webpage successfully")
@@ -35,9 +35,9 @@ def check_url_page_loads_correctly(selenium):
 
 @then("Firefox should still accept a copied string that is sent to the search bar")
 def copy_and_paste_string_to_url_bar(cmd_or_ctrl_button, selenium, navigate_using_url_bar):
-    selenium.get("http://www.allizom.org/en-US/")
+    selenium.get("http://localhost:8000")
     el = selenium.find_element(
-        By.CSS_SELECTOR, "section.mzp-c-footer-section:nth-child(1) > h5:nth-child(1)"
+        By.CSS_SELECTOR, "#copy-paste-string"
     )
 
     # scroll down to text

@@ -302,7 +302,7 @@ def fixture_cmd_or_ctrl_button():
 def fixture_navigate_using_url_bar(selenium, cmd_or_ctrl_button):
     def _navigate_function(text=None, use_clipboard=False):
         if not text:
-            text = "https://www.allizom.org/en-US/"
+            text = "http://localhost:8000"
         with selenium.context(selenium.CONTEXT_CHROME):
             el = selenium.find_element(By.CSS_SELECTOR, "#urlbar-input")
             if use_clipboard:
