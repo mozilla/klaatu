@@ -185,7 +185,7 @@ def firefox_options(
     firefox_options.set_preference("messaging-system.log", "debug")
     firefox_options.set_preference("toolkit.telemetry.scheduler.tickInterval", 30)
     firefox_options.set_preference("toolkit.telemetry.collectInterval", 1)
-    firefox_options.set_preference("toolkit.telemetry.eventping.minimumFrequency", 30000)
+    firefox_options.set_preference("toolkit.telemetry.eventping.minimumFrequency", 30)
     firefox_options.set_preference("toolkit.telemetry.unified", True)
     firefox_options.set_preference("allowServerURLOverride", True)
     firefox_options.set_preference("browser.aboutConfig.showWarning", False)
@@ -314,8 +314,9 @@ def fixture_navigate_using_url_bar(selenium, cmd_or_ctrl_button):
                 el.send_keys(text)
                 el.send_keys(Keys.ENTER)
         WebDriverWait(selenium, 60).until(
-            EC.visibility_of_element_located((By.CSS_SELECTOR, "body"))
-        )
+            EC.any_of(EC.presence_of_element_located((By.CSS_SELECTOR, ".loaded")),
+                      EC.title_contains(text)
+        ))
 
     return _navigate_function
 
@@ -339,6 +340,8 @@ def fixture_find_ads_search_telemetry(selenium):
             for item in stored_events:
                 data = item.get(ping)
                 if data is not None and ping_data == data:
-                    return
+                    return True
+        else:
+            return False
 
     return _

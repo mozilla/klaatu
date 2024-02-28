@@ -60,13 +60,13 @@ def selenium(selenium):
 
 @given("Firefox has loaded a webpage")
 def load_mozilla_wepage(navigate_using_url_bar, selenium):
-    navigate_using_url_bar()
+    navigate_using_url_bar("https://www.allizom.org/en-US/")
     assert "allizom" in selenium.current_url
 
 
 @then("Firefox should still accept a URL into the search bar")
 def navigate_to_url(navigate_using_url_bar):
-    navigate_using_url_bar()
+    navigate_using_url_bar("https://www.allizom.org/en-US/")
 
 
 @then("The URL should load the webpage successfully")
