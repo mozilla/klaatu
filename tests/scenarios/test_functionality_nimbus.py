@@ -36,9 +36,7 @@ def check_url_page_loads_correctly(selenium):
 @then("Firefox should still accept a copied string that is sent to the search bar")
 def copy_and_paste_string_to_url_bar(cmd_or_ctrl_button, selenium, navigate_using_url_bar):
     selenium.get("http://localhost:8000")
-    el = selenium.find_element(
-        By.CSS_SELECTOR, "#copy-paste-string"
-    )
+    el = selenium.find_element(By.CSS_SELECTOR, "#copy-paste-string")
 
     # scroll down to text
     selenium.execute_script("arguments[0].scrollIntoView(true);", el)
