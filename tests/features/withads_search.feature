@@ -18,3 +18,11 @@ Feature: Search tests that return ads to verify telemetry
         Given Firefox is launched enrolled in an Experiment
         And The user highlights some text and wants to search for it via the context menu
         Then The browser reports correct telemetry for the contextmenu search event
+
+    @smoke
+    Scenario: Telemetry reports correctly for new tab search events
+        Given Firefox is launched enrolled in an Experiment
+        Then Firefox should be allowed to open a new tab
+        And The tab should open successfully
+        Then The user should be allowed to search on the new tab
+        And The browser reports correct telemetry for the urlbar_handoff search event
