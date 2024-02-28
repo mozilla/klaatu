@@ -15,26 +15,27 @@ scenarios("../features/generic_functionality.feature")
 
 
 @given("Firefox has loaded a webpage")
-def load_mozilla_wepage(navigate_using_url_bar, selenium):
+def load_mozilla_wepage(navigate_using_url_bar, selenium, simplehttpserver):
     navigate_using_url_bar("http://localhost:8000")
-    assert "allizom" in selenium.current_url
+    assert "localhost" in selenium.current_url
 
 
 @then("Firefox should still accept a URL into the search bar")
-def navigate_to_url(navigate_using_url_bar):
+def navigate_to_url(navigate_using_url_bar, simplehttpserver):
     navigate_using_url_bar("http://localhost:8000")
 
 
 @then("The URL should load the webpage successfully")
 def check_url_page_loads_correctly(selenium):
     WebDriverWait(selenium, 60).until(
-        EC.visibility_of_element_located((By.CSS_SELECTOR, ".c-navigation-logo-image")),
-        message="Navigation logo not found",
+        EC.visibility_of_element_located((By.CSS_SELECTOR, ".klaatu-text"))
     )
 
 
 @then("Firefox should still accept a copied string that is sent to the search bar")
-def copy_and_paste_string_to_url_bar(cmd_or_ctrl_button, selenium, navigate_using_url_bar):
+def copy_and_paste_string_to_url_bar(
+    cmd_or_ctrl_button, selenium, navigate_using_url_bar, simplehttpserver
+):
     selenium.get("http://localhost:8000")
     el = selenium.find_element(By.CSS_SELECTOR, "#copy-paste-string")
 
