@@ -4,7 +4,7 @@
 import time
 
 import pytest
-from pytest_bdd import given, scenario, then
+from pytest_bdd import given, scenarios, then
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.actions.action_builder import ActionBuilder
 from selenium.webdriver.common.by import By
@@ -12,50 +12,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
 
-@scenario(
-    "../features/generic_functionality.feature",
-    "The browser's URL bar will navigate to the supplied URL",
-)
-def test_browser_navigates_to_url_correctly():
-    pass
+scenarios("../features/generic_functionality.feature")
 
-
-@scenario(
-    "../features/generic_functionality.feature",
-    "The browser's URL bar will navigate to the supplied string",
-)
-def test_browser_accepts_a_string():
-    pass
-
-
-@scenario(
-    "../features/generic_functionality.feature",
-    "The browser will allow a new tab to be opened",
-)
-def test_browser_loads_a_new_tab():
-    pass
-
-
-@scenario(
-    "../features/generic_functionality.feature",
-    "The browser will allow a new tab to be opened via the keyboard",
-)
-def test_browser_loads_a_new_tab_via_keyboard():
-    pass
-
-
-@scenario(
-    "../features/generic_functionality.feature",
-    "The browser will allow language packs to be installed",
-)
-def test_browser_allows_a_language_pack_to_be_installed():
-    pass
-
-
-@given("Firefox is launched enrolled in an Experiment")
-def selenium(selenium):
-    selenium.implicitly_wait(5)
-    return selenium
 
 
 @given("Firefox has loaded a webpage")
@@ -95,25 +53,11 @@ def copy_and_paste_string_to_url_bar(cmd_or_ctrl_button, selenium, navigate_usin
     WebDriverWait(selenium, 60).until(EC.title_contains(el.text))
 
 
-@then("Firefox should be allowed to open a new tab")
-def open_a_new_tab(selenium):
-    with selenium.context(selenium.CONTEXT_CHROME):
-        el = selenium.find_element(By.CSS_SELECTOR, "#tabs-newtab-button")
-        el.click()
-
-
 @then("Firefox should be allowed to open a new tab with the keyboard")
 def open_a_new_tab_via_keyboard(cmd_or_ctrl_button, selenium):
     with selenium.context(selenium.CONTEXT_CHROME):
         url_bar = selenium.find_element(By.CSS_SELECTOR, "#urlbar-input")
         url_bar.send_keys(cmd_or_ctrl_button, "t")
-
-
-@then("The tab should open successfully")
-def check_new_tab(selenium):
-    # get the last tab
-    selenium.switch_to.window(selenium.window_handles[-1])
-    assert "about:newtab" in selenium.current_url
 
 
 @then("The user will install a language pack")

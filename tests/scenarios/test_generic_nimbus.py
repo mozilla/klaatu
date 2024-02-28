@@ -2,39 +2,13 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-from pytest_bdd import given, scenario, then
+from pytest_bdd import scenarios, then
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
 
-@scenario(
-    "../features/generic_nimbus.feature",
-    "The browser will enroll into the requested branch",
-)
-def test_experiment_enrolls_into_correct_branch():
-    pass
-
-
-@scenario(
-    "../features/generic_nimbus.feature",
-    "The experiment can unenroll from the about:studies page",
-)
-def test_experiment_unenrolls_via_about_studies_page():
-    pass
-
-
-@scenario(
-    "../features/generic_nimbus.feature",
-    "The experiment can be unenrolled via opting out from studies",
-)
-def test_experiment_unenrolls_via_opting_out_of_studies():
-    pass
-
-
-@given("Firefox is launched enrolled in an Experiment")
-def selenium(selenium):
-    return selenium
+scenarios("../features/generic_nimbus.feature")
 
 
 @then("The experiment branch should be correctly reported")

@@ -12,6 +12,7 @@ from pathlib import Path
 
 import pytest
 import requests
+from pytest_bdd import given, then
 from selenium.webdriver import ActionChains, Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -347,3 +348,23 @@ def fixture_find_ads_search_telemetry(selenium):
             return False
 
     return _
+
+
+@then("Firefox should be allowed to open a new tab")
+def open_a_new_tab(selenium):
+    with selenium.context(selenium.CONTEXT_CHROME):
+        el = selenium.find_element(By.CSS_SELECTOR, "#tabs-newtab-button")
+        el.click()
+
+
+@then("The tab should open successfully")
+def check_new_tab(selenium):
+    # get the last tab
+    selenium.switch_to.window(selenium.window_handles[-1])
+    assert "about:newtab" in selenium.current_url
+
+
+@given("Firefox is launched enrolled in an Experiment")
+def selenium(selenium):
+    selenium.implicitly_wait(5)
+    return selenium

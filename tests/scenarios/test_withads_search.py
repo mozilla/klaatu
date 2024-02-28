@@ -2,41 +2,14 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-from pytest_bdd import given, parsers, scenario, then
+from pytest_bdd import given, parsers, scenarios, then
 from selenium.webdriver import ActionChains, Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
 
-@scenario(
-    "../features/withads_search.feature",
-    "Telemetry reports correctly for URL search events",
-)
-def test_telemetry_reports_for_url_bar_searches():
-    pass
-
-
-@scenario(
-    "../features/withads_search.feature",
-    "Telemetry reports correctly for search bar search events",
-)
-def test_telemetry_reports_for_search_bar_searches():
-    pass
-
-
-@scenario(
-    "../features/withads_search.feature",
-    "Telemetry reports correctly for context menu search events",
-)
-def test_telemetry_reports_for_context_menu_searches():
-    pass
-
-
-@given("Firefox is launched enrolled in an Experiment")
-def selenium(selenium):
-    selenium.implicitly_wait(5)
-    return selenium
+scenarios("../features/withads_search.feature")
 
 
 @given("The user searches for something that is likely to return ads")
