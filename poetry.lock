@@ -802,6 +802,20 @@ pytest = ">=7.0.0"
 test = ["black (>=22.1.0)", "flake8 (>=4.0.1)", "pre-commit (>=2.17.0)", "tox (>=3.24.5)"]
 
 [[package]]
+name = "pytest-repeat"
+version = "0.9.3"
+description = "pytest plugin for repeating tests"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "pytest_repeat-0.9.3-py3-none-any.whl", hash = "sha256:26ab2df18226af9d5ce441c858f273121e92ff55f5bb311d25755b8d7abdd8ed"},
+    {file = "pytest_repeat-0.9.3.tar.gz", hash = "sha256:ffd3836dfcd67bb270bec648b330e20be37d2966448c4148c4092d1e8aba8185"},
+]
+
+[package.dependencies]
+pytest = "*"
+
+[[package]]
 name = "pytest-rerunfailures"
 version = "13.0"
 description = "pytest plugin to re-run tests to eliminate flaky failures"
@@ -839,6 +853,17 @@ tenacity = ">=6.0.0"
 [package.extras]
 appium = ["appium-python-client (>=1.0.0)"]
 test = ["black (>=22.1.0)", "flake8 (>=4.0.1)", "pre-commit (>=2.17.0)", "pytest-mock (>=3.6.1)", "pytest-xdist (>=2.4.0)", "tox (>=3.24.5)"]
+
+[[package]]
+name = "pytest-simplehttpserver"
+version = "0.1.2"
+description = "Simple pytest fixture to spin up an HTTP server"
+optional = false
+python-versions = ">=3.5"
+files = [
+    {file = "pytest_simplehttpserver-0.1.2-py3-none-any.whl", hash = "sha256:b6eff57e2d57a64db0269b939a34bdf97dcd6321b418af761ea5f9685fffd61a"},
+    {file = "pytest_simplehttpserver-0.1.2.tar.gz", hash = "sha256:bb749abee8b224a910b87af33d0c815f3b4f350137841c851634c617cc1b0516"},
+]
 
 [[package]]
 name = "pytest-variables"
@@ -1050,4 +1075,4 @@ h11 = ">=0.9.0,<1"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "998e595f9692b1f54cb11dd38e57b53ad79bf772d76f5418f5a412a7125fbe5b"
+content-hash = "03a83894ba008ceeee49ef0f7a52df10a6e8b02feb7b4fdb29dd77bf8de1d1af"

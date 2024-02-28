@@ -25,6 +25,14 @@ def test_telemetry_reports_for_search_bar_searches():
     pass
 
 
+@scenario(
+    "../features/withads_search.feature",
+    "Telemetry reports correctly for context menu search events",
+)
+def test_telemetry_reports_for_context_menu_searches():
+    pass
+
+
 @given("Firefox is launched enrolled in an Experiment")
 def selenium(selenium):
     selenium.implicitly_wait(5)
@@ -59,6 +67,21 @@ def search_using_search_bar_to_return_ads(selenium):
         search_bar.send_keys(Keys.ENTER)
 
 
+@given("The user highlights some text and wants to search for it via the context menu")
+def search_using_context_click_menu(selenium, simplehttpserver):
+    selenium.get("http://localhost:8000")
+    el = selenium.find_element(By.CSS_SELECTOR, "#search-to-return-ads")
+
+    # scroll down to text
+    selenium.execute_script("arguments[0].scrollIntoView(true);", el)
+
+    ActionChains(selenium).move_to_element(el).pause(1).double_click(el).pause(1).context_click(el).perform()
+    with selenium.context(selenium.CONTEXT_CHROME):
+        menu = selenium.find_element(By.CSS_SELECTOR, "#contentAreaContextMenu")
+        menu.find_element(By.CSS_SELECTOR, "#context-searchselect").click()
+    WebDriverWait(selenium, 60).until(EC.number_of_windows_to_be(3))
+
+
 @then("The browser reports correct telemetry for the search event")
 def check_telemetry_for_with_ads_url_search(find_ads_search_telemetry):
     find_ads_search_telemetry("browser.search.withads.urlbar", ping_data={"google:tagged": 1})
@@ -67,3 +90,8 @@ def check_telemetry_for_with_ads_url_search(find_ads_search_telemetry):
 @then("The browser reports correct telemetry for the searchbar event")
 def check_telemetry_for_with_ads_search_bar(find_ads_search_telemetry):
     find_ads_search_telemetry("browser.search.withads.searchbar", ping_data={"google:tagged": 1})
+
+
+@then("The browser reports correct telemetry for the context menu search event")
+def check_telemetry_for_with_ads_search_bar(find_ads_search_telemetry):
+    find_ads_search_telemetry("browser.search.withads.contextmenu", ping_data={"google:tagged": 1})
