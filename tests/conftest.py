@@ -314,9 +314,11 @@ def fixture_navigate_using_url_bar(selenium, cmd_or_ctrl_button):
                 el.send_keys(text)
                 el.send_keys(Keys.ENTER)
         WebDriverWait(selenium, 60).until(
-            EC.any_of(EC.presence_of_element_located((By.CSS_SELECTOR, ".loaded")),
-                      EC.title_contains(text)
-        ))
+            EC.any_of(
+                EC.presence_of_element_located((By.CSS_SELECTOR, ".loaded")),
+                EC.title_contains(text),
+            )
+        )
 
     return _navigate_function
 
