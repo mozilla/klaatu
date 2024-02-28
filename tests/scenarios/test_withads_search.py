@@ -53,6 +53,16 @@ def search_using_context_click_menu(selenium, simplehttpserver):
     WebDriverWait(selenium, 60).until(EC.number_of_windows_to_be(3))
 
 
-@then(parsers.parse("The browser reports correct telemetry for the {search:l} search event"))
+@then(parsers.parse("The browser reports correct telemetry for the {search:w} search event"))
 def check_telemetry_for_with_ads_search(find_ads_search_telemetry, search):
     find_ads_search_telemetry(f"browser.search.withads.{search}", ping_data={"google:tagged": 1})
+
+
+@then("The user should be allowed to search on the new tab")
+def search_on_new_tab(selenium):
+    search_box = selenium.find_element(By.CSS_SELECTOR, ".search-handoff-button")
+    search_box.click()
+    with selenium.context(selenium.CONTEXT_CHROME):
+        el = selenium.find_element(By.CSS_SELECTOR, "#urlbar-input")
+        el.send_keys("Apple iphone")
+        el.send_keys(Keys.ENTER)
