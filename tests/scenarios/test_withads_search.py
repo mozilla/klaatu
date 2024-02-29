@@ -66,3 +66,13 @@ def search_on_new_tab(selenium):
         el = selenium.find_element(By.CSS_SELECTOR, "#urlbar-input")
         el.send_keys("Apple iphone")
         el.send_keys(Keys.ENTER)
+
+
+@then("The user should be allowed to perform a background search in the new tab")
+def perform_background_search(selenium):
+    with selenium.context(selenium.CONTEXT_CHROME):
+        el = selenium.find_element(By.CSS_SELECTOR, "#urlbar-input")
+        el.send_keys("Apple iphone")
+        ActionChains(selenium).key_down(Keys.ALT).key_down(Keys.SHIFT).key_down(
+            Keys.ENTER
+        ).perform()
