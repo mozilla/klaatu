@@ -55,8 +55,7 @@ def copy_and_paste_string_to_url_bar(
 def open_a_new_tab_via_keyboard(cmd_or_ctrl_button, selenium):
     with selenium.context(selenium.CONTEXT_CHROME):
         url_bar = selenium.find_element(By.CSS_SELECTOR, "#urlbar-input")
-        ActionChains(selenium).key_down(cmd_or_ctrl_button).send_keys("t").perform()
-        # url_bar.send_keys(cmd_or_ctrl_button, "t")
+        url_bar.send_keys(cmd_or_ctrl_button, "t")
 
 
 @then("The user will install a language pack")
