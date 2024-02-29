@@ -190,6 +190,7 @@ def firefox_options(
     firefox_options.set_preference("toolkit.telemetry.eventping.maximumFrequency", 6000)
     firefox_options.set_preference("allowServerURLOverride", True)
     firefox_options.set_preference("browser.aboutConfig.showWarning", False)
+    firefox_options.set_preference("browser.newtabpage.enabled", True)
     yield firefox_options
 
     # Delete old pings
@@ -360,8 +361,9 @@ def open_a_new_tab(selenium):
 @then("The tab should open successfully")
 def check_new_tab(selenium):
     # get the last tab
-    WebDriverWait(selenium, 60).until(EC.new_window_is_opened())
+    WebDriverWait(selenium, 60).until(EC.number_of_windows_to_be(3))
     selenium.switch_to.window(selenium.window_handles[-1])
+    WebDriverWait(selenium, 60).until(EC.url_contains("newtab"))
     assert "about:newtab" in selenium.current_url
 
 
