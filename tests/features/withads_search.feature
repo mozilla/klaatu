@@ -34,3 +34,11 @@ Feature: Search tests that return ads to verify telemetry
         And The tab should open successfully
         Then The user should be allowed to perform a background search in the new tab
         And The browser reports correct telemetry for the unknown search event
+
+    @smoke
+    Scenario: Telemetry reports correctly for reloaded page search events
+        Given Firefox is launched enrolled in an Experiment
+        And The user searches for something that is likely to return ads
+        Then The browser reports correct telemetry for the urlbar search event
+        Then The page is refreshed
+        And The browser reports correct telemetry for the reload search event

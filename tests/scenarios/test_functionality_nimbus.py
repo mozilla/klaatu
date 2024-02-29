@@ -50,6 +50,7 @@ def copy_and_paste_string_to_url_bar(
     WebDriverWait(selenium, 60).until(EC.title_contains(el.text))
 
 
+@pytest.mark.firefox_preferences({"remote.prefs.recommended", False})
 @then("Firefox should be allowed to open a new tab with the keyboard")
 def open_a_new_tab_via_keyboard(cmd_or_ctrl_button, selenium):
     with selenium.context(selenium.CONTEXT_CHROME):
