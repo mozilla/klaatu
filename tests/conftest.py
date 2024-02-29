@@ -172,7 +172,6 @@ def firefox_options(
         "security.content.signature.root_hash",
         "5E:36:F2:14:DE:82:3F:8B:29:96:89:23:5F:03:41:AC:AF:A0:75:AF:82:CB:4C:D4:30:7C:3D:B3:43:39:2A:FE",  # noqa: E501
     )
-    # firefox_options.set_preference("services.settings.server", "http://kinto:8888/v1")
     firefox_options.set_preference("datareporting.healthreport.service.enabled", True)
     firefox_options.set_preference("datareporting.healthreport.logging.consoleEnabled", True)
     firefox_options.set_preference("datareporting.healthreport.service.firstRun", True)
