@@ -86,5 +86,5 @@ def perform_background_search(selenium):
 def refresh_page_and_close_browser(selenium):
     # Need to close the browser to get the main ping to send
     selenium.refresh()
-    time.sleep(10)
+    time.sleep(30)
     selenium.quit()
