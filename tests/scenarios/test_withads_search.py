@@ -57,7 +57,9 @@ def search_using_context_click_menu(selenium, simplehttpserver):
 
 @then(parsers.parse("The browser reports correct telemetry for the {search:w} search event"))
 def check_telemetry_for_with_ads_search(find_ads_search_telemetry, search):
-    assert find_ads_search_telemetry(f"browser.search.withads.{search}", ping_data={"google:tagged": 1})
+    assert find_ads_search_telemetry(
+        f"browser.search.withads.{search}", ping_data={"google:tagged": 1}
+    )
 
 
 @then("The user should be allowed to search on the new tab")
