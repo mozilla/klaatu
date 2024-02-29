@@ -55,7 +55,6 @@ def open_a_new_tab_via_keyboard(cmd_or_ctrl_button, selenium):
     with selenium.context(selenium.CONTEXT_CHROME):
         url_bar = selenium.find_element(By.CSS_SELECTOR, "#urlbar-input")
         url_bar.send_keys(cmd_or_ctrl_button, "t")
-        
 
 
 @then("The user will install a language pack")
