@@ -26,3 +26,11 @@ Feature: Search tests that return ads to verify telemetry
         And The tab should open successfully
         Then The user should be allowed to search on the new tab
         And The browser reports correct telemetry for the urlbar_handoff search event
+
+    @smoke
+    Scenario: Telemetry reports correctly for background search events
+        Given Firefox is launched enrolled in an Experiment
+        Then Firefox should be allowed to open a new tab
+        And The tab should open successfully
+        Then The user should be allowed to perform a background search in the new tab
+        And The browser reports correct telemetry for the unknown search event
