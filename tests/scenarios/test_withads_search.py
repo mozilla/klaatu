@@ -2,6 +2,8 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+import time
+
 from pytest_bdd import given, parsers, scenarios, then
 from selenium.webdriver import ActionChains, Keys
 from selenium.webdriver.common.by import By
@@ -55,7 +57,7 @@ def search_using_context_click_menu(selenium, simplehttpserver):
 
 @then(parsers.parse("The browser reports correct telemetry for the {search:w} search event"))
 def check_telemetry_for_with_ads_search(find_ads_search_telemetry, search):
-    find_ads_search_telemetry(f"browser.search.withads.{search}", ping_data={"google:tagged": 1})
+    assert find_ads_search_telemetry(f"browser.search.withads.{search}", ping_data={"google:tagged": 1})
 
 
 @then("The user should be allowed to search on the new tab")
@@ -76,3 +78,11 @@ def perform_background_search(selenium):
         ActionChains(selenium).key_down(Keys.ALT).key_down(Keys.SHIFT).key_down(
             Keys.ENTER
         ).perform()
+
+
+@then("The page is refreshed")
+def refresh_page_and_close_browser(selenium):
+    # Need to close the browser to get the main ping to send
+    selenium.refresh()
+    time.sleep(10)
+    selenium.quit()
