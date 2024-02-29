@@ -137,7 +137,7 @@ def firefox_options(
                 f'{Path("utilities/klaatu-profile-disable-test").absolute()}'
             )
         else:
-            binary = Path("utilities/firefox-old-nightly/firefox/firefox-bin").absolute()
+            binary = Path("utilities/klaatu-profile-nightly-firefox/firefox/firefox-bin").absolute()
         firefox_options.binary = f"{binary}"
         firefox_options.add_argument("-profile")
         firefox_options.add_argument(setup_profile)
