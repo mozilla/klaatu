@@ -31,3 +31,12 @@ Feature: Tests that click ads and verify telemetry
         Then The user should be allowed to search on the new tab
         Then The user clicks on an ad
         And The browser reports correct telemetry for the urlbar_handoff adclick event
+
+    @smoke
+    Scenario: Telemetry reports correctly for background adclick search events
+        Given Firefox is launched enrolled in an Experiment
+        Then Firefox should be allowed to open a new tab
+        And The tab should open successfully
+        Then The user should be allowed to perform a background search in the new tab
+        Then The user clicks on an ad
+        And The browser reports correct telemetry for the unknown search event
