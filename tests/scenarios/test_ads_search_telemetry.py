@@ -97,6 +97,8 @@ def perform_background_search(selenium):
         ActionChains(selenium).key_down(Keys.ALT).key_down(Keys.SHIFT).key_down(
             Keys.ENTER
         ).perform()
+    WebDriverWait(selenium, 60).until(EC.number_of_windows_to_be(4))
+    selenium.switch_to.window(selenium.window_handles[-1])
 
 
 @then("The page is refreshed")
