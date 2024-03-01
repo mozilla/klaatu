@@ -85,7 +85,7 @@ def search_on_new_tab(selenium):
     search_box.click()
     with selenium.context(selenium.CONTEXT_CHROME):
         el = selenium.find_element(By.CSS_SELECTOR, "#urlbar-input")
-        el.send_keys("Apple iphone")
+        el.send_keys("buy stocks")
         el.send_keys(Keys.ENTER)
 
 
@@ -93,7 +93,7 @@ def search_on_new_tab(selenium):
 def perform_background_search(selenium):
     with selenium.context(selenium.CONTEXT_CHROME):
         el = selenium.find_element(By.CSS_SELECTOR, "#urlbar-input")
-        el.send_keys("Apple iphone")
+        el.send_keys("buy stocks")
         ActionChains(selenium).key_down(Keys.ALT).key_down(Keys.SHIFT).key_down(
             Keys.ENTER
         ).perform()
