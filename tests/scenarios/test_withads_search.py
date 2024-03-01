@@ -13,11 +13,6 @@ from selenium.webdriver.support.wait import WebDriverWait
 scenarios("../features/withads_search.feature")
 
 
-@given("The user searches for something that is likely to return ads")
-def search_using_url_bar_to_return_ads(navigate_using_url_bar):
-    navigate_using_url_bar(text="buy stocks")
-
-
 @given("The user searches for something in the search bar that will return ads")
 def search_using_search_bar_to_return_ads(selenium):
     pref_list_locator = (By.CSS_SELECTOR, "#prefs tr td span")
@@ -88,14 +83,6 @@ def refresh_page_and_close_browser(selenium):
     selenium.refresh()
     time.sleep(15)  # wait a little to not cause a race condition
     selenium.quit()
-
-
-@then("The user clicks on an ad")
-def click_on_an_add(selenium):
-    current_url = selenium.current_url
-    ads = selenium.find_elements(By.CSS_SELECTOR, "#center_col a")
-    ads[0].click()
-    WebDriverWait(selenium, 60).until(EC.url_changes(current_url))
 
 
 @then("The page loads")
