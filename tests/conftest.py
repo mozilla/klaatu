@@ -372,3 +372,16 @@ def check_new_tab(selenium):
 def _selenium(selenium):
     selenium.implicitly_wait(5)
     return selenium
+
+
+@given("The user searches for something that is likely to return ads")
+def search_using_url_bar_to_return_ads(navigate_using_url_bar):
+    navigate_using_url_bar(text="buy stocks")
+
+
+@then("The user clicks on an ad")
+def click_on_an_add(selenium):
+    current_url = selenium.current_url
+    ads = selenium.find_elements(By.CSS_SELECTOR, "#center_col a")
+    ads[0].click()
+    WebDriverWait(selenium, 60).until(EC.url_changes(current_url))
