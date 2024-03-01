@@ -7,3 +7,10 @@ Feature: Tests that click ads and verify telemetry
         And The user searches for something that is likely to return ads
         Then The user clicks on an ad
         And The browser reports correct telemetry for the urlbar adclick event
+
+    @smoke
+    Scenario: Telemetry reports correctly for search bar adclick search events
+        Given Firefox is launched enrolled in an Experiment
+        And The user searches for something in the search bar that will return ads
+        Then The user clicks on an ad
+        And The browser reports correct telemetry for the searchbar adclick event
