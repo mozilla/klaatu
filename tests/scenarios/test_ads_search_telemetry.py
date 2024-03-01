@@ -107,14 +107,6 @@ def refresh_page(selenium):
     selenium.refresh()
 
 
-@then("The page is refreshed and the browser is closed")
-def refresh_page_and_close_browser(selenium):
-    # Need to close the browser to get the main ping to send
-    selenium.refresh()
-    time.sleep(15)  # wait a little to not cause a race condition
-    selenium.quit()
-
-
 @then("The browser is closed")
 def close_browser(selenium):
     time.sleep(15)  # wait a little to not cause a race condition
