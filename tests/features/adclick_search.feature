@@ -21,3 +21,13 @@ Feature: Tests that click ads and verify telemetry
         And The user highlights some text and wants to search for it via the context menu
         Then The user clicks on an ad
         And The browser reports correct telemetry for the contextmenu adclick event
+
+
+    @smoke
+    Scenario: Telemetry reports correctly for new tab adclick search events
+        Given Firefox is launched enrolled in an Experiment
+        Then Firefox should be allowed to open a new tab
+        And The tab should open successfully
+        Then The user should be allowed to search on the new tab
+        Then The user clicks on an ad
+        And The browser reports correct telemetry for the urlbar_handoff adclick event
