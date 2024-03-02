@@ -122,4 +122,3 @@ def wait_for_ad_click_page_to_load(selenium):
 def go_back_one_page(selenium):
     selenium.back()
     time.sleep(10)  # wait some time after going back so the event can register
-    selenium.quit()

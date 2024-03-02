@@ -50,3 +50,16 @@ Feature: Tests that click ads and verify telemetry
         And The user clicks on an ad
         Then The browser is closed
         And The browser reports correct telemetry for the reload adclick event
+
+
+    @smoke
+    Scenario: Telemetry reports correctly for page history adclick search events
+        Given Firefox is launched enrolled in an Experiment
+        And The user searches for something that is likely to return ads
+        Then The browser reports correct telemetry for the urlbar search event
+        Then The user clicks on an ad
+        And The page loads
+        Then The user goes back to the search page
+        Then The user clicks on an ad
+        And The browser is closed
+        Then The browser reports correct telemetry for the tabhistory adclick event
