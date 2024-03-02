@@ -52,4 +52,5 @@ Feature: Search tests that return ads to verify telemetry
         Then The user clicks on an ad
         And The page loads
         Then The user goes back to the search page
+        Then The browser is closed
         And The browser reports correct telemetry for the tabhistory search event
