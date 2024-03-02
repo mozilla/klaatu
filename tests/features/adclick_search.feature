@@ -39,4 +39,14 @@ Feature: Tests that click ads and verify telemetry
         And The tab should open successfully
         Then The user should be allowed to perform a background search in the new tab
         Then The user clicks on an ad
-        And The browser reports correct telemetry for the unknown search event
+        And The browser reports correct telemetry for the unknown adclick event
+
+    @smoke
+    Scenario: Telemetry reports correctly for reloaded page adclick search events
+        Given Firefox is launched enrolled in an Experiment
+        And The user searches for something that is likely to return ads
+        Then The browser reports correct telemetry for the urlbar search event
+        Then The page is refreshed
+        And The user clicks on an ad
+        Then The browser is closed
+        And The browser reports correct telemetry for the reload adclick event

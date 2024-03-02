@@ -102,9 +102,13 @@ def perform_background_search(selenium):
 
 
 @then("The page is refreshed")
-def refresh_page_and_close_browser(selenium):
+def refresh_page(selenium):
     # Need to close the browser to get the main ping to send
     selenium.refresh()
+
+
+@then("The browser is closed")
+def close_browser(selenium):
     time.sleep(15)  # wait a little to not cause a race condition
     selenium.quit()
 

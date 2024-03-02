@@ -40,7 +40,8 @@ Feature: Search tests that return ads to verify telemetry
         Given Firefox is launched enrolled in an Experiment
         And The user searches for something that is likely to return ads
         Then The browser reports correct telemetry for the urlbar search event
-        Then The page is refreshed
+        Then The page is refreshed 
+        And The browser is closed
         And The browser reports correct telemetry for the reload search event
 
     @smoke
