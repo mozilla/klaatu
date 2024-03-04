@@ -5,6 +5,7 @@ Feature: Generic Telemetry event tests
     Scenario: Report correct telemetry for organic searches
         Given Firefox is launched enrolled in an Experiment
         Then The user searches for something on Google
-        And The user clicks on an ad
-        Then The browser reports correct provider telemetry for the adclick organic event
         And The browser reports correct provider telemetry for the withads organic event
+        Then The user clicks on an ad
+        And The browser is closed
+        Then The browser reports correct provider telemetry for the adclick organic event
