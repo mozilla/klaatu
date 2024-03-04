@@ -10,7 +10,11 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
-scenarios("../features/withads_search.feature", "../features/adclick_search.feature")
+scenarios(
+    "../features/withads_search.feature",
+    "../features/adclick_search.feature",
+    "../features/generic_telemetry.feature",
+)
 
 
 @given("The user searches for something in the search bar that will return ads")
@@ -63,6 +67,24 @@ def check_telemetry_for_with_ads_search(find_ads_search_telemetry, search):
 def check_telemetry_for_ad_click_search(find_ads_search_telemetry, search):
     assert find_ads_search_telemetry(
         f"browser.search.adclicks.{search}", ping_data={"google:tagged": 1}
+    )
+
+
+@then(
+    parsers.parse("The browser reports correct provider telemetry for the adclick {tag:w} event")
+)
+def check_telemetry_for_ad_click_provider_search(find_ads_search_telemetry, tag):
+    assert find_ads_search_telemetry(
+        "browser.search.adclicks.unknown", ping_data={f"google:{tag}": 1}
+    )
+
+
+@then(
+    parsers.parse("The browser reports correct provider telemetry for the withads {tag:w} event")
+)
+def check_telemetry_for_with_ads_provider_search(find_ads_search_telemetry, tag):
+    assert find_ads_search_telemetry(
+        "browser.search.withads.unknown", ping_data={f"google:{tag}": 1}
     )
 
 
@@ -122,3 +144,12 @@ def wait_for_ad_click_page_to_load(selenium):
 def go_back_one_page(selenium):
     selenium.back()
     time.sleep(10)  # wait some time after going back so the event can register
+
+
+@then("The user searches for something on Google")
+def load_and_search_on_google(selenium):
+    url = "http://www.google.com"
+    selenium.get(url)
+    text_box = selenium.find_element(By.CSS_SELECTOR, "form textarea")
+    text_box.send_keys("buy stocks", Keys.ENTER)
+    WebDriverWait(selenium, 60).until(EC.url_changes(url))
