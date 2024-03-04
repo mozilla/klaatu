@@ -331,7 +331,7 @@ def fixture_find_ads_search_telemetry(selenium):
     def _(ping, ping_data=None):
         stored_events = []
         control = True
-        timeout = time.time() + 60 * 5
+        timeout = time.time() + 60 * 2
 
         while control and time.time() < timeout:
             telemetry = requests.get(f"{PING_SERVER}/pings").json()
