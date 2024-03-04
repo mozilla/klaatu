@@ -74,16 +74,18 @@ def check_telemetry_for_ad_click_search(find_ads_search_telemetry, search):
     parsers.parse("The browser reports correct provider telemetry for the adclick {tag:w} event")
 )
 def check_telemetry_for_ad_click_provider_search(find_ads_search_telemetry, tag):
-    provider = f"google:{tag}"
-    assert find_ads_search_telemetry(f"browser.search.adclicks.unknown", ping_data={provider: 1})
+    assert find_ads_search_telemetry(
+        "browser.search.adclicks.unknown", ping_data={f"google:{tag}": 1}
+    )
 
 
 @then(
     parsers.parse("The browser reports correct provider telemetry for the withads {tag:w} event")
 )
 def check_telemetry_for_with_ads_provider_search(find_ads_search_telemetry, tag):
-    provider = f"google:{tag}"
-    assert find_ads_search_telemetry(f"browser.search.withads.unknown", ping_data={provider: 1})
+    assert find_ads_search_telemetry(
+        "browser.search.withads.unknown", ping_data={f"google:{tag}": 1}
+    )
 
 
 @given("The user searches for something that is likely to return ads")
