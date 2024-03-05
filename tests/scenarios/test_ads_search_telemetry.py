@@ -88,6 +88,17 @@ def check_telemetry_for_with_ads_provider_search(find_ads_search_telemetry, tag)
     )
 
 
+@then(
+    parsers.parse(
+        "The browser reports correct provider telemetry for the withads {scalar:w} tagged follow on event"  # noqa
+    )
+)
+def check_telemetry_for_tagged_follow_on_search(find_ads_search_telemetry, scalar):
+    assert find_ads_search_telemetry(
+        f"browser.search.withads.{scalar}", ping_data={"google:tagged-follow-on": 1}
+    )
+
+
 @then("The user searches for something that is likely to return ads")
 def search_using_url_bar_to_return_ads(navigate_using_url_bar):
     navigate_using_url_bar(text="buy stocks")
@@ -153,3 +164,9 @@ def load_and_search_on_google(selenium):
     text_box = selenium.find_element(By.CSS_SELECTOR, "form textarea")
     text_box.send_keys("buy stocks", Keys.ENTER)
     WebDriverWait(selenium, 60).until(EC.url_changes(url))
+
+
+@then("The user triggers a follow-on search")
+def trigger_follow_on_search(selenium):
+    url = "https://www.google.com/search?client=firefox-b-1-ab&ei=EI_VALUE&q=cheap%20shoes&oq=cheap%20shoes&gs_l=GS_L_VALUE"  # noqa
+    selenium.get(url)

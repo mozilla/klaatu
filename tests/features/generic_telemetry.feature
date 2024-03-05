@@ -19,3 +19,12 @@ Feature: Generic Telemetry event tests
         And The browser is closed
         Then The browser reports correct telemetry for the urlbar adclick event
 
+    @smoke
+    Scenario: Report correct telemetry for tagged follow on searches
+        Given Firefox is launched enrolled in an Experiment
+        Then The user loads Google search
+        And The user searches for cheap shoes on Google
+        Then The browser reports correct provider telemetry for the withads organic event
+        Then The user triggers a follow-on search
+        And The browser is closed
+        Then The browser reports correct provider telemetry for the withads unknown tagged follow on event
