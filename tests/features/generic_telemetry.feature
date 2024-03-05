@@ -9,3 +9,13 @@ Feature: Generic Telemetry event tests
         Then The user clicks on an ad
         And The browser is closed
         Then The browser reports correct provider telemetry for the adclick organic event
+
+    @smoke
+    Scenario: Report correct telemetry for tagged searches
+        Given Firefox is launched enrolled in an Experiment
+        Then The user searches for something that is likely to return ads
+        Then The browser reports correct telemetry for the urlbar search event
+        Then The user clicks on an ad
+        And The browser is closed
+        Then The browser reports correct telemetry for the urlbar adclick event
+

@@ -4,7 +4,7 @@
 
 import time
 
-from pytest_bdd import given, parsers, scenarios, then
+from pytest_bdd import parsers, scenarios, then
 from selenium.webdriver import ActionChains, Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -17,7 +17,7 @@ scenarios(
 )
 
 
-@given("The user searches for something in the search bar that will return ads")
+@then("The user searches for something in the search bar that will return ads")
 def search_using_search_bar_to_return_ads(selenium):
     pref_list_locator = (By.CSS_SELECTOR, "#prefs tr td span")
 
@@ -40,7 +40,7 @@ def search_using_search_bar_to_return_ads(selenium):
         search_bar.send_keys(Keys.ENTER)
 
 
-@given("The user highlights some text and wants to search for it via the context menu")
+@then("The user highlights some text and wants to search for it via the context menu")
 def search_using_context_click_menu(selenium, simplehttpserver):
     selenium.get("http://localhost:8000")
     el = selenium.find_element(By.CSS_SELECTOR, "#search-to-return-ads")
@@ -88,7 +88,7 @@ def check_telemetry_for_with_ads_provider_search(find_ads_search_telemetry, tag)
     )
 
 
-@given("The user searches for something that is likely to return ads")
+@then("The user searches for something that is likely to return ads")
 def search_using_url_bar_to_return_ads(navigate_using_url_bar):
     navigate_using_url_bar(text="buy stocks")
 
