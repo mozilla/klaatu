@@ -27,3 +27,12 @@ Feature: Generic Telemetry event tests
         Then The user triggers a follow-on search
         And The browser is closed
         Then The browser reports correct provider telemetry for the withads unknown tagged follow on event
+
+    @smoke
+    Scenario: Report correct telemetry for URI searches
+        Given Firefox is launched enrolled in an Experiment
+        Then The user searches for something in the search bar that will return ads
+        And The browser reports correct telemetry of 1 for the total URI count event
+        Then The user searches for something in the search bar that will return ads
+        And The browser reports correct telemetry of 2 for the total URI count event
+

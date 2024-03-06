@@ -57,35 +57,27 @@ def search_using_context_click_menu(selenium, simplehttpserver):
 
 
 @then(parsers.parse("The browser reports correct telemetry for the {search:w} search event"))
-def check_telemetry_for_with_ads_search(find_ads_search_telemetry, search):
-    assert find_ads_search_telemetry(
-        f"browser.search.withads.{search}", ping_data={"google:tagged": 1}
-    )
+def check_telemetry_for_with_ads_search(find_telemetry, search):
+    assert find_telemetry(f"browser.search.withads.{search}", ping_data={"google:tagged": 1})
 
 
 @then(parsers.parse("The browser reports correct telemetry for the {search:w} adclick event"))
-def check_telemetry_for_ad_click_search(find_ads_search_telemetry, search):
-    assert find_ads_search_telemetry(
-        f"browser.search.adclicks.{search}", ping_data={"google:tagged": 1}
-    )
+def check_telemetry_for_ad_click_search(find_telemetry, search):
+    assert find_telemetry(f"browser.search.adclicks.{search}", ping_data={"google:tagged": 1})
 
 
 @then(
     parsers.parse("The browser reports correct provider telemetry for the adclick {tag:w} event")
 )
-def check_telemetry_for_ad_click_provider_search(find_ads_search_telemetry, tag):
-    assert find_ads_search_telemetry(
-        "browser.search.adclicks.unknown", ping_data={f"google:{tag}": 1}
-    )
+def check_telemetry_for_ad_click_provider_search(find_telemetry, tag):
+    assert find_telemetry("browser.search.adclicks.unknown", ping_data={f"google:{tag}": 1})
 
 
 @then(
     parsers.parse("The browser reports correct provider telemetry for the withads {tag:w} event")
 )
-def check_telemetry_for_with_ads_provider_search(find_ads_search_telemetry, tag):
-    assert find_ads_search_telemetry(
-        "browser.search.withads.unknown", ping_data={f"google:{tag}": 1}
-    )
+def check_telemetry_for_with_ads_provider_search(find_telemetry, tag):
+    assert find_telemetry("browser.search.withads.unknown", ping_data={f"google:{tag}": 1})
 
 
 @then(
@@ -93,9 +85,20 @@ def check_telemetry_for_with_ads_provider_search(find_ads_search_telemetry, tag)
         "The browser reports correct provider telemetry for the withads {scalar:w} tagged follow on event"  # noqa
     )
 )
-def check_telemetry_for_tagged_follow_on_search(find_ads_search_telemetry, scalar):
-    assert find_ads_search_telemetry(
+def check_telemetry_for_tagged_follow_on_search(find_telemetry, scalar):
+    assert find_telemetry(
         f"browser.search.withads.{scalar}", ping_data={"google:tagged-follow-on": 1}
+    )
+
+
+@then(
+    parsers.parse(
+        "The browser reports correct telemetry of {count:d} for the total URI count event"
+    )
+)
+def check_telemetry_for_browser_engagement(find_telemetry, count):
+    assert find_telemetry(
+        "browser.engagement.total_uri_count", ping_data=count, scalar_type="scalars"
     )
 
 

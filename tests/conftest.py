@@ -326,9 +326,9 @@ def fixture_navigate_using_url_bar(selenium, cmd_or_ctrl_button):
     return _navigate_function
 
 
-@pytest.fixture(name="find_ads_search_telemetry")
-def fixture_find_ads_search_telemetry(selenium):
-    def _(ping, ping_data=None):
+@pytest.fixture(name="find_telemetry")
+def fixture_find_telemetry(selenium):
+    def _(ping, ping_data=None, scalar_type="keyedScalars"):
         stored_events = []
         control = True
         timeout = time.time() + 60 * 2
@@ -337,7 +337,7 @@ def fixture_find_ads_search_telemetry(selenium):
             telemetry = requests.get(f"{PING_SERVER}/pings").json()
             for event in telemetry:
                 try:
-                    stored_events.append(event["payload"]["processes"]["parent"]["keyedScalars"])
+                    stored_events.append(event["payload"]["processes"]["parent"][scalar_type])
                 except KeyError:
                     pass
                 else:
