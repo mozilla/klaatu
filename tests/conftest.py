@@ -44,7 +44,7 @@ def pytest_addoption(parser) -> None:
         action="store_true",
         default=None,
         help="Run private browsing test",
-    ),
+    )
 
 
 @pytest.fixture(name="enroll_experiment", autouse=True)
