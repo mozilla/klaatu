@@ -93,7 +93,7 @@ jobs:
     machine:
       image: ubuntu-2204:2024.01.1
     environment:
-      FIREFOX_VERSION: 
+      FIREFOX_VERSION: ""
     steps:
       - checkout
       - run: 
