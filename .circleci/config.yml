@@ -135,4 +135,4 @@ workflows:
             - test-beta
       - test-nightly
       - test-release-firefox
-      test-beta
+      - test-beta
