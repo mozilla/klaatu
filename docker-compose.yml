@@ -5,7 +5,7 @@ services:
     build:
       dockerfile: Dockerfile.desktop
       args: 
-        FIREFOX_VERSION: ${FIREFOX_VERSION:--nightly}
+        FIREFOX_VERSION: ${FIREFOX_VERSION:-}
     volumes:
       - ./test_experiments:/code/test_experiments
       - ./tests:/code/tests
