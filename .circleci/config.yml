@@ -63,7 +63,6 @@ jobs:
       - run:
           name: Run tests
           command: |
-            set -ex
             docker compose up -d
             docker compose run klaatu tox -e bdd-tests -- --reruns 2 --experiment-branch control --variables tests/fixtures/test_experiment.json --run-update-test --private-browsing-enabled
       - store_artifacts:
@@ -85,7 +84,6 @@ jobs:
       - run:
           name: Run tests
           command: |
-            set -ex
             docker compose up -d
             docker compose run klaatu tox -e bdd-tests -- --reruns 2 --experiment-branch control --variables tests/fixtures/test_experiment.json --run-update-test --private-browsing-enabled
       - store_artifacts:
@@ -105,7 +103,6 @@ jobs:
       - run: 
           name: Run tests
           command: |
-            set -ex
             docker compose up -d
             docker compose run klaatu tox -e bdd-tests -- --reruns 2 --experiment-branch control --variables tests/fixtures/test_experiment.json --private-browsing-enabled
       - store_artifacts:
