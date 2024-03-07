@@ -91,13 +91,13 @@ RUN FIREFOX_OLD_DOWNLOAD_URL=$(python3 utilities/download_old_firefox.py) \
     && rm /tmp/firefox_old.tar.bz2
 
 # Create profile used for update tests
-RUN utilities/firefox-old-nightly/firefox/firefox -no-remote -CreateProfile -headless "klaatu-profile-old-base /code/utilities/klaatu-profile-old-base"
+RUN utilities/firefox-old-nightly/firefox/firefox -CreateProfile -headless "klaatu-profile-old-base /code/utilities/klaatu-profile-old-base"
 
-RUN utilities/firefox-old-nightly-disable-test/firefox/firefox -no-remote -CreateProfile -headless "klaatu-profile-disable-test /code/utilities/klaatu-profile-disable-test"
+RUN utilities/firefox-old-nightly-disable-test/firefox/firefox -CreateProfile -headless "klaatu-profile-disable-test /code/utilities/klaatu-profile-disable-test"
 
-RUN firefox -no-remote -CreateProfile -headless "klaatu-profile-firefox-base /code/utilities/klaatu-profile-firefox-base"
+RUN firefox -CreateProfile -headless "klaatu-profile-firefox-base /code/utilities/klaatu-profile-firefox-base"
 
-RUN firefox -no-remote -CreateProfile -headless "klaatu-profile-current-base /code/utilities/klaatu-profile-current-base"
+RUN firefox -CreateProfile -headless "klaatu-profile-current-base /code/utilities/klaatu-profile-current-base"
 
 # Copy prefs needed for test
 RUN cp utilities/user.js utilities/klaatu-profile-old-base
