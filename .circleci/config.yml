@@ -54,7 +54,24 @@ jobs:
       - checkout
       - run:
           name: Build docker image
-          command: docker build -t klaatu:latest -f Dockerfile.desktop .
+          command: docker build -t klaatu:firefox-nightly -f Dockerfile.desktop --build-arg="FIREFOX_VERSION=-nightly" .
+      - run:
+          name: Run tests
+          command: |
+            set -ex
+            docker compose up -d
+            docker compose run klaatu tox -e bdd-tests -- --reruns 2 --experiment-branch control --variables tests/fixtures/test_experiment.json --run-update-test --private-browsing-enabled
+      - store_artifacts:
+          path: tests/report.html
+  test-beta:
+    working_directory: ~/klaatu
+    machine:
+      image: ubuntu-2204:2024.01.1
+    steps:
+      - checkout
+      - run:
+          name: Build docker image
+          command: docker build -t klaatu:firefox-beta -f Dockerfile.desktop --build-arg="FIREFOX_VERSION=-beta".
       - run:
           name: Run tests
           command: |
@@ -71,7 +88,7 @@ jobs:
       - checkout
       - run: 
           name: Build docker image
-          command: docker build -t klaatu:latest -f Dockerfile.desktop .
+          command: docker build -t klaatu:firefox-release -f Dockerfile.desktop .
       - run: 
           name: Run tests
           command: |
@@ -101,6 +118,7 @@ workflows:
       - lint
       - test-nightly
       - test-release-firefox
+      - test-beta
   weekly-test-and-build:
     triggers:
       - schedule:
@@ -114,5 +132,7 @@ workflows:
           requires:
             - test-nightly
             - test-release-firefox
+            - test-beta
       - test-nightly
       - test-release-firefox
+      test-beta

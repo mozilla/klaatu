@@ -8,15 +8,16 @@ USER root
 
 ARG RESOLUTION="1920x1080x24"
 ARG XARGS=""
+ARG FIREFOX_VERSION=""
 
 # Set env
 ENV DEBIAN_FRONTEND=noninteractive \
     LC_ALL=C.UTF-8 \
     LANG=C.UTF-8 \
-    FIREFOX_VERSION=123.0 \
+    FIREFOX_VERSION_NUM=123.0 \
     GECKODRIVER_VERSION=0.34.0 \
     XVFB_RES="${RESOLUTION}" \
-    XVFB_ARGS="${XARGS}" 
+    XVFB_ARGS="${XARGS}"
 
 # Install requirements to install tools
 RUN dependencies=' \
@@ -55,16 +56,23 @@ COPY . /code
 
 WORKDIR /code
 
-# Install Firefox and Geckodriver
-RUN INSTALLER_DOWNLOAD_URL=https://raw.githubusercontent.com/hackebrot/install-firefox/master/install-firefox.sh \
-    && curl $INSTALLER_DOWNLOAD_URL -sSf | sh -s -- --firefox $FIREFOX_VERSION --geckodriver $GECKODRIVER_VERSION
-
-# Update to firefox nightly
-ARG FIREFOX_DOWNLOAD_URL=https://download.mozilla.org/?product=firefox-nightly-latest-ssl&lang=en-US&os=linux64
+# Download Firefox
+ARG FIREFOX_DOWNLOAD_URL=https://download.mozilla.org/?product=firefox${FIREFOX_VERSION}-latest-ssl&lang=en-US&os=linux64
 RUN wget --no-verbose -O /tmp/firefox.tar.bz2 $FIREFOX_DOWNLOAD_URL \
-    && mkdir utilities/firefox-nightly \
-    && tar -C utilities/firefox-nightly -xjf /tmp/firefox.tar.bz2 \
-    && rm /tmp/firefox.tar.bz2
+    && rm -rf /opt/firefox \
+    && tar -C /opt -xjf /tmp/firefox.tar.bz2 \
+    && rm /tmp/firefox.tar.bz2 \
+    && ln -fs /opt/firefox/firefox /usr/bin/firefox
+
+# @hackebrot
+ARG GECKODRIVER_DOWNLOAD_URL=https://github.com/mozilla/geckodriver/releases/download/v$GECKODRIVER_VERSION/geckodriver-v$GECKODRIVER_VERSION-linux64.tar.gz
+RUN rm -rf /opt/geckodriver \
+    && curl -sSL $GECKODRIVER_DOWNLOAD_URL -o /tmp/geckodriver.tar.gz \
+    && tar -C /opt -zxf /tmp/geckodriver.tar.gz \
+    && rm /tmp/geckodriver.tar.gz \
+    && mv /opt/geckodriver /opt/geckodriver-$GECKODRIVER_VERSION \
+    && chmod 755 /opt/geckodriver-$GECKODRIVER_VERSION \
+    && ln -fs /opt/geckodriver-$GECKODRIVER_VERSION /usr/bin/geckodriver
 
 RUN mv /usr/bin/geckodriver /usr/bin/geckodriver2 \
     && mv ./utilities/geckodriver /usr/bin/geckodriver \
@@ -88,9 +96,7 @@ RUN utilities/firefox-old-nightly/firefox/firefox -no-remote -CreateProfile -hea
 
 RUN utilities/firefox-old-nightly-disable-test/firefox/firefox -no-remote -CreateProfile -headless "klaatu-profile-disable-test /code/utilities/klaatu-profile-disable-test"
 
-RUN utilities/firefox-nightly/firefox/firefox -no-remote -CreateProfile -headless "klaatu-profile-nightly-firefox /code/utilities/klaatu-profile-nightly-firefox"
-
-RUN firefox -no-remote -CreateProfile -headless "klaatu-profile-release-firefox-base /code/utilities/klaatu-profile-release-firefox-base"
+RUN firefox -no-remote -CreateProfile -headless "klaatu-profile-firefox-base /code/utilities/klaatu-profile-firefox-base"
 
 RUN firefox -no-remote -CreateProfile -headless "klaatu-profile-current-base /code/utilities/klaatu-profile-current-base"
 
@@ -101,7 +107,7 @@ RUN cp utilities/user.js utilities/klaatu-profile-current-base
 
 RUN cp utilities/user.js utilities/klaatu-profile-disable-test
 
-RUN cp utilities/user.js utilities/klaatu-profile-release-firefox-base
+RUN cp utilities/user.js utilities/klaatu-profile-firefox-base
 
 RUN sed -i 's/\r$//' xvfb-startup.sh
 

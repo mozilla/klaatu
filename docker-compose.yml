@@ -4,6 +4,8 @@ services:
   klaatu:
     build:
       dockerfile: Dockerfile.desktop
+      args: 
+        FIREFOX_VERSION: ${FIREFOX_VERSION:--nightly}
     volumes:
       - ./test_experiments:/code/test_experiments
       - ./tests:/code/tests

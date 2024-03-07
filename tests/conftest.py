@@ -3,7 +3,6 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import json
-import os
 import shutil
 import sys
 import time
@@ -41,17 +40,11 @@ def pytest_addoption(parser) -> None:
         help="Run older version of firefox",
     ),
     parser.addoption(
-        "--run-firefox-release",
-        action="store_true",
-        default=None,
-        help="Run older version of firefox",
-    ),
-    parser.addoption(
         "--private-browsing-enabled",
         action="store_true",
         default=None,
-        help="Run older version of firefox",
-    )
+        help="Run private browsing test",
+    ),
 
 
 @pytest.fixture(name="enroll_experiment", autouse=True)
@@ -102,19 +95,12 @@ def setup_profile(pytestconfig: typing.Any, request: typing.Any) -> typing.Any:
     if request.node.get_closest_marker("reuse_profile") and not request.config.getoption(
         "--run-update-test"
     ):
-        if request.config.getoption("--run-firefox-release"):
-            shutil.copytree(
-                Path("utilities/klaatu-profile-release-firefox-base").absolute(),
-                Path("utilities/klaatu-profile-release-firefox").absolute(),
-                dirs_exist_ok=True,
-            )
-            return f'{os.path.abspath("utilities/klaatu-profile-release-firefox")}'
         shutil.copytree(
+            Path("utilities/klaatu-profile-firefox-base").absolute(),
             Path("utilities/klaatu-profile-current-base").absolute(),
-            Path("utilities/klaatu-profile-current-nightly").absolute(),
             dirs_exist_ok=True,
         )
-        return f'{Path("utilities/klaatu-profile-current-nightly").absolute()}'
+        return f'{Path("utilities/klaatu-profile-current-base").absolute()}'
 
 
 @pytest.fixture
@@ -136,11 +122,6 @@ def firefox_options(
             firefox_options.add_argument(
                 f'{Path("utilities/klaatu-profile-disable-test").absolute()}'
             )
-        else:
-            binary = Path(
-                "utilities/klaatu-profile-nightly-firefox/firefox/firefox-bin"
-            ).absolute()
-        firefox_options.binary = f"{binary}"
         firefox_options.add_argument("-profile")
         firefox_options.add_argument(setup_profile)
     if request.node.get_closest_marker("reuse_profile") and not request.config.getoption(
