@@ -56,6 +56,9 @@ jobs:
           name: Build docker image
           command: docker build -t klaatu:firefox-nightly -f Dockerfile.desktop --build-arg="FIREFOX_VERSION=-nightly" .
       - run:
+          name: Print firefox version
+          command: docker compose run -it klaatu bash -c "firefox --version"
+      - run:
           name: Run tests
           command: |
             set -ex
@@ -73,6 +76,9 @@ jobs:
           name: Build docker image
           command: docker build -t klaatu:firefox-beta -f Dockerfile.desktop --build-arg="FIREFOX_VERSION=-beta" .
       - run:
+          name: Print firefox version
+          command: docker compose run -it klaatu bash -c "firefox --version"      
+      - run:
           name: Run tests
           command: |
             set -ex
@@ -89,6 +95,9 @@ jobs:
       - run: 
           name: Build docker image
           command: docker build -t klaatu:firefox-release -f Dockerfile.desktop .
+      - run:
+          name: Print firefox version
+          command: docker compose run -it klaatu bash -c "firefox --version"
       - run: 
           name: Run tests
           command: |
