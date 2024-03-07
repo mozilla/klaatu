@@ -71,7 +71,7 @@ jobs:
       - checkout
       - run:
           name: Build docker image
-          command: docker build -t klaatu:firefox-beta -f Dockerfile.desktop --build-arg="FIREFOX_VERSION=-beta".
+          command: docker build -t klaatu:firefox-beta -f Dockerfile.desktop --build-arg="FIREFOX_VERSION=-beta" .
       - run:
           name: Run tests
           command: |
