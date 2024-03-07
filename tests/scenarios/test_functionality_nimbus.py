@@ -76,8 +76,8 @@ def install_acholi_language_pack(selenium, request):
     language_search_locator = (By.CSS_SELECTOR, ".in-menulist menuitem label")
     menu_list_locator = (By.CSS_SELECTOR, ".languages-grid #availableLocales .in-menulist")
 
-    if not request.config.getoption("--run-firefox-release"):
-        pytest.skip("needs --run-firefox-release option to run")
+    if not request.config.getoption("--run-update-test"):
+        pytest.skip("needs --run-update-test option to run")
         return
 
     # install language pack

@@ -50,11 +50,13 @@ jobs:
     working_directory: ~/klaatu
     machine:
       image: ubuntu-2204:2024.01.1
+    environment:
+      FIREFOX_VERSION: -nightly
     steps:
       - checkout
       - run:
           name: Build docker image
-          command: docker build -t klaatu:firefox-nightly -f Dockerfile.desktop --build-arg="FIREFOX_VERSION=-nightly" .
+          command: docker compose up -d --build
       - run:
           name: Print firefox version
           command: docker compose run -it klaatu bash -c "firefox --version"
@@ -70,11 +72,13 @@ jobs:
     working_directory: ~/klaatu
     machine:
       image: ubuntu-2204:2024.01.1
+    environment:
+      FIREFOX_VERSION: -beta
     steps:
       - checkout
       - run:
           name: Build docker image
-          command: docker build -t klaatu:firefox-beta -f Dockerfile.desktop --build-arg="FIREFOX_VERSION=-beta" .
+          command: docker compose up -d --build
       - run:
           name: Print firefox version
           command: docker compose run -it klaatu bash -c "firefox --version"      
@@ -94,7 +98,7 @@ jobs:
       - checkout
       - run: 
           name: Build docker image
-          command: docker build -t klaatu:firefox-release -f Dockerfile.desktop .
+          command: docker compose up -d --build
       - run:
           name: Print firefox version
           command: docker compose run -it klaatu bash -c "firefox --version"
