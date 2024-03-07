@@ -125,9 +125,9 @@ workflows:
              branches:
                ignore: /.*/
       - lint
-      - test-nightly-firefox
       - test-release-firefox
       - test-beta-firefox
+      - test-nightly-firefox
   weekly-test-and-build:
     triggers:
       - schedule:
@@ -139,9 +139,9 @@ workflows:
     jobs:
       - build-deploy:
           requires:
-            - test-nightly-firefox
             - test-release-firefox
             - test-beta-firefox
-      - test-nightly-firefox
+            - test-nightly-firefox
       - test-release-firefox
       - test-beta-firefox
+      - test-nightly-firefox
