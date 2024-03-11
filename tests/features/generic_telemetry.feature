@@ -36,3 +36,11 @@ Feature: Generic Telemetry event tests
         Then The user searches for something in the search bar that will return ads
         And The browser reports correct telemetry of 2 for the total URI count event
 
+    @smoke
+    Scenario: Report correct telemetry for URI normal and private searches
+        Given Firefox is launched enrolled in an Experiment
+        Then The user searches for something in the search bar that will return ads
+        And The browser reports correct telemetry of 1 for the total URI count event
+        Then The user searches for something in the search bar that will return ads
+        And The browser reports correct telemetry of 2 for the total URI count event
+

@@ -173,6 +173,7 @@ def firefox_options(
     firefox_options.set_preference("allowServerURLOverride", True)
     firefox_options.set_preference("browser.aboutConfig.showWarning", False)
     firefox_options.set_preference("browser.newtabpage.enabled", True)
+    firefox_options.set_preference("privacy.query_stripping.enabled", False)
     yield firefox_options
 
     # Delete old pings
@@ -230,7 +231,7 @@ def trigger_experiment_loader(selenium):
 def fixture_check_ping_for_experiment(trigger_experiment_loader):
     def _check_ping_for_experiment(experiment=None):
         control = True
-        timeout = time.time() + 60 * 5
+        timeout = time.time() + 60 * 2
         while control and time.time() < timeout:
             data = requests.get(f"{PING_SERVER}/pings").json()
             try:
@@ -312,7 +313,7 @@ def fixture_find_telemetry(selenium):
     def _(ping, ping_data=None, scalar_type="keyedScalars"):
         stored_events = []
         control = True
-        timeout = time.time() + 60 * 2
+        timeout = time.time() + 60 * 5
 
         while control and time.time() < timeout:
             telemetry = requests.get(f"{PING_SERVER}/pings").json()

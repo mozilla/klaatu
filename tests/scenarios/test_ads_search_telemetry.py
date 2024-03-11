@@ -2,9 +2,13 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+import base64
+import json
+import logging
 import time
 
 from pytest_bdd import parsers, scenarios, then
+import requests
 from selenium.webdriver import ActionChains, Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -62,7 +66,7 @@ def check_telemetry_for_with_ads_search(find_telemetry, search):
 
 
 @then(parsers.parse("The browser reports correct telemetry for the {search:w} adclick event"))
-def check_telemetry_for_ad_click_search(find_telemetry, search):
+def check_telemetry_for_ad_click_search(find_telemetry, search, selenium):
     assert find_telemetry(f"browser.search.adclicks.{search}", ping_data={"google:tagged": 1})
 
 
@@ -71,7 +75,6 @@ def check_telemetry_for_ad_click_search(find_telemetry, search):
 )
 def check_telemetry_for_ad_click_provider_search(find_telemetry, tag):
     assert find_telemetry("browser.search.adclicks.unknown", ping_data={f"google:{tag}": 1})
-
 
 @then(
     parsers.parse("The browser reports correct provider telemetry for the withads {tag:w} event")
@@ -110,9 +113,11 @@ def search_using_url_bar_to_return_ads(navigate_using_url_bar):
 @then("The user clicks on an ad")
 def click_on_an_ad(selenium):
     current_url = selenium.current_url
+    time.sleep(30)
     ads = selenium.find_elements(By.CSS_SELECTOR, "#tads a")
     ads[0].click()
     WebDriverWait(selenium, 5).until(EC.url_changes(current_url))
+    logging.info(f"Ad URL: {selenium.current_url}")
 
 
 @then("The user should be allowed to search on the new tab")
@@ -145,7 +150,15 @@ def refresh_page(selenium):
 
 @then("The browser is closed")
 def close_browser(selenium):
-    time.sleep(15)  # wait a little to not cause a race condition
+    time.sleep(30)  # wait a little to not cause a race condition
+    # selenium.get("about:telemetry")
+    # selenium.find_element(By.CSS_SELECTOR, "#category-raw").click()
+    # time.sleep(5)
+    # selenium.switch_to.window(selenium.window_handles[1])
+    # url = selenium.current_url
+    # _json = base64.urlsafe_b64decode(url)
+    # _json = json.loads(_json)
+    # logging.info(_json)
     selenium.quit()
 
 
