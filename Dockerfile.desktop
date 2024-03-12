@@ -2,6 +2,12 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+FROM ubuntu:mantic as moz-central
+
+RUN apt-get -qq update && apt-get -qq install -y git
+
+RUN git clone https://github.com/mozilla/gecko-dev.git --depth 1
+
 FROM ubuntu:mantic
 
 USER root
@@ -107,6 +113,10 @@ RUN cp utilities/user.js utilities/klaatu-profile-current-base
 RUN cp utilities/user.js utilities/klaatu-profile-disable-test
 
 RUN cp utilities/user.js utilities/klaatu-profile-firefox-base
+
+COPY --from=moz-central gecko-dev/browser/components/search/test/browser/telemetry/ /code/search_files/
+
+RUN mv search_server/* search_files/
 
 RUN sed -i 's/\r$//' xvfb-startup.sh
 

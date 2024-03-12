@@ -3,6 +3,8 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import json
+import logging
+import os
 import shutil
 import sys
 import time
@@ -302,6 +304,7 @@ def fixture_navigate_using_url_bar(selenium, cmd_or_ctrl_button):
             EC.any_of(
                 EC.presence_of_element_located((By.CSS_SELECTOR, ".loaded")),
                 EC.title_contains(text),
+                EC.url_contains("localhost:8888"), # MozSearch server
             )
         )
 
@@ -310,26 +313,83 @@ def fixture_navigate_using_url_bar(selenium, cmd_or_ctrl_button):
 
 @pytest.fixture(name="find_telemetry")
 def fixture_find_telemetry(selenium):
-    def _(ping, ping_data=None, scalar_type="keyedScalars"):
-        stored_events = []
+    def _(ping, scalar=None, value=None, scalar_type="keyedScalars"):
         control = True
-        timeout = time.time() + 60 * 5
+        timeout = time.time() + 60
 
         while control and time.time() < timeout:
-            telemetry = requests.get(f"{PING_SERVER}/pings").json()
-            for event in telemetry:
-                try:
-                    stored_events.append(event["payload"]["processes"]["parent"][scalar_type])
-                except KeyError:
-                    pass
-                else:
-                    continue
-            for item in stored_events:
-                data = item.get(ping)
-                if data is not None and ping_data == data:
+            match scalar_type:
+                case "keyedScalars":
+                    script = """
+                        return Services.telemetry.getSnapshotForKeyedScalars()
+                    """
+                    with selenium.context(selenium.CONTEXT_CHROME):
+                        telemetry = selenium.execute_script(script)
+                    try:
+                        for item, val in telemetry["parent"].get(ping).items():
+                            if scalar == item and value == val:
+                                logging.info(f"Parent Pings {telemetry['parent']}\n")
+                                return True
+                    except (TypeError, AttributeError):
+                        continue
+                case "scalars":
+                    script = """
+                            return Services.telemetry.getSnapshotForScalars()
+                        """
+                    with selenium.context(selenium.CONTEXT_CHROME):
+                        telemetry = selenium.execute_script(script)
+                    assert telemetry["parent"].get(ping) == value
+                    logging.info(f"Parent Pings {telemetry['parent']}\n")
                     return True
+                case _:
+                    pytest.raises("Incorrect Scalar type")
+            time.sleep(1)
         else:
             return False
+
+    return _
+
+
+@pytest.fixture(name="search_server", autouse=True, scope="session")
+def fixture_search_server():
+    from subprocess import PIPE, Popen
+
+    os.chdir("search_files")
+    process = Popen(
+        ["python", "search_server.py"], stdout=PIPE, encoding="utf-8", universal_newlines=True
+    )
+    os.chdir("..")
+
+    yield "https://localhost:8888"
+
+    os.chdir("search_files")
+    process.terminate()
+
+
+@pytest.fixture(name="setup_search_test")
+def fixture_setup_search_test(selenium):
+    def _():
+        test_data = """
+        const lazy = {};
+        ChromeUtils.defineESModuleGetters(lazy, {
+            SearchSERPTelemetry: "resource:///modules/SearchSERPTelemetry.sys.mjs",
+        });
+        let testProvider = [
+            {
+                telemetryId: "klaatu",
+                searchPageRegexp:
+                /^https:\/\/localhost\/?/,
+                queryParamNames: ["s"],
+                codeParamName: "abc",
+                taggedCodes: ["ff"],
+                followOnParamNames: ["a"],
+                extraAdServersRegexps: [/^https:\/\/example\.com\/ad2?/],
+            },
+        ];
+        lazy.SearchSERPTelemetry.overrideSearchTelemetryForTests(testProvider);
+        """
+        with selenium.context(selenium.CONTEXT_CHROME):
+            selenium.execute_script(test_data)
 
     return _
 
@@ -351,6 +411,21 @@ def check_new_tab(selenium):
 
 
 @given("Firefox is launched enrolled in an Experiment", target_fixture="selenium")
-def _selenium(selenium):
+def selenium(selenium):
     selenium.implicitly_wait(5)
+    return selenium
+
+
+@given(
+    "Firefox is launched enrolled in an Experiment with custom search", target_fixture="selenium"
+)
+def selenium(selenium, setup_search_test):
+    selenium.implicitly_wait(5)
+    path = os.path.abspath("tests/fixtures/search_addon")
+    selenium.install_addon(path, temporary=True)
+    with selenium.context(selenium.CONTEXT_CHROME):
+        root = selenium.find_element(By.CSS_SELECTOR, "#addon-webext-defaultsearch-notification")
+        root.find_element(By.CSS_SELECTOR, ".popup-notification-primary-button").click()
+    setup_search_test()
+    logging.info("Custom search enabled\n")
     return selenium
