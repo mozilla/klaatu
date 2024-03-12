@@ -1,0 +1,22 @@
+{
+  "manifest_version": 2,
+  "name": "MozSearch search engine",
+  "description": "Adds a search engine",
+  "version": "1.0",
+  "browser_specific_settings": {
+    "gecko": {
+      "strict_min_version": "55.0"
+    }
+  },
+  "chrome_settings_overrides": {
+    "search_provider": {
+      "name": "MozSearch",
+      "search_url": "https://localhost:8888/searchTelemetryAd.html",
+      "search_url_get_params": "s={searchTerms}&abc=ff",
+      "suggest_url": "https://localhost:8888/searchSuggestionEngine.sjs",
+      "suggest_url_get_params": "query={searchTerms}",
+      "is_default": true,
+      "encoding": "UTF-8"
+    }
+  }
+}
