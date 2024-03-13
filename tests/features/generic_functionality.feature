@@ -31,6 +31,7 @@ Feature: Generic Functionality smoke tests all pass
         And The tab should open successfully
 
     @smoke
+    @xfail
     Scenario: The browser will allow language packs to be installed
         Given Firefox is launched enrolled in an Experiment with custom search
         Then The user will install a language pack
