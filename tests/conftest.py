@@ -304,7 +304,7 @@ def fixture_navigate_using_url_bar(selenium, cmd_or_ctrl_button):
             EC.any_of(
                 EC.presence_of_element_located((By.CSS_SELECTOR, ".loaded")),
                 EC.title_contains(text),
-                EC.url_contains("localhost:8888"),  # MozSearch server
+                EC.url_contains("localhost"),  # MozSearch/test website server
             )
         )
 

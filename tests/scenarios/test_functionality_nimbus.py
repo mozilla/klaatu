@@ -47,7 +47,7 @@ def copy_and_paste_string_to_url_bar(
     ).send_keys("c").key_up(cmd_or_ctrl_button).perform()
     navigate_using_url_bar(use_clipboard=True)
 
-    WebDriverWait(selenium, 60).until(EC.title_contains(el.text))
+    WebDriverWait(selenium, 60).until(EC.url_contains(el.text))
 
 
 @pytest.mark.firefox_preferences({"remote.prefs.recommended", False})
