@@ -17,7 +17,7 @@ scenarios("../features/generic_functionality.feature")
 @given("Firefox has loaded a webpage")
 def load_test_webpage(navigate_using_url_bar, selenium, static_server):
     navigate_using_url_bar(static_server)
-    assert "localhost" in selenium.current_url
+    assert static_server in selenium.current_url
 
 
 @then("Firefox should still accept a URL into the search bar")
