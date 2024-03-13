@@ -202,12 +202,6 @@ def firefox_startup_time(firefox: typing.Any) -> typing.Any:
 
 
 @pytest.fixture
-def selenium(pytestconfig: typing.Any, selenium: typing.Any, variables: dict) -> typing.Any:
-    """Setup Selenium"""
-    return selenium
-
-
-@pytest.fixture
 def trigger_experiment_loader(selenium):
     def _trigger_experiment_loader():
         with selenium.context(selenium.CONTEXT_CHROME):
@@ -304,7 +298,7 @@ def fixture_navigate_using_url_bar(selenium, cmd_or_ctrl_button):
             EC.any_of(
                 EC.presence_of_element_located((By.CSS_SELECTOR, ".loaded")),
                 EC.title_contains(text),
-                EC.url_contains("localhost:8888"), # MozSearch server
+                EC.url_contains("localhost:8888"),  # MozSearch server
             )
         )
 
@@ -419,7 +413,7 @@ def selenium(selenium):
 @given(
     "Firefox is launched enrolled in an Experiment with custom search", target_fixture="selenium"
 )
-def selenium(selenium, setup_search_test):
+def _selenium(selenium, setup_search_test):
     selenium.implicitly_wait(5)
     path = os.path.abspath("tests/fixtures/search_addon")
     selenium.install_addon(path, temporary=True)
@@ -428,4 +422,4 @@ def selenium(selenium, setup_search_test):
         root.find_element(By.CSS_SELECTOR, ".popup-notification-primary-button").click()
     setup_search_test()
     logging.info("Custom search enabled\n")
-    return selenium
+    return _selenium

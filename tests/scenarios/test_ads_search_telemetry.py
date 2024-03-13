@@ -2,12 +2,9 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-import base64
-import json
 import logging
 import time
 
-import requests
 from pytest_bdd import parsers, scenarios, then
 from selenium.webdriver import ActionChains, Keys
 from selenium.webdriver.common.by import By
@@ -156,17 +153,8 @@ def go_back_one_page(selenium):
     WebDriverWait(selenium, 30).until(EC.url_changes(url))
 
 
-@then("The user searches for something on Google")
-def load_and_search_on_google(selenium):
-    url = "http://www.google.com"
-    selenium.get(url)
-    text_box = selenium.find_element(By.CSS_SELECTOR, "form textarea")
-    text_box.send_keys("buy stocks", Keys.ENTER)
-    WebDriverWait(selenium, 60).until(EC.url_changes(url))
-
-
 @then("The user searches for something")
-def load_and_search_on_google(selenium, search_server, setup_search_test):
+def load_and_search_on_mozsearch(selenium, search_server):
     url = f"{search_server}/searchTelemetryAd.html?s=test"
     selenium.get(url)
 
