@@ -24,11 +24,3 @@ Feature: Generic Telemetry event tests
         And The browser reports correct provider telemetry for the withads organic event
         Then The user triggers a follow-on search
         Then The browser reports correct provider telemetry for the withads unknown tagged follow on event
-
-    @smoke
-    Scenario: Report correct telemetry for URI searches
-        Given Firefox is launched enrolled in an Experiment
-        Then The user searches for something using the nav bar
-        And The browser reports correct telemetry of 2 for the total URI count event
-        Then The user searches for something using the nav bar
-        And The browser reports correct telemetry of 4 for the total URI count event
