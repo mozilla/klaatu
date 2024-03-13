@@ -9,6 +9,7 @@ services:
     volumes:
       - ./test_experiments:/code/test_experiments
       - ./tests:/code/tests
+    working_dir: /code
     links:
       - ping-server
       - static-server

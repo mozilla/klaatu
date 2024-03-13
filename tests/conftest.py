@@ -329,6 +329,7 @@ def fixture_find_telemetry(selenium):
                     """
                     with selenium.context(selenium.CONTEXT_CHROME):
                         telemetry = selenium.execute_script(script)
+                    logging.info(f"Parent Pings {telemetry['parent']}\n")
                     try:
                         for item, val in telemetry["parent"].get(ping).items():
                             if scalar == item and value == val:
