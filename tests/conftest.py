@@ -233,7 +233,7 @@ def trigger_experiment_loader(selenium):
 def fixture_check_ping_for_experiment(trigger_experiment_loader):
     def _check_ping_for_experiment(experiment=None):
         control = True
-        timeout = time.time() + 60 * 2
+        timeout = time.time() + 60
         while control and time.time() < timeout:
             data = requests.get(f"{PING_SERVER}/pings").json()
             try:
@@ -257,24 +257,27 @@ def fixture_check_ping_for_experiment(trigger_experiment_loader):
 
 
 @pytest.fixture(name="telemetry_event_check")
-def fixture_telemetry_event_check(trigger_experiment_loader):
+def fixture_telemetry_event_check(trigger_experiment_loader, selenium):
     def _telemetry_event_check(experiment=None, event=None):
-        telemetry = requests.get(f"{PING_SERVER}/pings").json()
-        events = [
-            event["payload"]["events"]["parent"]
-            for event in telemetry
-            if "events" in event["payload"] and "parent" in event["payload"]["events"]
-        ]
+        fetch_events = """
+            return Services.telemetry.snapshotEvents(Ci.nsITelemetry.DATASET_ALL_CHANNELS);
+        """
 
-        try:
-            for _event in events:
-                for item in _event:
+        with selenium.context(selenium.CONTEXT_CHROME):
+            telemetry = selenium.execute_script(fetch_events)
+            logging.info(f"Event pings: {telemetry}\n")
+            control = True
+            timeout = time.time() + 60
+
+            while control and time.time() < timeout:
+                for item in telemetry.get("parent"):
                     if (experiment and event) in item:
                         return True
-            raise AssertionError
-        except (AssertionError, TypeError):
-            trigger_experiment_loader()
-            return False
+                else:
+                    trigger_experiment_loader()
+                    continue
+            else:
+                return False
 
     return _telemetry_event_check
 
@@ -304,7 +307,8 @@ def fixture_navigate_using_url_bar(selenium, cmd_or_ctrl_button):
             EC.any_of(
                 EC.presence_of_element_located((By.CSS_SELECTOR, ".loaded")),
                 EC.title_contains(text),
-                EC.url_contains("localhost"),  # MozSearch/test website server
+                EC.url_contains("localhost"),  # test website server
+                EC.url_contains("static-server"),  # MozSearch server
             )
         )
 
