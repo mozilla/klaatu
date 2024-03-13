@@ -67,7 +67,7 @@ jobs:
             docker compose run klaatu tox -e bdd-tests -- --reruns 2 --experiment-branch control --variables tests/fixtures/test_experiment.json --run-update-test --private-browsing-enabled
       - run:
           name: Move HTML Report
-          command: docker compose run -it klaatu bash -c "mv report.html tests/"
+          command: docker compose cp klaatu:/code/report.html ./report.html
       - store_artifacts:
           path: tests/report.html
   test-beta-firefox:
@@ -91,7 +91,7 @@ jobs:
             docker compose run klaatu tox -e bdd-tests -- --reruns 2 --experiment-branch control --variables tests/fixtures/test_experiment.json --private-browsing-enabled
       - run:
           name: Move HTML Report
-          command: docker compose run -it klaatu bash -c "mv report.html tests/"
+          command: docker compose cp klaatu:/code/report.html ./report.html
       - store_artifacts:
           path: tests/report.html
   test-release-firefox:
@@ -113,7 +113,7 @@ jobs:
             docker compose run klaatu tox -e bdd-tests -- --reruns 2 --experiment-branch control --variables tests/fixtures/test_experiment.json --private-browsing-enabled
       - run:
           name: Move HTML Report
-          command: docker compose run -it klaatu bash -c "mv report.html tests/"
+          command: docker compose cp klaatu:/code/report.html ./report.html
       - store_artifacts:
           path: tests/report.html
 workflows:

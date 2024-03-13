@@ -349,6 +349,7 @@ def fixture_find_telemetry(selenium):
                     pytest.raises("Incorrect Scalar type")
             time.sleep(1)
         else:
+            logging.info("Ping was not found\n")
             return False
 
     return _

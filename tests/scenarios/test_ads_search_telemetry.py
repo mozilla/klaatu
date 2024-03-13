@@ -63,7 +63,7 @@ def check_telemetry_for_with_ads_search(find_telemetry, search):
 
 
 @then(parsers.parse("The browser reports correct telemetry for the {search:w} adclick event"))
-def check_telemetry_for_ad_click_search(find_telemetry, search, selenium):
+def check_telemetry_for_ad_click_search(find_telemetry, search):
     assert find_telemetry(f"browser.search.adclicks.{search}", scalar="klaatu:tagged", value=1)
 
 
