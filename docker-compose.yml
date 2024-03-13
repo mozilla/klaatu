@@ -11,7 +11,16 @@ services:
       - ./tests:/code/tests
     links:
       - ping-server
+      - static-server
   ping-server:
     build: ping_server/
     ports:
       - "5000:5000"
+  static-server:
+    image: python:3.11.3-alpine
+    volumes:
+      - ./tests/fixtures/:/code/fixtures
+    working_dir: /code/fixtures
+    command: python -m http.server -d ./ 8000
+    ports:
+      - "8000:8000"

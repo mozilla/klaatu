@@ -42,8 +42,8 @@ def search_using_search_bar_to_return_ads(selenium):
 
 
 @then("The user highlights some text and wants to search for it via the context menu")
-def search_using_context_click_menu(selenium, simplehttpserver):
-    selenium.get("http://localhost:8000")
+def search_using_context_click_menu(selenium, static_server):
+    selenium.get(static_server)
     el = selenium.find_element(By.CSS_SELECTOR, "#search-to-return-ads")
 
     ActionChains(selenium).move_to_element(el).pause(1).double_click(el).pause(1).context_click(

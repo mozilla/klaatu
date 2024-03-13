@@ -394,6 +394,13 @@ def fixture_setup_search_test(selenium):
     return _
 
 
+@pytest.fixture(name="static_server")
+def fixture_static_server():
+    if os.environ.get("DEBIAN_FRONTEND"):
+        return "http://static-server:8000"
+    return "http://localhost:8000"
+
+
 @then("Firefox should be allowed to open a new tab")
 def open_a_new_tab(selenium):
     with selenium.context(selenium.CONTEXT_CHROME):
