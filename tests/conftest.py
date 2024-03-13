@@ -202,6 +202,12 @@ def firefox_startup_time(firefox: typing.Any) -> typing.Any:
 
 
 @pytest.fixture
+def selenium(selenium: typing.Any) -> typing.Any:
+    """Setup Selenium"""
+    return selenium
+
+
+@pytest.fixture
 def trigger_experiment_loader(selenium):
     def _trigger_experiment_loader():
         with selenium.context(selenium.CONTEXT_CHROME):
@@ -404,16 +410,10 @@ def check_new_tab(selenium):
     assert "about:newtab" in selenium.current_url
 
 
-@given("Firefox is launched enrolled in an Experiment", target_fixture="selenium")
-def selenium(selenium):
-    selenium.implicitly_wait(5)
-    return selenium
-
-
 @given(
     "Firefox is launched enrolled in an Experiment with custom search", target_fixture="selenium"
 )
-def _selenium(selenium, setup_search_test):
+def setup_browser(selenium, setup_search_test):
     selenium.implicitly_wait(5)
     path = os.path.abspath("tests/fixtures/search_addon")
     selenium.install_addon(path, temporary=True)
@@ -422,4 +422,4 @@ def _selenium(selenium, setup_search_test):
         root.find_element(By.CSS_SELECTOR, ".popup-notification-primary-button").click()
     setup_search_test()
     logging.info("Custom search enabled\n")
-    return _selenium
+    return selenium
