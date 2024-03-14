@@ -58,7 +58,8 @@ def search_using_context_click_menu(selenium, static_server, find_telemetry):
 
 
 @then("The user highlights some text and wants to search for it via the contextmenu")
-def search_using_context_click_menu(selenium, static_server, find_telemetry):
+def search_using_context_click_menu_full(selenium, static_server, find_telemetry):
+    """We need to make this a full test in one to avoid server errors."""
     selenium.get(static_server)
     el = selenium.find_element(By.CSS_SELECTOR, "#search-to-return-ads")
 

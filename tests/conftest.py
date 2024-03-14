@@ -191,15 +191,6 @@ def firefox_options(
         shutil.rmtree(setup_profile)
 
 
-# @pytest.fixture(name="move_html_report", autouse=True, scope="session")
-# def fixture_move_html_report():
-#     yield
-#     out = subprocess.check_output(
-#         "mv report.html tests", encoding="utf8", shell=True, stderr=subprocess.STDOUT
-#     )
-#     logging.info(out)
-
-
 @pytest.fixture
 def firefox_startup_time(firefox: typing.Any) -> typing.Any:
     """Startup with no extension installed"""
