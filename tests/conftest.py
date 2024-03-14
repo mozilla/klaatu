@@ -437,3 +437,10 @@ def setup_browser(selenium, setup_search_test):
     setup_search_test()
     logging.info("Custom search enabled\n")
     return selenium
+
+
+@then("The browser opens a private window")
+def open_private_browsing_window(selenium, firefox):
+    browser = firefox.browser.open_window(private=True)
+    assert browser.is_private
+    logging.info("Opened Private window\n")
