@@ -121,15 +121,24 @@ def check_telemetry_for_tagged_follow_on_search(find_telemetry, scalar):
 
 @then(
     parsers.parse(
-        "The browser reports correct telemetry of {count:d} for the total URI count event"
+        "The browser reports correct telemetry of {count:d} for the total URI count event on {window:w} windows"  # noqa
     )
 )
-def check_telemetry_for_browser_engagement(find_telemetry, count):
-    assert find_telemetry("browser.engagement.total_uri_count", value=count, scalar_type="scalars")
+def check_telemetry_for_browser_engagement(find_telemetry, count, window):
+    if window == "normal":
+        assert find_telemetry(
+            "browser.engagement.total_uri_count", value=count, scalar_type="scalars"
+        )
+    else:
+        assert find_telemetry(
+            "browser.engagement.total_uri_count_normal_and_private_mode",
+            value=count,
+            scalar_type="scalars",
+        )
 
 
 @then("The user searches for something using the nav bar")
-def search_using_url_bar_to_return_ads(navigate_using_url_bar, selenium, setup_search_test):
+def search_using_url_bar_to_return_ads(navigate_using_url_bar, selenium):
     navigate_using_url_bar(text="stocks")
     logging.info(f"{selenium.current_url}\n")
 

@@ -26,7 +26,14 @@ Feature: Generic Telemetry event tests
         Then The browser reports correct provider telemetry for the withads unknown tagged follow on event
 
     @smoke
-    Scenario: Report correct telemetry for URI events
+    Scenario: Report correct telemetry for URI events on normal windows
         Given Firefox is launched enrolled in an Experiment with custom search
         Then The user searches for something
-        Then The browser reports correct telemetry of 1 for the total URI count event
+        Then The browser reports correct telemetry of 1 for the total URI count event on normal windows
+
+    @smoke
+    Scenario: Report correct telemetry for URI events on private windows
+        Given Firefox is launched enrolled in an Experiment with custom search
+        Then The browser opens a private window
+        Then The user searches for something using the nav bar
+        Then The browser reports correct telemetry of 1 for the total URI count event on private windows
