@@ -81,7 +81,7 @@ jobs:
           command: docker compose up -d --build
       - run:
           name: Print firefox version
-          command: docker compose run -it klaatu bash -c "firefox --version"     
+          command: docker compose run -it klaatu bash -c "firefox --version"  
       - run:
           name: Run tests
           command: |

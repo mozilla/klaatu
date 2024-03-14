@@ -72,7 +72,7 @@ RUN wget --no-verbose -O /tmp/firefox.tar.bz2 $FIREFOX_DOWNLOAD_URL \
 # @hackebrot
 ARG GECKODRIVER_DOWNLOAD_URL=https://github.com/mozilla/geckodriver/releases/download/v$GECKODRIVER_VERSION/geckodriver-v$GECKODRIVER_VERSION-linux64.tar.gz
 RUN rm -rf /opt/geckodriver \
-    && curl -sSL $GECKODRIVER_DOWNLOAD_URL -o /tmp/geckodriver.tar.gz \
+    && wget --no-verbose -O /tmp/geckodriver.tar.gz $GECKODRIVER_DOWNLOAD_URL \
     && tar -C /opt -zxf /tmp/geckodriver.tar.gz \
     && rm /tmp/geckodriver.tar.gz \
     && mv /opt/geckodriver /opt/geckodriver-$GECKODRIVER_VERSION \
