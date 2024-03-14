@@ -58,7 +58,7 @@ def search_using_context_click_menu(selenium, static_server, find_telemetry):
         WebDriverWait(selenium, 60).until(EC.number_of_windows_to_be(current_windows + 1))
         try:
             assert find_telemetry(
-                f"browser.search.withads.contextmenu", scalar="klaatu:tagged", value=1
+                "browser.search.withads.contextmenu", scalar="klaatu:tagged", value=1
             )
         except AssertionError:
             continue

@@ -191,7 +191,7 @@ def firefox_options(
         shutil.rmtree(setup_profile)
 
 
-@pytest.fixture(name="move_html_report", autouse=True)
+@pytest.fixture(name="move_html_report", autouse=True, scope="session")
 def fixture_move_html_report():
     yield
     out = subprocess.check_output(
