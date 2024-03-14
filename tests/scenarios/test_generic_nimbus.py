@@ -50,3 +50,9 @@ def opt_out_via_about_preferences(selenium, variables):
     )
     check_box = selenium.find_element(By.CSS_SELECTOR, "#optOutStudiesEnabled")
     check_box.click()
+
+
+@then("The browser opens a private window")
+def open_private_browsing_window(selenium, firefox):
+    browser = firefox.browser.open_window(private=True)
+    assert browser.is_private
