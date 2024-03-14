@@ -20,8 +20,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
-PING_SERVER = "http://ping-server:5000"
-
 
 def pytest_addoption(parser) -> None:
     parser.addoption(
@@ -112,6 +110,7 @@ def firefox_options(
     pytestconfig: typing.Any,
     firefox_options: typing.Any,
     request: typing.Any,
+    ping_server,
 ) -> typing.Any:
     """Setup Firefox"""
     firefox_options.log.level = "trace"
@@ -135,7 +134,7 @@ def firefox_options(
     firefox_options.set_preference("extensions.install.requireBuiltInCerts", False)
     firefox_options.log.level = "trace"
     firefox_options.set_preference("browser.cache.disk.smart_size.enabled", False)
-    firefox_options.set_preference("toolkit.telemetry.server", f"{PING_SERVER}")
+    firefox_options.set_preference("toolkit.telemetry.server", f"{ping_server}")
     firefox_options.set_preference("telemetry.fog.test.localhost_port", -1)
     firefox_options.set_preference("toolkit.telemetry.initDelay", 1)
     firefox_options.set_preference("ui.popup.disable_autohide", True)
@@ -180,7 +179,7 @@ def firefox_options(
     yield firefox_options
 
     # Delete old pings
-    requests.delete(f"{PING_SERVER}/pings")
+    requests.delete(f"{ping_server}/pings")
 
     # Remove old profile
     if (
@@ -231,12 +230,12 @@ def trigger_experiment_loader(selenium):
 
 
 @pytest.fixture(name="check_ping_for_experiment")
-def fixture_check_ping_for_experiment(trigger_experiment_loader):
+def fixture_check_ping_for_experiment(trigger_experiment_loader, ping_server):
     def _check_ping_for_experiment(experiment=None):
         control = True
         timeout = time.time() + 60
         while control and time.time() < timeout:
-            data = requests.get(f"{PING_SERVER}/pings").json()
+            data = requests.get(f"{ping_server}/pings").json()
             try:
                 experiments_data = [
                     item["environment"]["experiments"]
@@ -406,6 +405,13 @@ def fixture_static_server():
     if os.environ.get("DEBIAN_FRONTEND"):
         return "http://static-server:8000"
     return "http://localhost:8000"
+
+
+@pytest.fixture(name="ping_server")
+def fixture_ping_server():
+    if os.environ.get("DEBIAN_FRONTEND"):
+        return "http://ping-server:5000"
+    return "http://localhost:5000"
 
 
 @then("Firefox should be allowed to open a new tab")

@@ -37,3 +37,9 @@ Feature: Generic Telemetry event tests
         Then The browser opens a private window
         Then The user searches for something using the nav bar
         Then The browser reports correct telemetry of 1 for the total URI count event on private windows
+
+    @smoke
+    Scenario: Report correct telemetry for subsession information
+        Given Firefox is launched enrolled in an Experiment with custom search
+        Then The user searches for something
+        Then The subsession and subsession length is correctly reported

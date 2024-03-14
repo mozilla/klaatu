@@ -5,6 +5,7 @@
 import logging
 import time
 
+import requests
 from pytest_bdd import parsers, scenarios, then
 from selenium.webdriver import ActionChains, Keys
 from selenium.webdriver.common.by import By
@@ -207,3 +208,10 @@ def click_on_ad_local_search(selenium):
 def trigger_follow_on_search(selenium, search_server):
     url = f"{search_server}/searchTelemetryAd.html?s=test&abc=ff&a=foo"
     selenium.get(url)
+
+
+@then("The subsession and subsession length is correctly reported")
+def check_telemetry_for_subsession_length(ping_server):
+    data = requests.get(f"{ping_server}/pings").json()
+    assert data[0]["payload"]["info"].get("subsessionLength") is not None
+    assert data[0]["payload"]["info"].get("sessionLength") is not None
