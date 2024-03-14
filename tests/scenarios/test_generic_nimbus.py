@@ -32,7 +32,7 @@ def unenroll_via_studies_page(selenium, variables):
 
 @then("the telemetry shows it as being unenrolled")
 def check_telemetry_for_unenrollment(variables, telemetry_event_check):
-    return telemetry_event_check(experiment=f"optin-{variables['slug']}", event="unenroll")
+    assert telemetry_event_check(experiment=f"optin-{variables['slug']}", event="unenroll")
 
 
 @then("The experiment can be unenrolled via opting out of studies")

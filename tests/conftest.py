@@ -3,8 +3,10 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import json
+import logging
 import os
 import shutil
+import subprocess
 import sys
 import time
 import typing
@@ -41,16 +43,10 @@ def pytest_addoption(parser) -> None:
         help="Run older version of firefox",
     ),
     parser.addoption(
-        "--run-firefox-release",
-        action="store_true",
-        default=None,
-        help="Run older version of firefox",
-    ),
-    parser.addoption(
         "--private-browsing-enabled",
         action="store_true",
         default=None,
-        help="Run older version of firefox",
+        help="Run private browsing test",
     )
 
 
@@ -102,19 +98,12 @@ def setup_profile(pytestconfig: typing.Any, request: typing.Any) -> typing.Any:
     if request.node.get_closest_marker("reuse_profile") and not request.config.getoption(
         "--run-update-test"
     ):
-        if request.config.getoption("--run-firefox-release"):
-            shutil.copytree(
-                Path("utilities/klaatu-profile-release-firefox-base").absolute(),
-                Path("utilities/klaatu-profile-release-firefox").absolute(),
-                dirs_exist_ok=True,
-            )
-            return f'{os.path.abspath("utilities/klaatu-profile-release-firefox")}'
         shutil.copytree(
+            Path("utilities/klaatu-profile-firefox-base").absolute(),
             Path("utilities/klaatu-profile-current-base").absolute(),
-            Path("utilities/klaatu-profile-current-nightly").absolute(),
             dirs_exist_ok=True,
         )
-        return f'{Path("utilities/klaatu-profile-current-nightly").absolute()}'
+        return f'{Path("utilities/klaatu-profile-current-base").absolute()}'
 
 
 @pytest.fixture
@@ -136,11 +125,6 @@ def firefox_options(
             firefox_options.add_argument(
                 f'{Path("utilities/klaatu-profile-disable-test").absolute()}'
             )
-        else:
-            binary = Path(
-                "utilities/klaatu-profile-nightly-firefox/firefox/firefox-bin"
-            ).absolute()
-        firefox_options.binary = f"{binary}"
         firefox_options.add_argument("-profile")
         firefox_options.add_argument(setup_profile)
     if request.node.get_closest_marker("reuse_profile") and not request.config.getoption(
@@ -192,6 +176,7 @@ def firefox_options(
     firefox_options.set_preference("allowServerURLOverride", True)
     firefox_options.set_preference("browser.aboutConfig.showWarning", False)
     firefox_options.set_preference("browser.newtabpage.enabled", True)
+    firefox_options.set_preference("privacy.query_stripping.enabled", False)
     yield firefox_options
 
     # Delete old pings
@@ -218,7 +203,7 @@ def firefox_startup_time(firefox: typing.Any) -> typing.Any:
 
 
 @pytest.fixture
-def selenium(pytestconfig: typing.Any, selenium: typing.Any, variables: dict) -> typing.Any:
+def selenium(selenium: typing.Any) -> typing.Any:
     """Setup Selenium"""
     return selenium
 
@@ -249,7 +234,7 @@ def trigger_experiment_loader(selenium):
 def fixture_check_ping_for_experiment(trigger_experiment_loader):
     def _check_ping_for_experiment(experiment=None):
         control = True
-        timeout = time.time() + 60 * 5
+        timeout = time.time() + 60
         while control and time.time() < timeout:
             data = requests.get(f"{PING_SERVER}/pings").json()
             try:
@@ -273,24 +258,27 @@ def fixture_check_ping_for_experiment(trigger_experiment_loader):
 
 
 @pytest.fixture(name="telemetry_event_check")
-def fixture_telemetry_event_check(trigger_experiment_loader):
+def fixture_telemetry_event_check(trigger_experiment_loader, selenium):
     def _telemetry_event_check(experiment=None, event=None):
-        telemetry = requests.get(f"{PING_SERVER}/pings").json()
-        events = [
-            event["payload"]["events"]["parent"]
-            for event in telemetry
-            if "events" in event["payload"] and "parent" in event["payload"]["events"]
-        ]
+        fetch_events = """
+            return Services.telemetry.snapshotEvents(Ci.nsITelemetry.DATASET_ALL_CHANNELS);
+        """
 
-        try:
-            for _event in events:
-                for item in _event:
+        with selenium.context(selenium.CONTEXT_CHROME):
+            telemetry = selenium.execute_script(fetch_events)
+            logging.info(f"Event pings: {telemetry}\n")
+            control = True
+            timeout = time.time() + 30
+
+            while control and time.time() < timeout:
+                for item in telemetry.get("parent"):
                     if (experiment and event) in item:
                         return True
-            raise AssertionError
-        except (AssertionError, TypeError):
-            trigger_experiment_loader()
-            return False
+                else:
+                    trigger_experiment_loader()
+                    continue
+            else:
+                return False
 
     return _telemetry_event_check
 
@@ -320,6 +308,8 @@ def fixture_navigate_using_url_bar(selenium, cmd_or_ctrl_button):
             EC.any_of(
                 EC.presence_of_element_located((By.CSS_SELECTOR, ".loaded")),
                 EC.title_contains(text),
+                EC.url_contains("localhost"),  # test website server
+                EC.url_contains("static-server"),  # MozSearch server
             )
         )
 
@@ -328,28 +318,94 @@ def fixture_navigate_using_url_bar(selenium, cmd_or_ctrl_button):
 
 @pytest.fixture(name="find_telemetry")
 def fixture_find_telemetry(selenium):
-    def _(ping, ping_data=None, scalar_type="keyedScalars"):
-        stored_events = []
+    def _(ping, scalar=None, value=None, scalar_type="keyedScalars"):
         control = True
-        timeout = time.time() + 60 * 2
+        timeout = time.time() + 60
 
         while control and time.time() < timeout:
-            telemetry = requests.get(f"{PING_SERVER}/pings").json()
-            for event in telemetry:
-                try:
-                    stored_events.append(event["payload"]["processes"]["parent"][scalar_type])
-                except KeyError:
-                    pass
-                else:
-                    continue
-            for item in stored_events:
-                data = item.get(ping)
-                if data is not None and ping_data == data:
+            match scalar_type:
+                case "keyedScalars":
+                    script = """
+                        return Services.telemetry.getSnapshotForKeyedScalars()
+                    """
+                    with selenium.context(selenium.CONTEXT_CHROME):
+                        telemetry = selenium.execute_script(script)
+                    try:
+                        for item, val in telemetry["parent"].get(ping).items():
+                            if scalar == item and value == val:
+                                logging.info(f"Parent Pings {telemetry['parent']}\n")
+                                return True
+                    except (TypeError, AttributeError):
+                        continue
+                case "scalars":
+                    script = """
+                            return Services.telemetry.getSnapshotForScalars()
+                        """
+                    with selenium.context(selenium.CONTEXT_CHROME):
+                        telemetry = selenium.execute_script(script)
+                    assert telemetry["parent"].get(ping) == value
+                    logging.info(f"Parent Pings {telemetry['parent']}\n")
                     return True
+                case _:
+                    pytest.raises("Incorrect Scalar type")
+            time.sleep(1)
         else:
+            logging.info("Ping was not found\n")
             return False
 
     return _
+
+
+@pytest.fixture(name="search_server", autouse=True, scope="session")
+def fixture_search_server():
+    os.chdir("search_files")
+    process = subprocess.Popen(
+        ["python", "search_server.py"],
+        stdout=subprocess.PIPE,
+        encoding="utf-8",
+        universal_newlines=True,
+    )
+    os.chdir("..")
+
+    yield "https://localhost:8888"
+
+    os.chdir("search_files")
+    process.terminate()
+
+
+@pytest.fixture(name="setup_search_test")
+def fixture_setup_search_test(selenium):
+    def _():
+        test_data = """
+        const lazy = {};
+        ChromeUtils.defineESModuleGetters(lazy, {
+            SearchSERPTelemetry: "resource:///modules/SearchSERPTelemetry.sys.mjs",
+        });
+        let testProvider = [
+            {
+                telemetryId: "klaatu",
+                searchPageRegexp:
+                /^https:\/\/localhost\/?/,
+                queryParamNames: ["s"],
+                codeParamName: "abc",
+                taggedCodes: ["ff"],
+                followOnParamNames: ["a"],
+                extraAdServersRegexps: [/^https:\/\/example\.com\/ad2?/],
+            },
+        ];
+        lazy.SearchSERPTelemetry.overrideSearchTelemetryForTests(testProvider);
+        """
+        with selenium.context(selenium.CONTEXT_CHROME):
+            selenium.execute_script(test_data)
+
+    return _
+
+
+@pytest.fixture(name="static_server")
+def fixture_static_server():
+    if os.environ.get("DEBIAN_FRONTEND"):
+        return "http://static-server:8000"
+    return "http://localhost:8000"
 
 
 @then("Firefox should be allowed to open a new tab")
@@ -368,7 +424,16 @@ def check_new_tab(selenium):
     assert "about:newtab" in selenium.current_url
 
 
-@given("Firefox is launched enrolled in an Experiment", target_fixture="selenium")
-def _selenium(selenium):
+@given(
+    "Firefox is launched enrolled in an Experiment with custom search", target_fixture="selenium"
+)
+def setup_browser(selenium, setup_search_test):
     selenium.implicitly_wait(5)
+    path = os.path.abspath("tests/fixtures/search_addon")
+    selenium.install_addon(path, temporary=True)
+    with selenium.context(selenium.CONTEXT_CHROME):
+        root = selenium.find_element(By.CSS_SELECTOR, "#addon-webext-defaultsearch-notification")
+        root.find_element(By.CSS_SELECTOR, ".popup-notification-primary-button").click()
+    setup_search_test()
+    logging.info("Custom search enabled\n")
     return selenium

@@ -855,17 +855,6 @@ appium = ["appium-python-client (>=1.0.0)"]
 test = ["black (>=22.1.0)", "flake8 (>=4.0.1)", "pre-commit (>=2.17.0)", "pytest-mock (>=3.6.1)", "pytest-xdist (>=2.4.0)", "tox (>=3.24.5)"]
 
 [[package]]
-name = "pytest-simplehttpserver"
-version = "0.1.2"
-description = "Simple pytest fixture to spin up an HTTP server"
-optional = false
-python-versions = ">=3.5"
-files = [
-    {file = "pytest_simplehttpserver-0.1.2-py3-none-any.whl", hash = "sha256:b6eff57e2d57a64db0269b939a34bdf97dcd6321b418af761ea5f9685fffd61a"},
-    {file = "pytest_simplehttpserver-0.1.2.tar.gz", hash = "sha256:bb749abee8b224a910b87af33d0c815f3b4f350137841c851634c617cc1b0516"},
-]
-
-[[package]]
 name = "pytest-variables"
 version = "3.1.0"
 description = "pytest plugin for providing variables to tests/fixtures"
@@ -1075,4 +1064,4 @@ h11 = ">=0.9.0,<1"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "03a83894ba008ceeee49ef0f7a52df10a6e8b02feb7b4fdb29dd77bf8de1d1af"
+content-hash = "7f253ee0cce43f92e22be02e666cdaa8f7e75441ed1cf7c7e3186d9bc5ef8809"

@@ -4,12 +4,24 @@ services:
   klaatu:
     build:
       dockerfile: Dockerfile.desktop
+      args: 
+        FIREFOX_VERSION: ${FIREFOX_VERSION:-}
     volumes:
       - ./test_experiments:/code/test_experiments
       - ./tests:/code/tests
+    working_dir: /code
     links:
       - ping-server
+      - static-server
   ping-server:
     build: ping_server/
     ports:
       - "5000:5000"
+  static-server:
+    image: python:3.11.3-alpine
+    volumes:
+      - ./tests/fixtures/:/code/fixtures
+    working_dir: /code/fixtures
+    command: python -m http.server -d ./ 8000
+    ports:
+      - "8000:8000"

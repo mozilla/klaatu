@@ -46,21 +46,48 @@ jobs:
           key: klaatu-lint-{{ checksum "poetry.lock" }}
           paths:
             - .tox
-  test-nightly:
+  test-nightly-firefox:
     working_directory: ~/klaatu
     machine:
       image: ubuntu-2204:2024.01.1
+    environment:
+      FIREFOX_VERSION: -nightly
     steps:
       - checkout
       - run:
           name: Build docker image
-          command: docker build -t klaatu:latest -f Dockerfile.desktop .
+          command: docker compose up -d --build
+      - run:
+          name: Print firefox version
+          command: docker compose run -it klaatu bash -c "firefox --version"
       - run:
           name: Run tests
           command: |
-            set -ex
             docker compose up -d
             docker compose run klaatu tox -e bdd-tests -- --reruns 2 --experiment-branch control --variables tests/fixtures/test_experiment.json --run-update-test --private-browsing-enabled
+            echo $?
+      - store_artifacts:
+          path: tests/report.html
+  test-beta-firefox:
+    working_directory: ~/klaatu
+    machine:
+      image: ubuntu-2204:2024.01.1
+    environment:
+      FIREFOX_VERSION: -beta
+    steps:
+      - checkout
+      - run:
+          name: Build docker image
+          command: docker compose up -d --build
+      - run:
+          name: Print firefox version
+          command: docker compose run -it klaatu bash -c "firefox --version"  
+      - run:
+          name: Run tests
+          command: |
+            docker compose up -d
+            docker compose run klaatu tox -e bdd-tests -- --reruns 2 --experiment-branch control --variables tests/fixtures/test_experiment.json --private-browsing-enabled
+            echo $?
       - store_artifacts:
           path: tests/report.html
   test-release-firefox:
@@ -71,13 +98,16 @@ jobs:
       - checkout
       - run: 
           name: Build docker image
-          command: docker build -t klaatu:latest -f Dockerfile.desktop .
+          command: docker compose up -d --build
+      - run:
+          name: Print firefox version
+          command: docker compose run -it klaatu bash -c "firefox --version"
       - run: 
           name: Run tests
           command: |
-            set -ex
             docker compose up -d
-            docker compose run klaatu tox -e bdd-tests -- --reruns 2 --experiment-branch control --variables tests/fixtures/test_experiment.json --run-firefox-release --private-browsing-enabled
+            docker compose run klaatu tox -e bdd-tests -- --reruns 2 --experiment-branch control --variables tests/fixtures/test_experiment.json --private-browsing-enabled
+            echo $?
       - store_artifacts:
           path: tests/report.html
 workflows:
@@ -86,21 +116,22 @@ workflows:
     jobs:
       - build-deploy:
            requires:
-              - test-nightly
+              - test-nightly-firefox
            filters:
              branches:
                only: master
       - build-release:
            requires:
-              - test-nightly
+              - test-nightly-firefox
            filters:
              tags:
                only: /.*/
              branches:
                ignore: /.*/
       - lint
-      - test-nightly
       - test-release-firefox
+      - test-beta-firefox
+      - test-nightly-firefox
   weekly-test-and-build:
     triggers:
       - schedule:
@@ -112,7 +143,9 @@ workflows:
     jobs:
       - build-deploy:
           requires:
-            - test-nightly
             - test-release-firefox
-      - test-nightly
+            - test-beta-firefox
+            - test-nightly-firefox
       - test-release-firefox
+      - test-beta-firefox
+      - test-nightly-firefox

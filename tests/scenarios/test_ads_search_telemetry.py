@@ -2,6 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+import logging
 import time
 
 from pytest_bdd import parsers, scenarios, then
@@ -41,8 +42,8 @@ def search_using_search_bar_to_return_ads(selenium):
 
 
 @then("The user highlights some text and wants to search for it via the context menu")
-def search_using_context_click_menu(selenium, simplehttpserver):
-    selenium.get("http://localhost:8000")
+def search_using_context_click_menu(selenium, static_server, find_telemetry):
+    selenium.get(static_server)
     el = selenium.find_element(By.CSS_SELECTOR, "#search-to-return-ads")
 
     ActionChains(selenium).move_to_element(el).pause(1).double_click(el).pause(1).context_click(
@@ -56,28 +57,55 @@ def search_using_context_click_menu(selenium, simplehttpserver):
     time.sleep(5)
 
 
+@then("The user highlights some text and wants to search for it via the contextmenu")
+def search_using_context_click_menu_full(selenium, static_server, find_telemetry):
+    """We need to make this a full test in one to avoid server errors."""
+    selenium.get(static_server)
+    el = selenium.find_element(By.CSS_SELECTOR, "#search-to-return-ads")
+
+    for _ in range(5):
+        current_windows = len(selenium.window_handles)
+        ActionChains(selenium).move_to_element(el).pause(1).double_click(el).pause(
+            1
+        ).context_click(el).perform()
+        with selenium.context(selenium.CONTEXT_CHROME):
+            menu = selenium.find_element(By.CSS_SELECTOR, "#contentAreaContextMenu")
+            menu.find_element(By.CSS_SELECTOR, "#context-searchselect").click()
+        WebDriverWait(selenium, 60).until(EC.number_of_windows_to_be(current_windows + 1))
+        try:
+            assert find_telemetry(
+                "browser.search.withads.contextmenu", scalar="klaatu:tagged", value=1
+            )
+        except AssertionError:
+            continue
+        else:
+            return True
+    else:
+        assert False
+
+
 @then(parsers.parse("The browser reports correct telemetry for the {search:w} search event"))
 def check_telemetry_for_with_ads_search(find_telemetry, search):
-    assert find_telemetry(f"browser.search.withads.{search}", ping_data={"google:tagged": 1})
+    assert find_telemetry(f"browser.search.withads.{search}", scalar="klaatu:tagged", value=1)
 
 
 @then(parsers.parse("The browser reports correct telemetry for the {search:w} adclick event"))
 def check_telemetry_for_ad_click_search(find_telemetry, search):
-    assert find_telemetry(f"browser.search.adclicks.{search}", ping_data={"google:tagged": 1})
+    assert find_telemetry(f"browser.search.adclicks.{search}", scalar="klaatu:tagged", value=1)
 
 
 @then(
     parsers.parse("The browser reports correct provider telemetry for the adclick {tag:w} event")
 )
 def check_telemetry_for_ad_click_provider_search(find_telemetry, tag):
-    assert find_telemetry("browser.search.adclicks.unknown", ping_data={f"google:{tag}": 1})
+    assert find_telemetry("browser.search.adclicks.unknown", scalar=f"klaatu:{tag}", value=1)
 
 
 @then(
     parsers.parse("The browser reports correct provider telemetry for the withads {tag:w} event")
 )
 def check_telemetry_for_with_ads_provider_search(find_telemetry, tag):
-    assert find_telemetry("browser.search.withads.unknown", ping_data={f"google:{tag}": 1})
+    assert find_telemetry("browser.search.withads.unknown", scalar=f"klaatu:{tag}", value=1)
 
 
 @then(
@@ -87,7 +115,7 @@ def check_telemetry_for_with_ads_provider_search(find_telemetry, tag):
 )
 def check_telemetry_for_tagged_follow_on_search(find_telemetry, scalar):
     assert find_telemetry(
-        f"browser.search.withads.{scalar}", ping_data={"google:tagged-follow-on": 1}
+        f"browser.search.withads.{scalar}", scalar="klaatu:tagged-follow-on", value=1
     )
 
 
@@ -97,22 +125,13 @@ def check_telemetry_for_tagged_follow_on_search(find_telemetry, scalar):
     )
 )
 def check_telemetry_for_browser_engagement(find_telemetry, count):
-    assert find_telemetry(
-        "browser.engagement.total_uri_count", ping_data=count, scalar_type="scalars"
-    )
+    assert find_telemetry("browser.engagement.total_uri_count", value=count, scalar_type="scalars")
 
 
-@then("The user searches for something that is likely to return ads")
-def search_using_url_bar_to_return_ads(navigate_using_url_bar):
-    navigate_using_url_bar(text="buy stocks")
-
-
-@then("The user clicks on an ad")
-def click_on_an_ad(selenium):
-    current_url = selenium.current_url
-    ads = selenium.find_elements(By.CSS_SELECTOR, "#tads a")
-    ads[0].click()
-    WebDriverWait(selenium, 5).until(EC.url_changes(current_url))
+@then("The user searches for something using the nav bar")
+def search_using_url_bar_to_return_ads(navigate_using_url_bar, selenium, setup_search_test):
+    navigate_using_url_bar(text="stocks")
+    logging.info(f"{selenium.current_url}\n")
 
 
 @then("The user should be allowed to search on the new tab")
@@ -129,7 +148,7 @@ def search_on_new_tab(selenium):
 def perform_background_search(selenium):
     with selenium.context(selenium.CONTEXT_CHROME):
         el = selenium.find_element(By.CSS_SELECTOR, "#urlbar-input")
-        el.send_keys("buy stocks")
+        el.send_keys("stocks")
         ActionChains(selenium).key_down(Keys.ALT).key_down(Keys.SHIFT).key_down(
             Keys.ENTER
         ).perform()
@@ -139,7 +158,6 @@ def perform_background_search(selenium):
 
 @then("The page is refreshed")
 def refresh_page(selenium):
-    # Need to close the browser to get the main ping to send
     selenium.refresh()
 
 
@@ -156,20 +174,27 @@ def wait_for_ad_click_page_to_load(selenium):
 
 @then("The user goes back to the search page")
 def go_back_one_page(selenium):
+    url = selenium.current_url
     selenium.back()
-    time.sleep(10)  # wait some time after going back so the event can register
+    # wait some time after going back so the event can register
+    WebDriverWait(selenium, 30).until(EC.url_changes(url))
 
 
-@then("The user searches for something on Google")
-def load_and_search_on_google(selenium):
-    url = "http://www.google.com"
+@then("The user searches for something")
+def load_and_search_on_mozsearch(selenium, search_server):
+    url = f"{search_server}/searchTelemetryAd.html?s=test"
     selenium.get(url)
-    text_box = selenium.find_element(By.CSS_SELECTOR, "form textarea")
-    text_box.send_keys("buy stocks", Keys.ENTER)
-    WebDriverWait(selenium, 60).until(EC.url_changes(url))
+
+
+@then("The user clicks on an ad")
+def click_on_ad_local_search(selenium):
+    time.sleep(10)
+    el = selenium.find_element(By.CSS_SELECTOR, "#ad1")
+    el.click()
+    logging.info(f"Ad URL: {selenium.current_url}\n")
 
 
 @then("The user triggers a follow-on search")
-def trigger_follow_on_search(selenium):
-    url = "https://www.google.com/search?client=firefox-b-1-ab&ei=EI_VALUE&q=cheap%20shoes&oq=cheap%20shoes&gs_l=GS_L_VALUE"  # noqa
+def trigger_follow_on_search(selenium, search_server):
+    url = f"{search_server}/searchTelemetryAd.html?s=test&abc=ff&a=foo"
     selenium.get(url)
