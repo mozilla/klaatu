@@ -42,19 +42,30 @@ def search_using_search_bar_to_return_ads(selenium):
 
 
 @then("The user highlights some text and wants to search for it via the context menu")
-def search_using_context_click_menu(selenium, static_server):
+def search_using_context_click_menu(selenium, static_server, find_telemetry):
     selenium.get(static_server)
     el = selenium.find_element(By.CSS_SELECTOR, "#search-to-return-ads")
 
-    ActionChains(selenium).move_to_element(el).pause(1).double_click(el).pause(1).context_click(
-        el
-    ).perform()
-    with selenium.context(selenium.CONTEXT_CHROME):
-        menu = selenium.find_element(By.CSS_SELECTOR, "#contentAreaContextMenu")
-        menu.find_element(By.CSS_SELECTOR, "#context-searchselect").click()
-    WebDriverWait(selenium, 60).until(EC.number_of_windows_to_be(3))
-    selenium.switch_to.window(selenium.window_handles[1])
-    time.sleep(5)
+    for _ in range(5):
+        current_windows = len(selenium.window_handles)
+        logging.info(current_windows)
+        ActionChains(selenium).move_to_element(el).pause(1).double_click(el).pause(
+            1
+        ).context_click(el).perform()
+        with selenium.context(selenium.CONTEXT_CHROME):
+            menu = selenium.find_element(By.CSS_SELECTOR, "#contentAreaContextMenu")
+            menu.find_element(By.CSS_SELECTOR, "#context-searchselect").click()
+        WebDriverWait(selenium, 60).until(EC.number_of_windows_to_be(current_windows + 1))
+        try:
+            assert find_telemetry(
+                f"browser.search.withads.contextmenu", scalar="klaatu:tagged", value=1
+            )
+        except AssertionError:
+            continue
+        else:
+            break
+    else:
+        assert False
 
 
 @then(parsers.parse("The browser reports correct telemetry for the {search:w} search event"))

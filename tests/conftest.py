@@ -6,6 +6,7 @@ import json
 import logging
 import os
 import shutil
+import subprocess
 import sys
 import time
 import typing
@@ -190,6 +191,15 @@ def firefox_options(
         shutil.rmtree(setup_profile)
 
 
+@pytest.fixture(name="move_html_report", autouse=True)
+def fixture_move_html_report():
+    yield
+    out = subprocess.check_output(
+        "mv report.html tests", encoding="utf8", shell=True, stderr=subprocess.STDOUT
+    )
+    logging.info(out)
+
+
 @pytest.fixture
 def firefox_startup_time(firefox: typing.Any) -> typing.Any:
     """Startup with no extension installed"""
@@ -267,7 +277,7 @@ def fixture_telemetry_event_check(trigger_experiment_loader, selenium):
             telemetry = selenium.execute_script(fetch_events)
             logging.info(f"Event pings: {telemetry}\n")
             control = True
-            timeout = time.time() + 60
+            timeout = time.time() + 30
 
             while control and time.time() < timeout:
                 for item in telemetry.get("parent"):
@@ -329,7 +339,6 @@ def fixture_find_telemetry(selenium):
                     """
                     with selenium.context(selenium.CONTEXT_CHROME):
                         telemetry = selenium.execute_script(script)
-                    logging.info(f"Parent Pings {telemetry['parent']}\n")
                     try:
                         for item, val in telemetry["parent"].get(ping).items():
                             if scalar == item and value == val:
@@ -358,11 +367,12 @@ def fixture_find_telemetry(selenium):
 
 @pytest.fixture(name="search_server", autouse=True, scope="session")
 def fixture_search_server():
-    from subprocess import PIPE, Popen
-
     os.chdir("search_files")
-    process = Popen(
-        ["python", "search_server.py"], stdout=PIPE, encoding="utf-8", universal_newlines=True
+    process = subprocess.Popen(
+        ["python", "search_server.py"],
+        stdout=subprocess.PIPE,
+        encoding="utf-8",
+        universal_newlines=True,
     )
     os.chdir("..")
 

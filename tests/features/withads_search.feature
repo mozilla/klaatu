@@ -17,7 +17,6 @@ Feature: Search tests that return ads to verify telemetry
     Scenario: Telemetry reports correctly for context menu search events
         Given Firefox is launched enrolled in an Experiment with custom search
         Then The user highlights some text and wants to search for it via the context menu
-        And The browser reports correct telemetry for the contextmenu search event
 
     @smoke
     Scenario: Telemetry reports correctly for new tab search events
