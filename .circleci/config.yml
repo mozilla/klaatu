@@ -39,7 +39,7 @@ jobs:
             docker version
             docker build -t mozilla/klaatu:firefox-release -f Dockerfile.desktop .
             docker login -u "${DOCKERHUB_USER}" -p "${DOCKERHUB_PASS}"
-            docker push "mozilla/klaatu:firefox-release
+            docker push mozilla/klaatu:firefox-release
   lint:
     docker:
       - image: cimg/python:3.11
