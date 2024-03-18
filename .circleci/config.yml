@@ -11,7 +11,7 @@ jobs:
           name: Build docker image and push to repo
           command: |
             docker version
-            docker build -t klaatu:firefox-nightly --build-arg="FIREFOX_VERSION=-nightly" -f Dockerfile.desktop .
+            docker build -t mozilla/klaatu:firefox-nightly --build-arg="FIREFOX_VERSION=-nightly" -f Dockerfile.desktop .
             docker login -u "${DOCKERHUB_USER}" -p "${DOCKERHUB_PASS}"
             docker push mozilla/klaatu:firefox-nightly
   build-beta: # build for the main branch
@@ -24,7 +24,7 @@ jobs:
           name: Build docker image and push to repo
           command: |
             docker version
-            docker build -t klaatu:firefox-beta --build-arg="FIREFOX_VERSION=-beta" -f Dockerfile.desktop .
+            docker build -t mozilla/klaatu:firefox-beta --build-arg="FIREFOX_VERSION=-beta" -f Dockerfile.desktop .
             docker login -u "${DOCKERHUB_USER}" -p "${DOCKERHUB_PASS}"
             docker push mozilla/klaatu:firefox-beta
   build-release: # build for tags
@@ -37,7 +37,7 @@ jobs:
           name: Build docker image and push to repo
           command: |
             docker version
-            docker build -t klaatu:firefox-release --build-arg="FIREFOX_VERSION=" -f Dockerfile.desktop .
+            docker build -t mozilla/klaatu:firefox-release --build-arg="FIREFOX_VERSION=" -f Dockerfile.desktop .
             docker login -u "${DOCKERHUB_USER}" -p "${DOCKERHUB_PASS}"
             docker push "mozilla/klaatu:firefox-release
   lint:
