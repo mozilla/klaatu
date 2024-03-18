@@ -123,14 +123,12 @@ jobs:
           path: tests/report.html
 workflows:
   version: 2.1
-  test_and_lint:
+  lint_test_release:
     jobs:
       - lint
       - test-release-firefox
       - test-beta-firefox
       - test-nightly-firefox
-  release:
-    jobs:
       - build-nightly:
            requires:
               - lint
@@ -152,7 +150,3 @@ workflows:
            filters:
              branches:
                only: main
-      - lint
-      - test-release-firefox
-      - test-beta-firefox
-      - test-nightly-firefox
