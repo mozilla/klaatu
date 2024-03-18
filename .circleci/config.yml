@@ -1,7 +1,7 @@
 version: 2.1
 
 jobs:
-  build-deploy: # build for the master branch
+  build-nightly: # build for the main branch
     machine:
       image: ubuntu-2204:2024.01.1
     working_directory: ~/klaatu
@@ -11,8 +11,20 @@ jobs:
           name: Build docker image and push to repo
           command: |
             docker version
-            docker build -t klaatu .
-            docker tag klaatu mozilla/klaatu:latest
+            docker build -t klaatu:firefox-nightly --build-arg="FIREFOX_VERSION=-nightly" -f Dockerfile.desktop .
+            docker login -u "${DOCKERHUB_USER}" -p "${DOCKERHUB_PASS}"
+            docker push mozilla/klaatu:latest
+  build-beta: # build for the main branch
+    machine:
+      image: ubuntu-2204:2024.01.1
+    working_directory: ~/klaatu
+    steps:
+      - checkout
+      - run:
+          name: Build docker image and push to repo
+          command: |
+            docker version
+            docker build -t klaatu:firefox-beta --build-arg="FIREFOX_VERSION=-beta" -f Dockerfile.desktop .
             docker login -u "${DOCKERHUB_USER}" -p "${DOCKERHUB_PASS}"
             docker push mozilla/klaatu:latest
   build-release: # build for tags
@@ -25,8 +37,7 @@ jobs:
           name: Build docker image and push to repo
           command: |
             docker version
-            docker build -t klaatu .
-            docker tag klaatu "mozilla/klaatu:${CIRCLE_TAG}"
+            docker build -t klaatu:firefox-release --build-arg="FIREFOX_VERSION=" -f Dockerfile.desktop .
             docker login -u "${DOCKERHUB_USER}" -p "${DOCKERHUB_PASS}"
             docker push "mozilla/klaatu:${CIRCLE_TAG}"
   lint:
@@ -114,38 +125,34 @@ workflows:
   version: 2.1
   test_and_lint:
     jobs:
-      - build-deploy:
-           requires:
-              - test-nightly-firefox
-           filters:
-             branches:
-               only: master
-      - build-release:
-           requires:
-              - test-nightly-firefox
-           filters:
-             tags:
-               only: /.*/
-             branches:
-               ignore: /.*/
       - lint
       - test-release-firefox
       - test-beta-firefox
       - test-nightly-firefox
-  weekly-test-and-build:
-    triggers:
-      - schedule:
-          cron: "0 0 * * 0"
-          filters:
-            branches:
-              only:
-                - master
+  release:
     jobs:
-      - build-deploy:
-          requires:
-            - test-release-firefox
-            - test-beta-firefox
-            - test-nightly-firefox
+      - build-nightly:
+           requires:
+              - lint
+              - test-nightly-firefox
+           filters:
+             branches:
+               only: main
+      - build-beta:
+           requires:
+              - lint
+              - test-beta-firefox
+           filters:
+             branches:
+               only: main
+      - build-release:
+           requires:
+              - lint
+              - test-release-firefox
+           filters:
+             branches:
+               only: main
+      - lint
       - test-release-firefox
       - test-beta-firefox
       - test-nightly-firefox
