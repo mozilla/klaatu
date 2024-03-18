@@ -37,7 +37,7 @@ jobs:
           name: Build docker image and push to repo
           command: |
             docker version
-            docker build -t mozilla/klaatu:firefox-release --build-arg="FIREFOX_VERSION=" -f Dockerfile.desktop .
+            docker build -t mozilla/klaatu:firefox-release -f Dockerfile.desktop .
             docker login -u "${DOCKERHUB_USER}" -p "${DOCKERHUB_PASS}"
             docker push "mozilla/klaatu:firefox-release
   lint:
