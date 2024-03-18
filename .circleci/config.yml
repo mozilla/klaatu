@@ -13,7 +13,7 @@ jobs:
             docker version
             docker build -t klaatu:firefox-nightly --build-arg="FIREFOX_VERSION=-nightly" -f Dockerfile.desktop .
             docker login -u "${DOCKERHUB_USER}" -p "${DOCKERHUB_PASS}"
-            docker push mozilla/klaatu:latest
+            docker push mozilla/klaatu:firefox-nightly
   build-beta: # build for the main branch
     machine:
       image: ubuntu-2204:2024.01.1
@@ -26,7 +26,7 @@ jobs:
             docker version
             docker build -t klaatu:firefox-beta --build-arg="FIREFOX_VERSION=-beta" -f Dockerfile.desktop .
             docker login -u "${DOCKERHUB_USER}" -p "${DOCKERHUB_PASS}"
-            docker push mozilla/klaatu:latest
+            docker push mozilla/klaatu:firefox-beta
   build-release: # build for tags
     machine:
       image: ubuntu-2204:2024.01.1
@@ -39,7 +39,7 @@ jobs:
             docker version
             docker build -t klaatu:firefox-release --build-arg="FIREFOX_VERSION=" -f Dockerfile.desktop .
             docker login -u "${DOCKERHUB_USER}" -p "${DOCKERHUB_PASS}"
-            docker push "mozilla/klaatu:${CIRCLE_TAG}"
+            docker push "mozilla/klaatu:firefox-release
   lint:
     docker:
       - image: cimg/python:3.11
