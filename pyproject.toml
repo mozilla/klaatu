@@ -45,6 +45,7 @@ isort = "^5.13.2"
 flake8 = "^7.0.0"
 beautifulsoup4 = "^4.12.3"
 pytest-repeat = "^0.9.3"
+flask = "^3.0.2"
 
 [build-system]
 requires = ["poetry-core"]
