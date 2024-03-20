@@ -48,6 +48,27 @@ def pytest_addoption(parser) -> None:
     )
 
 
+def start_process(path, command):
+    module_path = Path(path)
+
+    try:
+        process = subprocess.Popen(
+            command,
+            encoding="utf-8",
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            universal_newlines=True,
+            cwd=module_path.absolute(),
+        )
+        stdout, stderr = process.communicate(timeout=5)
+
+        if process.returncode != 0:
+            raise Exception(stderr)
+    except subprocess.TimeoutExpired:
+        logging.info(f"{module_path.name} server started")
+        return process
+
+
 @pytest.fixture(name="enroll_experiment", autouse=True)
 def fixture_enroll_experiment(
     request: typing.Any,
@@ -357,18 +378,8 @@ def fixture_find_telemetry(selenium):
 
 @pytest.fixture(name="search_server", autouse=True, scope="session")
 def fixture_search_server():
-    os.chdir("search_files")
-    process = subprocess.Popen(
-        ["python", "search_server.py"],
-        stdout=subprocess.PIPE,
-        encoding="utf-8",
-        universal_newlines=True,
-    )
-    os.chdir("..")
-
+    process = start_process("search_files", ["python", "search_server.py"])
     yield "https://localhost:8888"
-
-    os.chdir("search_files")
     process.terminate()
 
 
@@ -400,18 +411,26 @@ def fixture_setup_search_test(selenium):
     return _
 
 
-@pytest.fixture(name="static_server")
+@pytest.fixture(name="static_server", autouse=True, scope="session")
 def fixture_static_server():
     if os.environ.get("DEBIAN_FRONTEND"):
-        return "http://static-server:8000"
-    return "http://localhost:8000"
+        yield "http://static-server:8000"
+    else:
+        process = start_process(
+            "tests/fixtures", ["python", "-m", "http.server", "-d", "./", "8000"]
+        )
+        yield "http://localhost:8000"
+        process.terminate()
 
 
-@pytest.fixture(name="ping_server")
+@pytest.fixture(name="ping_server", autouse=True, scope="session")
 def fixture_ping_server():
     if os.environ.get("DEBIAN_FRONTEND"):
-        return "http://ping-server:5000"
-    return "http://localhost:5000"
+        yield "http://ping-server:5000"
+    else:
+        process = start_process("ping_server", ["python", "ping_server.py"])
+        yield "http://localhost:5000"
+        process.terminate()
 
 
 @then("Firefox should be allowed to open a new tab")
