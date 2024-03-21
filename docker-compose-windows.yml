@@ -9,7 +9,7 @@ services:
     devices:
       - /dev/kvm
     volumes:
-      - ~/stuff/klaatu-windows:/storage
+      - ./klaatu-windows-storage:/storage
     cap_add:
       - NET_ADMIN
     ports:
