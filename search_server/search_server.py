@@ -8,8 +8,10 @@ import ssl
 
 httpd = HTTPServer(('localhost', 8888), SimpleHTTPRequestHandler)
 
-httpd.socket = ssl.wrap_socket (httpd.socket, 
-        keyfile='server.key', 
-        certfile='server.cert', server_side=True)
+context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+context.load_cert_chain("server.cert", "server.key")
+
+# Set the SSL context for the server
+httpd.socket = context.wrap_socket(httpd.socket, server_side=True)
 
 httpd.serve_forever()
