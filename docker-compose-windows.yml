@@ -10,6 +10,7 @@ services:
       - /dev/kvm
     volumes:
       - ./klaatu-windows-storage:/storage
+      - .:/storage/shared
     cap_add:
       - NET_ADMIN
     ports:
