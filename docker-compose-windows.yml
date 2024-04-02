@@ -8,9 +8,6 @@ services:
       CPU_CORES: "4"
     devices:
       - /dev/kvm
-    volumes:
-      - ./klaatu-windows-storage:/storage
-      - .:/storage/shared
     cap_add:
       - NET_ADMIN
     ports:
@@ -19,4 +16,3 @@ services:
       - 3389:3389/udp
     stop_grace_period: 2m
     restart: on-failure
-    
