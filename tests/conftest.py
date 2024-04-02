@@ -428,7 +428,7 @@ def fixture_ping_server():
     if os.environ.get("DEBIAN_FRONTEND"):
         yield "http://ping-server:5000"
     else:
-        process = start_process("ping_server", ["python", "ping_server.py"])
+        process = start_process("ping_server", ["poetry", "run", "ping_server.py"])
         yield "http://localhost:5000"
         process.terminate()
 

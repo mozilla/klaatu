@@ -42,13 +42,25 @@ The file `docker-compose-windows.yml` contains a windows docker image. This setu
 
 1. The method of interacting with the docker image is through RDP. I suggest using [XDRP](https://github.com/neutrinolabs/xrdp) for this. If you're on windows but using WSL, you can use the build in RDP client.
 2. Run the docker image `docker compose -f docker-compose-windows.yml up`. This will take some time to finish as it has to download the windows image. You can view this process via `novnc` in the browser at `localhost:8006`
-3. Inside of the windows instance in VNC, navigate to the File Explorer and hit the dropdown on the Network storage location. You might have to enable this option, but you should see a folder named `host.lan`. Open this folder and following `Data` folder. This is where the project repositories files will be hosted.
-4. Right click inside the white space in the folder and select `Open in Terminal`.
-5. Enable script running privilages for powershell: `Set-ExecutionPolicy Bypass`.
-6. Run the `setup-windows.ps1` script.
-7. When it has finished, close powershell and right click on some white space within the Data folder again, this time click `More Options` and then `Open Git Bash here`.
-8. Run the script `setup_script.sh`: `./setup_script.sh`. This will download mozilla-central as we will be using some components from it.
-9. Close the VNC window and connect via RDP using the following address: `localhost:3389`. The user is `docker` and there is no password.
+3. Close the VNC window after the windows desktop is shown and connect via RDP using the following address: `localhost:3389`. The user is `docker` and there is no password.
+4. Open a powershell terminal and execute the following:
+```sh
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+```
+5. Install git:
+```sh
+choco install git
+```
+6. Right click on the desktop and make a folder named `klaatu`.
+7. Open the `klaatu` folder and right click, select `More Options` and then `Open git bash here`.
+8. Clone the klaatu repo: 
+```sh
+git clone https://github.com/mozilla/klaatu.git
+```
+9. Run the `setup_script.sh`: 
+```sh
+./setup_script.sh
+```
 
 You should now be able to run the tests in the git bash shell: `tox -e bdd-tests -- --experiment-branch control --variables tests/fixtures/test_experiment.json`
 
