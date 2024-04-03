@@ -100,9 +100,7 @@ def fixture_get_experiment_json(request):
     else:
         match slug_server:
             case "prod":
-                url = (
-                    f"https://experimenter.services.mozilla.com/api/v6/experiments/{experiment_slug}/"
-                )
+                url = f"https://experimenter.services.mozilla.com/api/v6/experiments/{experiment_slug}/"  # noqa: E501
             case "stage":
                 url = f"https://stage.experimenter.nonprod.dataops.mozgcp.net/api/v6/experiments/{experiment_slug}/"  # noqa: E501
         return requests.get(url).json()
