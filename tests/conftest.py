@@ -57,13 +57,14 @@ def pytest_addoption(parser) -> None:
         "--experiment-server",
         action="store",
         default="prod",
+        choices=("prod", "stage"),
         help="The server where the experiment is located, either stage or prod",
     ),
     parser.addoption(
         "--experiment-json",
         action="store",
         default=None,
-        help="The experiments JSON",
+        help="The experiments JSON file.",
     )
 
 
@@ -97,13 +98,12 @@ def fixture_experiment_json(request):
     if experiment_json:
         with open(experiment_json) as f:
             return json.load(f)
-    else:
-        match slug_server:
-            case "prod":
-                url = f"https://experimenter.services.mozilla.com/api/v6/experiments/{experiment_slug}/"  # noqa: E501
-            case "stage":
-                url = f"https://stage.experimenter.nonprod.dataops.mozgcp.net/api/v6/experiments/{experiment_slug}/"  # noqa: E501
-        return requests.get(url).json()
+    match slug_server:
+        case "prod":
+            url = f"https://experimenter.services.mozilla.com/api/v6/experiments/{experiment_slug}/"  # noqa: E501
+        case "stage":
+            url = f"https://stage.experimenter.nonprod.dataops.mozgcp.net/api/v6/experiments/{experiment_slug}/"  # noqa: E501
+    return requests.get(url).json()
 
 
 @pytest.fixture(name="enroll_experiment", autouse=True)

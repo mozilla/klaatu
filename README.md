@@ -34,7 +34,9 @@ Place this file in the somewhere within the working directory.
 4. Add the branch you want to test with the `--experiment-branch` option. Ex: `--experiment-branch control`
 
 5. Build docker image with command `FIREFOX_VERSION="-nightly" docker compose -f docker-compose.yml up -d --build` in the projects root directory. The `FIREFOX_VERSION` env variable can either be `-nightly` or `-beta`. Leave it blank to build for release: `FIREFOX_VERSION=""`.
-6. Run tests with docker, example: `docker compose run klaatu tox -e bdd-tests -- --experiment-branch={BRANCH YOU WANT TO TEST} --variables={PATH/TO/variables.json}`
+6. Run tests with docker, example: `docker compose run klaatu tox -e bdd-tests -- --experiment-branch={BRANCH YOU WANT TO TEST} --experiment-slug experiment-slug --experiment-server {stage-or-prod}`
+
+If you want to run against a locally stored experiments JSON file, place the file in `tests/fixtures` and pass the path to the `--experiment-json` flag. You can remove the `--experiment-server` and `--experiment-slug` flags when using this method.
 
 ## Running on Windows
 
@@ -62,7 +64,7 @@ git clone https://github.com/mozilla/klaatu.git
 ./setup_script.sh
 ```
 
-You should now be able to run the tests in the git bash shell: `tox -e bdd-tests -- --experiment-branch control --variables tests/fixtures/test_experiment.json`
+You should now be able to run the tests in the git bash shell: `tox -e bdd-tests -- --experiment-branch control --experiment-json tests/fixtures/test_experiment.json` or `tox -e bdd-tests -- --experiment-branch control --experiment-slug experiment-slug-here`
 
 
 ## CLI Options
@@ -70,3 +72,6 @@ You should now be able to run the tests in the git bash shell: `tox -e bdd-tests
 - `--private-browsing-enabled`: If your experiment runs within private browsing windows please include this option.
 - `--run-update-test`: Includes the update test in the test run using Firefox Nightly.
 - `--experiment-branch`: Experiment branch you want to test.
+- `--experiment-slug`: The experiments slug from experimenter to load the experiment into the test.
+- `--experiment-server`: The server where the experiment is located, either `stage` or `prod`.
+- `--experiment-json`: The experiments JSON path on your local system.
