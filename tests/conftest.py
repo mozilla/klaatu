@@ -88,8 +88,8 @@ def start_process(path, command):
         return process
 
 
-@pytest.fixture(name="get_experiment_json", scope="session")
-def fixture_get_experiment_json(request):
+@pytest.fixture(name="experiment_json", scope="session")
+def fixture_experiment_json(request):
     experiment_slug = request.config.getoption("--experiment-slug")
     slug_server = request.config.getoption("--experiment-server")
     experiment_json = request.config.getoption("--experiment-json")
@@ -110,8 +110,8 @@ def fixture_get_experiment_json(request):
 def fixture_enroll_experiment(
     request: typing.Any,
     selenium: typing.Any,
-    check_ping_for_experiment: object,
-    get_experiment_json: object,
+    telemetry_event_check: object,
+    experiment_json: object,
     experiment_slug: str,
 ) -> typing.Any:
     """Fixture to enroll into an experiment"""
@@ -131,13 +131,13 @@ def fixture_enroll_experiment(
 
     try:
         with selenium.context(selenium.CONTEXT_CHROME):
-            selenium.execute_script(script, json.dumps(get_experiment_json), experiment_branch)
+            selenium.execute_script(script, json.dumps(experiment_json), experiment_branch)
     except JavascriptException as e:
         if "slug" in str(e):
             raise (Exception("Experiment slug was not found in the experiment."))
     else:
         assert (
-            check_ping_for_experiment(f"optin-{experiment_slug}") is not None
+            telemetry_event_check(f"optin-{experiment_slug}", event="enroll")
         ), "Experiment not found in telemetry"
         logging.info("Experiment loaded successfully!")
 

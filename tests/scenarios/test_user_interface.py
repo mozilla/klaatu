@@ -67,7 +67,7 @@ def page_loads(selenium):
 
 
 @then("The Experiment should be shown on the about:studies page")
-def studies_page_shows_experiment(selenium, variables):
+def studies_page_shows_experiment(selenium, experiment_json):
     selenium.get("about:studies")
     WebDriverWait(selenium, 60).until(
         EC.visibility_of_element_located((By.CSS_SELECTOR, ".study-name")),
@@ -75,9 +75,9 @@ def studies_page_shows_experiment(selenium, variables):
     )
     items = selenium.find_elements(By.CSS_SELECTOR, ".study-name")
     for item in items:
-        if variables["userFacingName"] in item.text:
+        if experiment_json["userFacingName"] in item.text:
             assert (
-                variables["userFacingDescription"]
+                experiment_json["userFacingDescription"]
                 in selenium.find_element(By.CSS_SELECTOR, ".study-description").text
             )
 
@@ -152,7 +152,7 @@ def start_updated_firefox():
 
 
 @then("The experiment is still enrolled")
-def check_experiment_is_still_enrolled(selenium, variables):
+def check_experiment_is_still_enrolled(selenium, experiment_json):
     selenium.get("about:studies")
     WebDriverWait(selenium, 60).until(
         EC.visibility_of_element_located((By.CSS_SELECTOR, ".study-name")),
@@ -160,9 +160,9 @@ def check_experiment_is_still_enrolled(selenium, variables):
     )
     items = selenium.find_elements(By.CSS_SELECTOR, ".study-name")
     for item in items:
-        if variables["userFacingName"] in item.text:
+        if experiment_json["userFacingName"] in item.text:
             assert (
-                variables["userFacingDescription"]
+                experiment_json["userFacingDescription"]
                 in selenium.find_element(By.CSS_SELECTOR, ".study-description").text
             )
     selenium.quit()

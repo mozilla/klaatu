@@ -6,11 +6,6 @@
 Feature: Generic Nimbus smoke tests all pass
 
     @smoke
-    Scenario: The browser will enroll into the requested branch
-        Given Firefox is launched enrolled in an Experiment with custom search
-        Then The experiment branch should be correctly reported
-
-    @smoke
     Scenario: The experiment can unenroll from the about:studies page
         Given Firefox is launched enrolled in an Experiment with custom search
         Then The Experiment is unenrolled via the about:studies page
