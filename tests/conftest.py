@@ -88,7 +88,7 @@ def start_process(path, command):
         return process
 
 
-@pytest.fixture(name="get_experiment_json")
+@pytest.fixture(name="get_experiment_json", scope="session")
 def fixture_get_experiment_json(request):
     experiment_slug = request.config.getoption("--experiment-slug")
     slug_server = request.config.getoption("--experiment-server")
