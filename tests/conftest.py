@@ -136,8 +136,8 @@ def fixture_enroll_experiment(
         if "slug" in str(e):
             raise (Exception("Experiment slug was not found in the experiment."))
     else:
-        assert (
-            telemetry_event_check(f"optin-{experiment_slug}", event="enroll")
+        assert telemetry_event_check(
+            f"optin-{experiment_slug}", event="enroll"
         ), "Experiment not found in telemetry"
         logging.info("Experiment loaded successfully!")
 
