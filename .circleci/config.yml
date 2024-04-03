@@ -75,7 +75,7 @@ jobs:
           name: Run tests
           command: |
             docker compose up -d
-            docker compose run klaatu tox -e bdd-tests -- --reruns 2 --experiment-branch control --experiment-slug tests/fixtures/test_experiment.json --run-update-test --private-browsing-enabled
+            docker compose run klaatu tox -e bdd-tests -- --reruns 2 --experiment-branch control --experiment-json tests/fixtures/test_experiment.json --run-update-test --private-browsing-enabled
             echo $?
       - store_artifacts:
           path: tests/report.html
@@ -97,7 +97,7 @@ jobs:
           name: Run tests
           command: |
             docker compose up -d
-            docker compose run klaatu tox -e bdd-tests -- --reruns 2 --experiment-branch control --experiment-slug tests/fixtures/test_experiment.json --private-browsing-enabled
+            docker compose run klaatu tox -e bdd-tests -- --reruns 2 --experiment-branch control --experiment-json tests/fixtures/test_experiment.json --private-browsing-enabled
             echo $?
       - store_artifacts:
           path: tests/report.html
@@ -117,7 +117,7 @@ jobs:
           name: Run tests
           command: |
             docker compose up -d
-            docker compose run klaatu tox -e bdd-tests -- --reruns 2 --experiment-branch control --experiment-slug tests/fixtures/test_experiment.json --private-browsing-enabled
+            docker compose run klaatu tox -e bdd-tests -- --reruns 2 --experiment-branch control --experiment-json tests/fixtures/test_experiment.json --private-browsing-enabled
             echo $?
       - store_artifacts:
           path: tests/report.html
