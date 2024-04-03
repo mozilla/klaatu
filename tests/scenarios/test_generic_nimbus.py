@@ -11,14 +11,14 @@ scenarios("../features/generic_nimbus.feature")
 
 
 @then("The experiment branch should be correctly reported")
-def check_branch_in_telemetry(check_ping_for_experiment, request, variables):
+def check_branch_in_telemetry(telemetry_event_check, experiment_json, request, experiment_slug):
     experiment_branch = request.config.getoption("--experiment-branch")
-    data = check_ping_for_experiment(f"optin-{variables['slug']}")
-    assert experiment_branch in data["branch"]
+    telemetry_event_check(f"optin-{experiment_slug}")
+    assert experiment_branch in experiment_json["branch"]
 
 
 @then("The Experiment is unenrolled via the about:studies page")
-def unenroll_via_studies_page(selenium, variables):
+def unenroll_via_studies_page(selenium, experiment_json):
     selenium.get("about:studies")
     WebDriverWait(selenium, 60).until(
         EC.visibility_of_element_located((By.CSS_SELECTOR, ".study-name")),
@@ -26,17 +26,17 @@ def unenroll_via_studies_page(selenium, variables):
     )
     items = selenium.find_elements(By.CSS_SELECTOR, ".study-name")
     for item in items:
-        if variables["userFacingName"] in item.text:
+        if experiment_json["userFacingName"] in item.text:
             selenium.find_element(By.CSS_SELECTOR, ".remove-button").click()
 
 
 @then("the telemetry shows it as being unenrolled")
-def check_telemetry_for_unenrollment(variables, telemetry_event_check):
-    assert telemetry_event_check(experiment=f"optin-{variables['slug']}", event="unenroll")
+def check_telemetry_for_unenrollment(experiment_slug, telemetry_event_check):
+    assert telemetry_event_check(experiment=f"optin-{experiment_slug}", event="unenroll")
 
 
 @then("The experiment can be unenrolled via opting out of studies")
-def opt_out_via_about_preferences(selenium, variables):
+def opt_out_via_about_preferences(selenium):
     selenium.get("about:preferences")
     WebDriverWait(selenium, 60).until(
         EC.visibility_of_element_located((By.CSS_SELECTOR, "#preferences-body")),

@@ -15,6 +15,7 @@ from pathlib import Path
 import pytest
 import requests
 from pytest_bdd import given, then
+from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains, Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -45,6 +46,25 @@ def pytest_addoption(parser) -> None:
         action="store_true",
         default=None,
         help="Run private browsing test",
+    ),
+    parser.addoption(
+        "--experiment-slug",
+        action="store",
+        default=None,
+        help="Experiment slug from Experimenter",
+    ),
+    parser.addoption(
+        "--experiment-server",
+        action="store",
+        default="prod",
+        choices=("prod", "stage"),
+        help="The server where the experiment is located, either stage or prod",
+    ),
+    parser.addoption(
+        "--experiment-json",
+        action="store",
+        default=None,
+        help="The experiments JSON file.",
     )
 
 
@@ -69,12 +89,30 @@ def start_process(path, command):
         return process
 
 
+@pytest.fixture(name="experiment_json", scope="session")
+def fixture_experiment_json(request):
+    experiment_slug = request.config.getoption("--experiment-slug")
+    slug_server = request.config.getoption("--experiment-server")
+    experiment_json = request.config.getoption("--experiment-json")
+
+    if experiment_json:
+        with open(experiment_json) as f:
+            return json.load(f)
+    match slug_server:
+        case "prod":
+            url = f"https://experimenter.services.mozilla.com/api/v6/experiments/{experiment_slug}/"  # noqa: E501
+        case "stage":
+            url = f"https://stage.experimenter.nonprod.dataops.mozgcp.net/api/v6/experiments/{experiment_slug}/"  # noqa: E501
+    return requests.get(url).json()
+
+
 @pytest.fixture(name="enroll_experiment", autouse=True)
 def fixture_enroll_experiment(
     request: typing.Any,
     selenium: typing.Any,
-    variables: dict,
-    check_ping_for_experiment: object,
+    telemetry_event_check: object,
+    experiment_json: object,
+    experiment_slug: str,
 ) -> typing.Any:
     """Fixture to enroll into an experiment"""
     experiment_branch = request.config.getoption("--experiment-branch")
@@ -91,16 +129,22 @@ def fixture_enroll_experiment(
         ExperimentManager.ExperimentManager.forceEnroll(recipe, branch);
     """
 
-    with selenium.context(selenium.CONTEXT_CHROME):
-        selenium.execute_script(script, json.dumps(variables), experiment_branch)
-    assert (
-        check_ping_for_experiment(f"optin-{variables['slug']}") is not None
-    ), "Experiment not found in telemetry"
+    try:
+        with selenium.context(selenium.CONTEXT_CHROME):
+            selenium.execute_script(script, json.dumps(experiment_json), experiment_branch)
+    except JavascriptException as e:
+        if "slug" in str(e):
+            raise (Exception("Experiment slug was not found in the experiment."))
+    else:
+        assert telemetry_event_check(
+            f"optin-{experiment_slug}", event="enroll"
+        ), "Experiment not found in telemetry"
+        logging.info("Experiment loaded successfully!")
 
 
 @pytest.fixture(name="experiment_slug")
-def fixture_experiment_slug(variables: dict) -> typing.Any:
-    return f"optin-{variables['slug']}"
+def fixture_experiment_slug(request) -> typing.Any:
+    return request.config.getoption("--experiment-slug")
 
 
 @pytest.fixture

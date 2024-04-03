@@ -54,7 +54,7 @@ def test_experiment_shows_on_support_page(selenium: typing.Any, experiment_slug:
 
 
 @pytest.mark.nondestructive
-def test_experiment_shows_on_studies_page(selenium: typing.Any, variables: dict):
+def test_experiment_shows_on_studies_page(selenium: typing.Any, experiment_json: dict):
     """Experiment should show on about:studies page."""
     selenium.get("about:studies")
     WebDriverWait(selenium, 60).until(
@@ -63,9 +63,9 @@ def test_experiment_shows_on_studies_page(selenium: typing.Any, variables: dict)
     )
     items = selenium.find_elements(By.CSS_SELECTOR, ".study-name")
     for item in items:
-        if variables["userFacingName"] in item.text:
+        if experiment_json["userFacingName"] in item.text:
             assert (
-                variables["userFacingDescription"]
+                experiment_json["userFacingDescription"]
                 in selenium.find_element(By.CSS_SELECTOR, ".study-description").text
             )
 
@@ -243,7 +243,7 @@ def test_experiment_shows_on_studies_page(selenium: typing.Any, variables: dict)
 @pytest.mark.update_test
 @pytest.mark.nondestructive
 def test_experiment_does_not_stop_update(
-    variables: dict, selenium: typing.Any, request: typing.Any
+    experiment_json: dict, selenium: typing.Any, request: typing.Any
 ):
     """Experinemt should not block firefox updates."""
     if not request.config.getoption("--run-update-test"):
@@ -292,9 +292,9 @@ def test_experiment_does_not_stop_update(
     )
     items = selenium.find_elements(By.CSS_SELECTOR, ".study-name")
     for item in items:
-        if variables["userFacingName"] in item.text:
+        if experiment_json["userFacingName"] in item.text:
             assert (
-                variables["userFacingDescription"]
+                experiment_json["userFacingDescription"]
                 in selenium.find_element(By.CSS_SELECTOR, ".study-description").text
             )
     selenium.quit()
