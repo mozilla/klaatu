@@ -47,11 +47,11 @@ The file `docker-compose-windows.yml` contains a windows docker image. This setu
 3. Close the VNC window after the windows desktop is shown and connect via RDP using the following address: `localhost:3389`. The user is `docker` and there is no password.
 4. Open a powershell terminal and execute the following:
 ```sh
-Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+Set-ExecutionPolicy Bypass -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 ```
-5. Install git:
+5. Run the `setup-windows.ps1` script:
 ```sh
-choco install git
+.\setup-windows.ps1
 ```
 6. Right click on the desktop and make a folder named `klaatu`.
 7. Open the `klaatu` folder and right click, select `More Options` and then `Open git bash here`.
