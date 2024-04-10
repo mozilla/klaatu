@@ -8,6 +8,8 @@ on:
         default: 'control'
         required: true
         type: string
+env:
+  MOZ_HEADLESS: 1
 jobs:
   test:
     runs-on: windows-latest
