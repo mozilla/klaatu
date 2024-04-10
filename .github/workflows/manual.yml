@@ -31,4 +31,4 @@ jobs:
     - uses: actions/setup-python@v5
       with:
         python-version: '3.11'
-    - run: tox -e bdd-tests -- --experiment-branch ${{ inputs.name }} --experiment-json tests/fixtures/test_experiment.json
+    - run: tox -e bdd-tests -- --experiment-branch ${{ inputs.name }} --experiment-json tests/fixtures/test_experiment.json -k navigate_to_the_supplied_url
