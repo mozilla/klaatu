@@ -28,5 +28,5 @@ jobs:
       run: ./setup_script.sh
     - uses: actions/setup-python@v5
       with:
-        python-version: '3.12'
+        python-version: '3.11'
     - run: tox -e bdd-tests -- --experiment-branch ${{ inputs.name }} --experiment-json tests/fixtures/test_experiment.json
