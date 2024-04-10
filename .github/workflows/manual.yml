@@ -1,5 +1,5 @@
 # This is a basic workflow that is manually triggered
-name: Manual workflow
+name: Windows Klaatu Tests
 on:
   workflow_dispatch:
     inputs:
@@ -56,12 +56,10 @@ jobs:
       run: choco install jdk8 selenium-gecko-driver selenium 
     - name: Install Firefox Beta
       shell: pwsh
-      run: choco install firefox-beta --pre
+      run: choco install firefox-dev --pre 
     - name: Setup tests
       shell: bash
       run: ./setup_script.sh
-    - name: Echo firefox version
-      run: firefox --version
     - name: Run Tests
       run: tox -e bdd-tests -- --experiment-branch ${{ inputs.branch }} --experiment-slug ${{ inputs.slug }} 
   windows-klaatu-firefox-nightly:
@@ -85,7 +83,5 @@ jobs:
     - name: Setup tests
       shell: bash
       run: ./setup_script.sh
-    - name: Echo firefox version
-      run: firefox --version
     - name: Run Tests
       run: tox -e bdd-tests -- --experiment-branch ${{ inputs.branch }} --experiment-slug ${{ inputs.slug }} 
