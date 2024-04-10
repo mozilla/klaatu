@@ -3,20 +3,26 @@ name: Manual workflow
 on:
   workflow_dispatch:
     inputs:
-      name:
-        description: 'Run Klaatu on Firefox Release'
+      branch:
+        description: 'Experiment Branch'
         default: 'control'
+        required: true
+        type: string
+      slug:
+        description: 'Experiment Slug'
+        default: 'an-awesome-experiment'
         required: true
         type: string
 env:
   MOZ_HEADLESS: 1
 jobs:
-  test:
+  windows-klaatu-firefox-release:
     runs-on: windows-latest
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
+    - name: Setup Python
+      uses: actions/setup-python@v5
       with:
         python-version: '3.11'
     - name: Install Chocolatey
@@ -31,4 +37,55 @@ jobs:
     - name: Setup tests
       shell: bash
       run: ./setup_script.sh
-    - run: tox -e bdd-tests -- --experiment-branch ${{ inputs.name }} --experiment-json tests/fixtures/test_experiment.json -k navigate_to_the_supplied_url
+    - name: Run Tests
+      run: tox -e bdd-tests -- --experiment-branch ${{ inputs.branch }} --experiment-slug ${{ inputs.slug }} 
+  windows-klaatu-firefox-beta:
+    runs-on: windows-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    - name: Install Chocolatey
+      shell: pwsh
+      run: Set-ExecutionPolicy Bypass -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+    - name: Install Dependencies
+      shell: pwsh
+      run: choco install jdk8 selenium-gecko-driver selenium 
+    - name: Install Firefox Beta
+      shell: pwsh
+      run: choco install firefox-beta --pre
+    - name: Setup tests
+      shell: bash
+      run: ./setup_script.sh
+    - name: Echo firefox version
+      run: firefox --version
+    - name: Run Tests
+      run: tox -e bdd-tests -- --experiment-branch ${{ inputs.branch }} --experiment-slug ${{ inputs.slug }} 
+  windows-klaatu-firefox-nightly:
+    runs-on: windows-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    - name: Install Chocolatey
+      shell: pwsh
+      run: Set-ExecutionPolicy Bypass -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+    - name: Install Dependencies
+      shell: pwsh
+      run: choco install jdk8 selenium-gecko-driver selenium 
+    - name: Install Firefox Nightly
+      shell: pwsh
+      run: choco install firefox-nightly --pre
+    - name: Setup tests
+      shell: bash
+      run: ./setup_script.sh
+    - name: Echo firefox version
+      run: firefox --version
+    - name: Run Tests
+      run: tox -e bdd-tests -- --experiment-branch ${{ inputs.branch }} --experiment-slug ${{ inputs.slug }} 
