@@ -38,7 +38,7 @@ jobs:
       shell: bash
       run: ./setup_script.sh
     - name: Run Tests
-      run: tox -e bdd-tests -- --experiment-branch ${{ inputs.branch }} --experiment-slug ${{ inputs.slug }} 
+      run: tox -e bdd-tests -- --experiment-branch ${{ inputs.branch }} --experiment-slug ${{ inputs.slug }} --private-browsing-enabled
   windows-klaatu-firefox-beta:
     runs-on: windows-latest
     steps:
@@ -61,7 +61,7 @@ jobs:
       shell: bash
       run: ./setup_script.sh
     - name: Run Tests
-      run: tox -e bdd-tests -- --experiment-branch ${{ inputs.branch }} --experiment-slug ${{ inputs.slug }} 
+      run: tox -e bdd-tests -- --experiment-branch ${{ inputs.branch }} --experiment-slug ${{ inputs.slug }} --private-browsing-enabled
   windows-klaatu-firefox-nightly:
     runs-on: windows-latest
     steps:
@@ -84,4 +84,4 @@ jobs:
       shell: bash
       run: ./setup_script.sh
     - name: Run Tests
-      run: tox -e bdd-tests -- --experiment-branch ${{ inputs.branch }} --experiment-slug ${{ inputs.slug }} 
+      run: tox -e bdd-tests -- --experiment-branch ${{ inputs.branch }} --experiment-slug ${{ inputs.slug }} --private-browsing-enabled --run-update-test
