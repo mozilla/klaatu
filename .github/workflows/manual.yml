@@ -19,13 +19,16 @@ jobs:
       run: Set-ExecutionPolicy Bypass -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
     - name: Install Dependencies
       shell: pwsh
-      run: choco install jdk8 selenium-gecko-driver selenium python git
+      run: choco install jdk8 selenium-gecko-driver selenium 
     - name: Install Firefox Release
       shell: pwsh
       run: choco install firefox
     - name: Setup tests
       shell: bash
       run: ./setup_script.sh
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
     - name: Run test
       shell: bash
       run: tox -e bdd-tests -- --experiment-branch ${{ inputs.name }} --experiment-json tests/fixtures/test_experiment.json
