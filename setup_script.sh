@@ -13,4 +13,4 @@ cp gecko-dev/browser/components/search/test/browser/telemetry/* search_files/
 
 cp search_server/* search_files/
 
-pip install tox poetry
+pip install tox poetry flask
