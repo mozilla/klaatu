@@ -477,6 +477,14 @@ def fixture_ping_server():
         process.terminate()
 
 
+@pytest.fixture(name="echo_firefox_version", autouse=True)
+def fixture_echo_firefox_version(selenium):
+    script = """return navigator.userAgent"""
+    version = selenium.execute_script(script)
+    version = [item for item in version.split() if "Firefox" in item][0]
+    logging.info(f"Firefox version {version}")
+
+
 @then("Firefox should be allowed to open a new tab")
 def open_a_new_tab(selenium):
     with selenium.context(selenium.CONTEXT_CHROME):

@@ -12,4 +12,4 @@ choco install jdk8 selenium-gecko-driver selenium firefox python git
 
 choco install firefox-nightly --pre
 
-choco install firefox-beta --pre
+choco install firefox-dev --pre
