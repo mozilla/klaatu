@@ -46,3 +46,23 @@ jobs:
         run: ./setup_script.sh
       - name: Run Tests
         run: tox -e bdd-tests -- --experiment-branch ${{ inputs.branch }} --experiment-slug ${{ inputs.slug }} --private-browsing-enabled
+  iOS-klaatu-tests:
+    runs-on: macos-latest
+    name: iOS Klaatu Tests
+    steps:
+      - name: Clone firefox-ios repo
+        uses: actions/checkout@v4
+        with:
+            repository: mozilla-mobile/firefox-ios
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Build and setup app
+        run: |
+          cd firefox-ios/firefox-ios
+          brew update
+          brew install node
+          pip3 install virtualenv
+          sh ./bootstrap.sh
+          
