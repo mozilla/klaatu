@@ -38,6 +38,8 @@ jobs:
           cd firefox-ios
           brew update
           pip3 install virtualenv pipenv
+      - name: Install Nimbus CLI
+        run: curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/mozilla/application-services/main/install-nimbus-cli.sh | bash  
       - name: Run Tests
         run: |
           cd firefox-ios/firefox-ios-tests/Tests/ExperimentIntegrationTests
