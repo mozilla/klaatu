@@ -34,15 +34,14 @@ jobs:
           python-version: '3.11'
       - name: Build and setup app
         run: |
-          cd firefox-ios/
-          ls
+          sh ./bootstrap.sh  
+          cd firefox-ios
           brew update
           brew install node
           pip3 install virtualenv pipenv
-          sh ./bootstrap.sh
       - name: Run Tests
         run: |
-          cd firefox-ios/firefox-ios/firefox-ios-tests/Tests/ExperimentIntegrationTests
+          cd firefox-ios/firefox-ios-tests/Tests/ExperimentIntegrationTests
           pipenv install
           EXPERIMENT_NAME= ${{ inputs.user-facing-name }} pipenv run pytest --experiment ${{ inputs.slug }} -k test_generic.py
           
