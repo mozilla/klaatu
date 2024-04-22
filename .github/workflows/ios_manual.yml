@@ -20,7 +20,7 @@ on:
         type: string
 jobs:
   iOS-klaatu-tests:
-    runs-on: macos-latest
+    runs-on: macos-14
     name: iOS Klaatu Tests
     steps:
       - name: Clone firefox-ios repo
