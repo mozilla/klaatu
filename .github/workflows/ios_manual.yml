@@ -1,0 +1,47 @@
+# This is a basic workflow that is manually triggered
+name: iOS Klaatu Tests
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Experiment Branch'
+        default: 'control'
+        required: true
+        type: string
+      slug:
+        description: 'Experiment Slug'
+        default: 'an-awesome-experiment'
+        required: true
+        type: string
+      user-facing-name:
+        description: 'The user facing name'
+        default: "An Awesome Experiment"
+        required: false
+        type: string
+jobs:
+  iOS-klaatu-tests:
+    runs-on: macos-latest
+    name: iOS Klaatu Tests
+    steps:
+      - name: Clone firefox-ios repo
+        uses: actions/checkout@v4
+        with:
+            repository: jrbenny35/firefox-ios
+            ref: "github-actions-update"
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Build and setup app
+        run: |
+          cd firefox-ios
+          brew update
+          brew install node
+          pip3 install virtualenv pipenv
+          sh ./bootstrap.sh
+      - name: Run Tests
+        run: |
+          cd firefox-ios/firefox-ios-tests/Tests/ExperimentIntegrationTests
+          pipenv install
+          EXPERIMENT_NAME= ${{ inputs.user-facing-name }} pipenv run pytest --experiment ${{ inputs.slug }} -k test_generic.py
+          
