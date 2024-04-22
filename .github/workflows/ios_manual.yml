@@ -37,12 +37,11 @@ jobs:
           sh ./bootstrap.sh  
           cd firefox-ios
           brew update
-          brew install node
           pip3 install virtualenv pipenv
       - name: Run Tests
         run: |
           cd firefox-ios/firefox-ios-tests/Tests/ExperimentIntegrationTests
           pipenv install
           echo "RUNNING TESTS"
-          EXPERIMENT_NAME= ${{ inputs.user-facing-name }} pipenv run pytest --experiment ${{ inputs.slug }} -k test_generic.py
+          EXPERIMENT_NAME="${{ inputs.user-facing-name }}" pipenv run pytest --experiment ${{ inputs.slug }} -k test_generic.py
           
