@@ -34,8 +34,8 @@ jobs:
           python-version: '3.11'
       - name: Build and setup app
         run: |
-          cd firefox-ios/firefox-ios
-          pwd
+          cd firefox-ios/
+          ls
           brew update
           brew install node
           pip3 install virtualenv pipenv
