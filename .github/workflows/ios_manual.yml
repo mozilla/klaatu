@@ -35,6 +35,7 @@ jobs:
       - name: Build and setup app
         run: |
           cd firefox-ios
+          pwd
           brew update
           brew install node
           pip3 install virtualenv pipenv
