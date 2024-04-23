@@ -26,7 +26,7 @@ jobs:
       - name: Clone firefox-ios repo
         uses: actions/checkout@v4
         with:
-            repository: mozilla-mobile/firefox-ios
+            repository: jrbenny35/firefox-ios
             ref: "github-actions-update"
       - name: Setup Python
         uses: actions/setup-python@v5
