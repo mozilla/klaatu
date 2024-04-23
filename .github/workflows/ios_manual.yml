@@ -45,8 +45,7 @@ jobs:
       - name: Build App
         run: |
           cd firefox-ios
-          xcodebuild build -project Client.xcodeproj -scheme Fennec -configuration Fennec -sdk iphonesimulator -arch x86_64
-          xcodebuild build -project Client.xcodeproj -scheme Fennec -configuration Fennec -sdk iphonesimulator -arch arm64
+          xcodebuild build-for-testing -project Client.xcodeproj -scheme Fennec -configuration Fennec -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.2'
       - name: Run Tests
         run: |
           cd firefox-ios/firefox-ios-tests/Tests/ExperimentIntegrationTests
