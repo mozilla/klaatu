@@ -41,11 +41,10 @@ jobs:
           pip3 install virtualenv pipenv
       - name: Install Nimbus CLI
         run: curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/mozilla/application-services/main/install-nimbus-cli.sh | bash  
-      - uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: '15.2'
       - name: Xcode Version
-        run: xcodebuild -version
+        run: |
+          xcode-select -s /Applications/Xcode_15.2.app/Contents/Developer
+          xcodebuild -version
       - name: Build Focus (to debug)
         run: |
           cd focus-ios
