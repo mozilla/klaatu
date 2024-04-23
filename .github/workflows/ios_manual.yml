@@ -40,6 +40,8 @@ jobs:
           pip3 install virtualenv pipenv
       - name: Install Nimbus CLI
         run: curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/mozilla/application-services/main/install-nimbus-cli.sh | bash  
+      - name: Delete Xcode App
+        run: sudo rm -rf /Applications/Xcode.app
       - name: Xcode Version
         run: sudo xcode-select -switch /Applications/Xcode_15.3.app && xcodebuild -version
       - name: Build App
