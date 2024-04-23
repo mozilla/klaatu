@@ -26,7 +26,7 @@ jobs:
       - name: Clone firefox-ios repo
         uses: actions/checkout@v4
         with:
-            repository: jrbenny35/firefox-ios
+            repository: mozilla-mobile/firefox-ios
             ref: "github-actions-update"
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -34,7 +34,8 @@ jobs:
           python-version: '3.11'
       - name: Build and setup app
         run: |
-          sh ./bootstrap.sh  
+          sh ./bootstrap.sh --force
+          sh ./checkout.sh
           cd firefox-ios
           brew update
           pip3 install virtualenv pipenv
@@ -42,10 +43,14 @@ jobs:
         run: curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/mozilla/application-services/main/install-nimbus-cli.sh | bash  
       - name: Xcode Version
         run: xcodebuild -version
-      - name: Build App
+      - name: Build Focus (to debug)
+        run: |
+          cd focus-ios
+          xcodebuild build-for-testing -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.2'
+      - name: Build Firefox
         run: |
           cd firefox-ios
-          xcodebuild clean build -scheme Fennec -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.2' -derivedDataPath results
+          xcodebuild clean build -scheme Fennec -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.2'
       - name: Run Tests
         run: |
           cd firefox-ios/firefox-ios-tests/Tests/ExperimentIntegrationTests
