@@ -49,11 +49,11 @@ jobs:
       - name: Build Focus (to debug)
         run: |
           cd focus-ios
-          xcodebuild build-for-testing -project Blockzilla.xcodeproj -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.2'
+          xcodebuild build-for-testing -scheme Focus -target XCUITest -configuration FocusDebug -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.2'
       - name: Build Firefox
         run: |
           cd firefox-ios
-          xcodebuild build-for-testing -project Client.xcodeproj -scheme Fennec -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.2'
+          xcodebuild build-for-testing -scheme Fennec -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.2'
       - name: Run Tests
         run: |
           cd firefox-ios/firefox-ios-tests/Tests/ExperimentIntegrationTests
