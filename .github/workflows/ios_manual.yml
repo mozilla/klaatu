@@ -41,11 +41,11 @@ jobs:
       - name: Install Nimbus CLI
         run: curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/mozilla/application-services/main/install-nimbus-cli.sh | bash  
       - name: Xcode Version
-        run: xcodebuild -version
+        run: sudo xcode-select -switch /Applications/Xcode_15.3.app && xcodebuild -version
       - name: Build App
         run: |
           cd firefox-ios
-          xcodebuild clean build -scheme Fennec -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.2' -derivedDataPath results
+          xcodebuild clean test -scheme Fennec -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.2' -derivedDataPath results -testPlan Smoketest1
       - name: Run Tests
         run: |
           cd firefox-ios/firefox-ios-tests/Tests/ExperimentIntegrationTests
