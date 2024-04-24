@@ -18,8 +18,6 @@ on:
         default: "An Awesome Experiment"
         required: false
         type: string
-env:
-  SIMULATOR_UUID: BA619DC0-2C86-43C0-8D0A-9F4518D0EA18
 jobs:
   iOS-klaatu-tests:
     runs-on: macos-14-xlarge
@@ -52,6 +50,7 @@ jobs:
         run: |
           cd firefox-ios/firefox-ios-tests/Tests/ExperimentIntegrationTests
           pipenv install
+          export SIMULATOR_UDID=$(python get_specific_device_udid.py)
           echo "RUNNING TESTS"
           EXPERIMENT_NAME="${{ inputs.user-facing-name }}" pipenv run pytest --experiment ${{ inputs.slug }} -k test_generic.py
       - name: Archive Results
