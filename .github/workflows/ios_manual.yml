@@ -44,6 +44,8 @@ jobs:
         run: sudo rm -rf /Applications/Xcode.app
       - name: Xcode Version
         run: sudo xcode-select -switch /Applications/Xcode_15.3.app && xcodebuild -version
+      - name: Echo iOS devices
+        run: xcrun simctl list devices
       - name: Run Tests
         run: |
           cd firefox-ios/firefox-ios-tests/Tests/ExperimentIntegrationTests
