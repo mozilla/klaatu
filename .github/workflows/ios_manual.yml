@@ -31,7 +31,7 @@ jobs:
       - name: Clone firefox-ios repo
         uses: actions/checkout@v4
         with:
-            repository: mozilla/firefox-ios
+            repository: jrbenny35/firefox-ios
             ref: "release/v${{ inputs.firefox-version }}"
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -58,11 +58,6 @@ jobs:
           xcodebuild build-for-testing -project Client.xcodeproj -scheme Fennec -configuration Fennec -sdk iphonesimulator -quiet -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.2'
       - name: Install Nimbus CLI
         run: curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/mozilla/application-services/main/install-nimbus-cli.sh | bash  
-      - name: Clone firefox-ios repo
-        uses: actions/checkout@v4
-        with:
-            repository: jrbenny35/firefox-ios
-            ref: "github-actions-update"
       - name: Run Tests
         run: |
           cd firefox-ios/firefox-ios-tests/Tests/ExperimentIntegrationTests
