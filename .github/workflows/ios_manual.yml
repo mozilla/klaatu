@@ -55,7 +55,7 @@ jobs:
       - name: Build app
         run: |
           cd firefox-ios
-          xcodebuild build-for-testing -project Client.xcodeproj -scheme Fennec -configuration Fennec -sdk iphonesimulator
+          xcodebuild build-for-testing -project Client.xcodeproj -scheme Fennec -configuration Fennec -sdk iphonesimulator -quiet
       - name: Install Nimbus CLI
         run: curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/mozilla/application-services/main/install-nimbus-cli.sh | bash  
       - name: Clone firefox-ios repo
