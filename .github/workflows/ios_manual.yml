@@ -18,6 +18,8 @@ on:
         default: "An Awesome Experiment"
         required: false
         type: string
+env:
+  SIMULATOR_UUID: BA619DC0-2C86-43C0-8D0A-9F4518D0EA18
 jobs:
   iOS-klaatu-tests:
     runs-on: macos-14-xlarge
