@@ -44,8 +44,6 @@ jobs:
         run: sudo rm -rf /Applications/Xcode.app
       - name: Xcode Version
         run: sudo xcode-select -switch /Applications/Xcode_15.3.app && xcodebuild -version
-      - name: Echo iOS devices
-        run: xcrun simctl list devices
       - name: Run Tests
         run: |
           cd firefox-ios/firefox-ios-tests/Tests/ExperimentIntegrationTests
@@ -59,6 +57,10 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
-          name: test-results
+          name: xctest-results
           path: results.zip
-          
+      - uses: actions/upload-artifact@v4
+        if: ${{ always() }}
+        with:
+          name: HTML Test Report
+          path: /Users/runner/work/klaatu/klaatu/firefox-ios/firefox-ios-tests/Tests/ExperimentIntegrationTests/results/index.html
