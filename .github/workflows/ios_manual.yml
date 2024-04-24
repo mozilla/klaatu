@@ -53,6 +53,7 @@ jobs:
           brew update
           pip3 install virtualenv pipenv
       - name: Build app
+        if: ${{ ! test /Users/runner/Library/Developer/Xcode/DerivedData/Client-*/ }}
         run: |
           cd firefox-ios
           xcodebuild build-for-testing -project Client.xcodeproj -scheme Fennec -configuration Fennec -sdk iphonesimulator -quiet -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.2'
