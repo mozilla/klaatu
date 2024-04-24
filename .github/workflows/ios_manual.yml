@@ -18,6 +18,11 @@ on:
         default: "An Awesome Experiment"
         required: false
         type: string
+      firefox-version:
+        description: 'The Firefox Version you want to test'
+        default: "123"
+        required: false
+        type: string
 jobs:
   iOS-klaatu-tests:
     runs-on: macos-14-xlarge
@@ -26,24 +31,36 @@ jobs:
       - name: Clone firefox-ios repo
         uses: actions/checkout@v4
         with:
-            repository: jrbenny35/firefox-ios
-            ref: "github-actions-update"
+            repository: mozilla/firefox-ios
+            ref: "release/v${{ inputs.firefox-version }}"
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Build and setup app
+      - name: Cache
+        uses: actions/cache@v4.0.2
+        with:
+          path: /Users/runner/Library/Developer/Xcode/DerivedData/**/
+          key: xcode-firefox-v${{ inputs.firefox-version }}-cache
+      - name: Delete Xcode App
+        run: sudo rm -rf /Applications/Xcode.app
+      - name: Set Xcode version
+        run: sudo xcode-select -switch /Applications/Xcode_15.3.app && xcodebuild -version
+      - name: Setup build
         run: |
           sh ./bootstrap.sh  
           cd firefox-ios
           brew update
           pip3 install virtualenv pipenv
+      - name: Build app
+        run: xcodebuild build-for-testing -project Client.xcodeproj -scheme Fennec -configuration Fennec -sdk iphonesimulator
       - name: Install Nimbus CLI
         run: curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/mozilla/application-services/main/install-nimbus-cli.sh | bash  
-      - name: Delete Xcode App
-        run: sudo rm -rf /Applications/Xcode.app
-      - name: Xcode Version
-        run: sudo xcode-select -switch /Applications/Xcode_15.3.app && xcodebuild -version
+      - name: Clone firefox-ios repo
+        uses: actions/checkout@v4
+        with:
+            repository: jrbenny35/firefox-ios
+            ref: "github-actions-update"
       - name: Run Tests
         run: |
           cd firefox-ios/firefox-ios-tests/Tests/ExperimentIntegrationTests
