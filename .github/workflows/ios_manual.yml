@@ -87,4 +87,4 @@ jobs:
         if: ${{ always() }}
         with:
           name: xcodebuild.log
-          path: /private/var/folders/**/**/*/pytest-of-runner/pytest-*/logs0/xcodebuild.log
+          path: /private/var/folders/3m/**/T/pytest-of-runner/pytest-*/logs0/xcodebuild.log
