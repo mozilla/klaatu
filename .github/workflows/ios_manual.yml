@@ -35,7 +35,7 @@ on:
 jobs:
   iOS-klaatu-tests:
     runs-on: macos-14-xlarge
-    name: ${{ inputs.feature-name}} tests for ${{ inputs.slug }}
+    name: ${{ inputs.feature-name }} tests for ${{ inputs.slug }}
     steps:
       - name: Clone firefox-ios repo
         uses: actions/checkout@v4
