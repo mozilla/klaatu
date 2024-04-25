@@ -23,6 +23,11 @@ on:
         default: "123"
         required: false
         type: string
+      feature-name:
+        description: 'The Feature you want to test'
+        default: 'smoke'
+        required: true
+        type: string
 jobs:
   iOS-klaatu-tests:
     runs-on: macos-14-xlarge
@@ -73,7 +78,7 @@ jobs:
           pipenv install
           export SIMULATOR_UDID=$(python get_specific_device_udid.py)
           echo "RUNNING TESTS"
-          EXPERIMENT_NAME="${{ inputs.user-facing-name }}" pipenv run pytest --experiment ${{ inputs.slug }} -k test_generic.py
+          EXPERIMENT_NAME="${{ inputs.user-facing-name }}" pipenv run pytest --experiment ${{ inputs.slug }} --experiment-branch ${{ inputs.branch }} --feature ${{ inputs.feature-name }}
       - name: Archive Results
         if: ${{ always() }}
         run: zip -r results.zip /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult
