@@ -22,7 +22,11 @@ on:
         description: 'The Feature you want to test'
         default: 'smoke'
         required: true
-        type: string
+        type: choice
+        options:
+          - smoke
+          - messaging_survey
+          - messaging-new-tab-card
       extra-arguments:
         description: 'Additional testing arguments'
         default: ''
