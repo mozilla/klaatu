@@ -13,11 +13,6 @@ on:
         default: 'an-awesome-experiment'
         required: true
         type: string
-      user-facing-name:
-        description: 'The user facing name'
-        default: "An Awesome Experiment"
-        required: false
-        type: string
       firefox-version:
         description: 'The Firefox Version you want to test'
         default: "123"
@@ -27,6 +22,11 @@ on:
         description: 'The Feature you want to test'
         default: 'smoke'
         required: true
+        type: string
+      extra-arguments:
+        description: 'Additional testing arguments'
+        default: ''
+        required: false
         type: string
 jobs:
   iOS-klaatu-tests:
@@ -77,8 +77,7 @@ jobs:
           cd firefox-ios/firefox-ios-tests/Tests/ExperimentIntegrationTests
           pipenv install
           export SIMULATOR_UDID=$(python get_specific_device_udid.py)
-          echo "RUNNING TESTS"
-          EXPERIMENT_NAME="${{ inputs.user-facing-name }}" pipenv run pytest --experiment ${{ inputs.slug }} --experiment-branch ${{ inputs.branch }} --feature ${{ inputs.feature-name }}
+          pipenv run pytest --experiment ${{ inputs.slug }} --experiment-branch ${{ inputs.branch }} --feature ${{ inputs.feature-name }} ${{ inputs.extra-arguments }}
       - name: Archive Results
         if: ${{ always() }}
         run: zip -r results.zip /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult
