@@ -81,7 +81,7 @@ jobs:
           cd firefox-ios/firefox-ios-tests/Tests/ExperimentIntegrationTests
           poetry install
           export SIMULATOR_UDID=$(python get_specific_device_udid.py)
-          python generate_smoke_tests.py
+          poetry run python generate_smoke_tests.py
           poetry run pytest --experiment ${{ inputs.slug }} --experiment-branch ${{ inputs.branch }} --feature ${{ inputs.feature-name }} ${{ inputs.extra-arguments }}
       - name: Archive Results
         if: ${{ always() }}
