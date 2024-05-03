@@ -34,7 +34,7 @@ on:
         type: string
 jobs:
   iOS-klaatu-tests:
-    runs-on: macos-14-xlarge
+    runs-on: macos-14
     name: ${{ inputs.feature-name }} tests for ${{ inputs.slug }}
     steps:
       - name: Clone firefox-ios repo
@@ -60,7 +60,7 @@ jobs:
           sh ./bootstrap.sh  
           cd firefox-ios
           brew update
-          pip3 install virtualenv pipenv
+          pip3 install virtualenv poetry
       - name: Check if cache loaded correctly
         id: check_cache
         run: |
@@ -79,9 +79,10 @@ jobs:
       - name: Run Tests
         run: |
           cd firefox-ios/firefox-ios-tests/Tests/ExperimentIntegrationTests
-          pipenv install
+          poetry install
           export SIMULATOR_UDID=$(python get_specific_device_udid.py)
-          pipenv run pytest --experiment ${{ inputs.slug }} --experiment-branch ${{ inputs.branch }} --feature ${{ inputs.feature-name }} ${{ inputs.extra-arguments }}
+          python generate_smoke_tests.py
+          poetry run pytest --experiment ${{ inputs.slug }} --experiment-branch ${{ inputs.branch }} --feature ${{ inputs.feature-name }} ${{ inputs.extra-arguments }}
       - name: Archive Results
         if: ${{ always() }}
         run: zip -r results.zip /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult
