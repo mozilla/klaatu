@@ -55,7 +55,7 @@ jobs:
       - name: Add Firefox to Path
         shell: powershell
         run: |
-          $newPath = "C:\Path\to\your\Firefox_${{ matrix.firefox }}
+          $newPath = "C:\Path\to\your\Firefox_${{ matrix.firefox }}"
           $currentPath = [System.Environment]::GetEnvironmentVariable("PATH", "Machine")
           $newPath += ";$currentPath"
           [System.Environment]::SetEnvironmentVariable("PATH", $newPath, "Machine")
