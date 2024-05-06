@@ -521,5 +521,3 @@ def open_private_browsing_window(selenium, firefox):
     browser = firefox.browser.open_window(private=True)
     assert browser.is_private
     logging.info("Opened Private window\n")
-
-# iOS Felt Privacy - Simplified Nav and Felt Deletion v2  ios-felt-privacy-simplified-nav-and-felt-deletion-v2 
