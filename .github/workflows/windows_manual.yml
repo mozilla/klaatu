@@ -48,7 +48,22 @@ jobs:
         shell: pwsh
         run: choco install jdk8 selenium selenium-gecko-driver
       - name: Uninstall default Firefox
-        run: Get-Package -Name "Firefox" | Uninstall-Package -Force
+        run: |
+          $firefoxKey = Get-ItemProperty 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*' | Where-Object { $_.DisplayName -eq 'Mozilla Firefox (x64 en-US)' }
+          if ($firefoxKey) {
+              $uninstallString = $firefoxKey.UninstallString
+              if ($uninstallString) {
+                  Write-Host "Uninstalling Mozilla Firefox..."
+                  Start-Process -FilePath $uninstallString -ArgumentList "/S" -Wait
+                  Write-Host "Mozilla Firefox has been uninstalled."
+              } else {
+                  Write-Host "Uninstall string not found."
+                  exit 1
+              }
+          } else {
+              Write-Host "Mozilla Firefox is not installed."
+              exit 1
+          }
       - name: Setup tests
         shell: bash
         run: ./setup_script.sh
