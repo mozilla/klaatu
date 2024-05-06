@@ -47,6 +47,8 @@ jobs:
       - name: Install Dependencies
         shell: pwsh
         run: choco install jdk8 selenium selenium-gecko-driver
+      - name: Uninstall default Firefox
+        run: Get-Package -Name "Firefox" | Uninstall-Package -Force
       - name: Setup tests
         shell: bash
         run: ./setup_script.sh
