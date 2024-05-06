@@ -28,6 +28,10 @@ jobs:
         firefox: ['latest-beta', 'latest-nightly', 'latest' ]
     name: windows-klaatu-firefox${{ matrix.firefox }}
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
       - name: Setup firefox
         id: setup-firefox
         uses: ./.github/actions/setup-firefox/setup-firefox@v1
@@ -36,8 +40,6 @@ jobs:
       - run: |
           echo Installed firefox versions: ${{ steps.setup-firefox.outputs.firefox-version }}
           ${{ steps.setup-firefox.outputs.firefox-path }} --version
-      - name: Checkout repository
-        uses: actions/checkout@v4
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
