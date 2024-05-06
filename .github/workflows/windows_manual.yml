@@ -55,29 +55,3 @@ jobs:
         run: ./setup_script.sh
       - name: Run Tests
         run: tox -e bdd-tests -- --experiment-branch ${{ inputs.branch }} --experiment-slug ${{ inputs.slug }} --private-browsing-enabled
-  iOS-klaatu-tests:
-    runs-on: macos-latest
-    name: iOS Klaatu Tests
-    steps:
-      - name: Clone firefox-ios repo
-        uses: actions/checkout@v4
-        with:
-            repository: jrbenny35/firefox-ios
-            ref: "github-actions-update"
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      - name: Build and setup app
-        run: |
-          cd firefox-ios
-          brew update
-          brew install node
-          pip3 install virtualenv pipenv
-          sh ./bootstrap.sh
-      - name: Run Tests
-        run: |
-          cd firefox-ios/firefox-ios-tests/Tests/ExperimentIntegrationTests
-          pipenv install
-          EXPERIMENT_NAME="iOS Felt Privacy - Simplified Nav and Felt Deletion v2" pipenv run pytest --experiment ${{ inputs.slug }} -k test_generic.py
-          
