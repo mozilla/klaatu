@@ -44,13 +44,12 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - uses: browser-actions/setup-geckodriver@latest
       - name: Install Chocolatey
         shell: pwsh
         run: Set-ExecutionPolicy Bypass -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
       - name: Install Dependencies
         shell: pwsh
-        run: choco install jdk8 selenium 
+        run: choco install jdk8 selenium selenium-gecko-driver
       - name: Setup tests
         shell: bash
         run: ./setup_script.sh
