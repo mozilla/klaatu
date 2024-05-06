@@ -48,6 +48,7 @@ jobs:
         shell: pwsh
         run: choco install jdk8 selenium selenium-gecko-driver
       - name: Uninstall default Firefox
+        shell: pwsh
         run: |
           $firefoxKey = Get-ItemProperty 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*' | Where-Object { $_.DisplayName -eq 'Mozilla Firefox (x64 en-US)' }
           if ($firefoxKey) {
