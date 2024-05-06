@@ -50,12 +50,14 @@ jobs:
       - name: Uninstall default Firefox
         shell: pwsh
         run: |
-          $firefoxKey = Get-ItemProperty 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*' | Where-Object { $_.DisplayName -eq 'Mozilla Firefox (x64 en-US)' }
+          $firefoxKey = Get-ItemProperty 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*' | Where-Object { $_.DisplayName -eq 'Mozilla Firefox' }
           if ($firefoxKey) {
               $uninstallString = $firefoxKey.UninstallString
               if ($uninstallString) {
+                  $uninstallString = $uninstallString -replace '\/I','\/X'   # Change /I to /X to uninstall
                   Write-Host "Uninstalling Mozilla Firefox..."
-                  Start-Process -FilePath $uninstallString -ArgumentList "/S" -Wait
+                  $uninstallString = $uninstallString.Trim()                # Trim extra spaces
+                  Start-Process -FilePath "cmd.exe" -ArgumentList "/c $uninstallString /S" -Wait
                   Write-Host "Mozilla Firefox has been uninstalled."
               } else {
                   Write-Host "Uninstall string not found."
