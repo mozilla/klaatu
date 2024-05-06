@@ -1,3 +1,0 @@
-[submodule ".github/actions/setup-firefox"]
-	path = .github/actions/setup-firefox
-	url = https://github.com/jrbenny35/setup-firefox.git
