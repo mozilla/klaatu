@@ -34,7 +34,7 @@ jobs:
           submodules: recursive
       - name: Setup firefox
         id: setup-firefox
-        uses: ./.github/actions/setup-firefox/src
+        uses: ./.github/actions/setup-firefox
         with:
           firefox-version: ${{ matrix.firefox }}
       - run: |
