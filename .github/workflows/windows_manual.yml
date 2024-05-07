@@ -13,9 +13,9 @@ on:
         default: 'an-awesome-experiment'
         required: true
         type: string
-      user-facing-name:
-        description: 'The user facing name'
-        default: "An Awesome Experiment"
+      firefox-version:
+        description: 'The Firefox Version(s) you want to test'
+        default: "['latest-beta', 'latest', '123.0']"
         required: false
         type: string
 env:
@@ -25,7 +25,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        firefox: ['latest-beta', 'latest-nightly', 'latest' ]
+        firefox: ${{ fromJSON(inputs.firefox-version) }}
     name: windows-klaatu-firefox-${{ matrix.firefox }}
     steps:
       - name: Checkout repository
@@ -46,12 +46,7 @@ jobs:
         run: Set-ExecutionPolicy Bypass -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
       - name: Install Dependencies
         shell: pwsh
-        run: choco install jdk8 selenium selenium-gecko-driver
-      - name: Verify Path
-        shell: powershell
-        run: |
-          Write-Host "Current PATH environment variable:"
-          [System.Environment]::GetEnvironmentVariable("PATH", "Machine")
+        run: choco install jdk8 selenium
       - name: Add Firefox to Path
         shell: powershell
         run: |
