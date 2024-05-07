@@ -65,7 +65,14 @@ def pytest_addoption(parser) -> None:
         action="store",
         default=None,
         help="The experiments JSON file.",
+    ),
+    parser.addoption(
+        "--firefox-path",
+        action="store",
+        default=None,
+        help="The path to the Firefox you want to use",
     )
+
 
 
 def start_process(path, command):
@@ -178,6 +185,9 @@ def firefox_options(
     ping_server,
 ) -> typing.Any:
     """Setup Firefox"""
+    if firefox_path := request.config.getoption("--firefox-path"):
+        firefox_options.binary = firefox_path
+        logging.info(f"Using firefox at {firefox_path}")
     firefox_options.log.level = "trace"
     if request.config.getoption("--run-update-test"):
         if request.node.get_closest_marker("update_test"):  # disable test needs different firefox
