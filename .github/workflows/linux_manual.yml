@@ -30,7 +30,7 @@ jobs:
     strategy:
       matrix:
         firefox: ${{ fromJSON(inputs.firefox-version) }}
-    name: windows-klaatu-firefox-${{ matrix.firefox }}
+    name: linux-klaatu-firefox-${{ matrix.firefox }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

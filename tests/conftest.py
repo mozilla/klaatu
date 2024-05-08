@@ -467,7 +467,7 @@ def fixture_setup_search_test(selenium):
 
 @pytest.fixture(name="static_server", autouse=True, scope="session")
 def fixture_static_server():
-    if os.environ.get("DEBIAN_FRONTEND"):
+    if os.environ.get("DEBIAN_FRONTEND") and not os.environ.get("CI"):
         yield "http://static-server:8000"
     else:
         process = start_process(
@@ -479,7 +479,7 @@ def fixture_static_server():
 
 @pytest.fixture(name="ping_server", autouse=True, scope="session")
 def fixture_ping_server():
-    if os.environ.get("DEBIAN_FRONTEND"):
+    if os.environ.get("DEBIAN_FRONTEND") and not os.environ.get("CI"):
         yield "http://ping-server:5000"
     else:
         process = start_process("ping_server", ["python", "ping_server.py"])
