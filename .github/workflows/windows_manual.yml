@@ -18,6 +18,11 @@ on:
         default: "['latest-beta', 'latest', '123.0']"
         required: false
         type: string
+      extra-arguments:
+        description: 'Additional testing arguments'
+        default: ''
+        required: false
+        type: string
 env:
   MOZ_HEADLESS: 1
 jobs:
@@ -65,4 +70,4 @@ jobs:
         shell: bash
         run: ./setup_script.sh
       - name: Run Tests
-        run: tox -e bdd-tests -- --experiment-branch ${{ inputs.branch }} --experiment-slug ${{ inputs.slug }} --private-browsing-enabled --firefox-path="C:\Program Files\Firefox_${{ matrix.firefox }}\firefox.exe"
+        run: tox -e bdd-tests -- --experiment-branch ${{ inputs.branch }} --experiment-slug ${{ inputs.slug }} --private-browsing-enabled --firefox-path="C:\Program Files\Firefox_${{ matrix.firefox }}\firefox.exe" ${{ inputs.extra-arguments }}
