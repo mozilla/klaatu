@@ -49,4 +49,4 @@ jobs:
         shell: bash
         run: ./setup_script.sh
       - name: Run Tests
-        run: tox -e bdd-tests -- --experiment-branch ${{ inputs.branch }} --experiment-slug ${{ inputs.slug }} --private-browsing-enabled --firefox-path ${{ inputs.extra-arguments }}
+        run: tox -e bdd-tests -- --experiment-branch ${{ inputs.branch }} --experiment-slug ${{ inputs.slug }} --private-browsing-enabled --firefox-path="/opt/hostedtoolcache/firefox/${{ matrix.firefox }}/x64/firefox" ${{ inputs.extra-arguments }}
