@@ -1,0 +1,52 @@
+name: Linux Klaatu Tests
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Experiment Branch'
+        default: 'control'
+        required: true
+        type: string
+      slug:
+        description: 'Experiment Slug'
+        default: 'an-awesome-experiment'
+        required: true
+        type: string
+      firefox-version:
+        description: 'The Firefox Version(s) you want to test'
+        default: "['latest-beta', 'latest', '123.0']"
+        required: false
+        type: string
+      extra-arguments:
+        description: 'Additional testing arguments'
+        default: ''
+        required: false
+        type: string
+env:
+  MOZ_HEADLESS: 1
+jobs:
+  klaatu-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        firefox: ${{ fromJSON(inputs.firefox-version) }}
+    name: windows-klaatu-firefox-${{ matrix.firefox }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup firefox
+        id: setup-firefox
+        uses: ./.github/actions/setup_firefox/
+        with:
+          firefox-version: ${{ matrix.firefox }}
+      - run: |
+          echo Installed firefox versions: ${{ steps.setup-firefox.outputs.firefox-version }}
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Setup tests
+        shell: bash
+        run: ./setup_script.sh
+      - name: Run Tests
+        run: tox -e bdd-tests -- --experiment-branch ${{ inputs.branch }} --experiment-slug ${{ inputs.slug }} --private-browsing-enabled --firefox-path ${{ inputs.extra-arguments }}
