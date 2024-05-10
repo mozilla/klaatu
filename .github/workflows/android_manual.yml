@@ -46,8 +46,6 @@ jobs:
       - name: Setup files
         run: |
           unzip -q -o firefox-android.zip -d firefox-android
-          ls -l
-          pwd
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
@@ -66,9 +64,7 @@ jobs:
             firefox-${{ matrix.firefox }}-gradle-
       - name: Setup build
         run: |
-          pwd
-          ls -l
-          cd firefox-android/mobile/android/fenix
+          cd firefox-android/**/mobile/android/fenix
           cp app/src/androidTest/java/org/mozilla/fenix/experimentintegration/local.properties ./
       - name: Start emulator
         run: |
