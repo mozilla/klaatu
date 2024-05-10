@@ -13,8 +13,8 @@ on:
         required: true
         type: string
       firefox-version:
-        description: 'The Firefox Version you want to test'
-        default: "123"
+        description: 'The Firefox Version(s) you want to test'
+        default: "['latest-beta', 'latest', '123.0']"
         required: false
         type: string
       feature-name:
@@ -37,11 +37,11 @@ jobs:
     strategy:
         matrix:
           firefox: ${{ fromJSON(inputs.firefox-version) }}
-    name: ${{ inputs.feature-name }} tests for ${{ inputs.slug }}
+    name: ${{ inputs.feature-name }} tests for ${{ inputs.slug }} on firefox ${{ matrix.firefox }}
     steps:
       - name: Clone android branch
         run: |
-          firefox_version=$(echo "${{ inputs.firefox-version }}" | tr '.' '_')
+          firefox_version=$(echo "${{ matrix.firefox }}" | tr '.' '_')
           curl -sSL https://hg.mozilla.org/releases/mozilla-release/archive/FIREFOX-ANDROID_${firefox_version}_BUILD1.zip -o firefox-android.zip
       - name: Setup files
         run: |
@@ -60,9 +60,9 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.gradle/caches
-          key: firefox-${{ inputs.firefox-version }}-gradle-${{ hashFiles('**/*.gradle*', '**/*.kts') }}
+          key: firefox-${{ matrix.firefox }}-gradle-${{ hashFiles('**/*.gradle*', '**/*.kts') }}
           restore-keys: |
-            firefox-${{ inputs.firefox-version }}-gradle-
+            firefox-${{ matrix.firefox }}-gradle-
       - name: Setup build
         run: |
           cd mobile/android/fenix
