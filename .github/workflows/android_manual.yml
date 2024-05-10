@@ -75,12 +75,10 @@ jobs:
           adb devices
       - name: Build Test files
         run: |
-          cd firefox-android/mobile/android/fenix
           ./gradlew clean app:assembleFenixDebugAndroidTest
           adb install app/build/outputs/apk/androidTest/fenix/debug/app-fenix-debug-androidTest.apk
       - name: Build Fenix App
         run: |
-          cd firefox-android/mobile/android/fenix
           adb uninstall org.mozilla.fenix.debug
           ./gradlew clean app:assembleFenixDebug
           adb install app/build/outputs/apk/fenix/debug/app-fenix-x86_64-debug.apk
@@ -88,7 +86,7 @@ jobs:
         run: curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/mozilla/application-services/main/install-nimbus-cli.sh | bash  
       - name: Run Tests
         run: |
-          cd firefox-android/mobile/android/fenix/app/src/androidTest/java/org/mozilla/fenix/experimentintegration
+          cd app/src/androidTest/java/org/mozilla/fenix/experimentintegration
           pip3 install virtualenv poetry
           poetry install
           poetry run python generate_smoke_tests.py
