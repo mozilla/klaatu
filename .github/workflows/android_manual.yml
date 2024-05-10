@@ -65,7 +65,6 @@ jobs:
       - name: Setup build
         run: |
           cd firefox-android/**/mobile/android/fenix
-          cp app/src/androidTest/java/org/mozilla/fenix/experimentintegration/local.properties ./
       - name: Start emulator
         run: |
           echo no | android create avd --force -n test -k "system-images;android-34;google_apis;x86" --device "Pixel 3a"
