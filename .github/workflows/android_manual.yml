@@ -14,7 +14,7 @@ on:
         type: string
       firefox-version:
         description: 'The Firefox Version(s) you want to test'
-        default: "['latest-beta', 'latest', '123.0']"
+        default: "['123.0']"
         required: false
         type: string
       feature-name:
@@ -66,6 +66,8 @@ jobs:
             firefox-${{ matrix.firefox }}-gradle-
       - name: Setup build
         run: |
+          pwd
+          ls -l
           cd firefox-android/mobile/android/fenix
           cp app/src/androidTest/java/org/mozilla/fenix/experimentintegration/local.properties ./
       - name: Start emulator
