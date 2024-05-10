@@ -1,0 +1,94 @@
+name: Android Klaatu Tests
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Experiment Branch'
+        default: 'control'
+        required: true
+        type: string
+      slug:
+        description: 'Experiment Slug'
+        default: 'an-awesome-experiment'
+        required: true
+        type: string
+      firefox-version:
+        description: 'The Firefox Version you want to test'
+        default: "123"
+        required: false
+        type: string
+      feature-name:
+        description: 'The Feature you want to test'
+        default: 'smoke'
+        required: true
+        type: choice
+        options:
+          - smoke
+          - messaging_survey
+          - messaging_homescreen
+      extra-arguments:
+        description: 'Additional testing arguments'
+        default: ''
+        required: false
+        type: string
+jobs:
+  android-klaatu-tests:
+    runs-on: ubuntu-latest
+    strategy:
+        matrix:
+          firefox: ${{ fromJSON(inputs.firefox-version) }}
+    name: ${{ inputs.feature-name }} tests for ${{ inputs.slug }}
+    steps:
+      - name: Clone firefox-ios repo
+        uses: actions/checkout@v4
+        with:
+            repository: mozilla/gecko-dev
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Setup JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: firefox-${{ inputs.firefox-version }}-gradle-${{ hashFiles('**/*.gradle*', '**/*.kts') }}
+          restore-keys: |
+            firefox-${{ inputs.firefox-version }}-gradle-
+      - name: Setup build
+        run: |
+          cd mobile/android/fenix
+          cp app/src/androidTest/java/org/mozilla/fenix/experimentintegration/local.properties ./
+      - name: Start emulator
+        run: |
+          echo no | android create avd --force -n test -k "system-images;android-34;google_apis;x86" --device "Pixel 3a"
+          emulator -avd test -no-audio -no-window -gpu swiftshader -no-snapshot -no-accel &
+      - name: Wait for emulator to start
+        run: |
+          android-wait-for-emulator
+          adb devices
+      - name: Build Test files
+        run: |
+          ./gradlew clean app:assembleFenixDebugAndroidTest
+          adb install app/build/outputs/apk/androidTest/fenix/debug/app-fenix-debug-androidTest.apk
+      - name: Build Fenix App
+        run: |
+          adb uninstall org.mozilla.fenix.debug
+          ./gradlew clean app:assembleFenixDebug
+          adb install app/build/outputs/apk/fenix/debug/app-fenix-x86_64-debug.apk
+      - name: Install Nimbus CLI
+        run: curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/mozilla/application-services/main/install-nimbus-cli.sh | bash  
+      - name: Run Tests
+        run: |
+          cd app/src/androidTest/java/org/mozilla/fenix/experimentintegration
+          pip3 install virtualenv poetry
+          poetry install
+          poetry run python generate_smoke_tests.py
+          poetry run pytest --experiment ${{ inputs.slug }} --experiment-branch ${{ inputs.branch }} --experiment-feature ${{ inputs.feature-name }} ${{ inputs.extra-arguments }}
+      - name: HTML Test Report
+        if: ${{ always() }}
+        run: zip -r results.zip ~/gecko-dev/mobile/android/fenix/app/src/androidTest/java/org/mozilla/fenix/experimentintegration/results/index.html
