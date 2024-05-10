@@ -39,10 +39,14 @@ jobs:
           firefox: ${{ fromJSON(inputs.firefox-version) }}
     name: ${{ inputs.feature-name }} tests for ${{ inputs.slug }}
     steps:
-      - name: Clone firefox-ios repo
-        uses: actions/checkout@v4
-        with:
-            repository: mozilla/gecko-dev
+      - name: Clone android branch
+        run: |
+          firefox_version=$(echo "${{ inputs.firefox-version }}" | tr '.' '_')
+          curl -sSL https://hg.mozilla.org/releases/mozilla-release/archive/FIREFOX-ANDROID_${firefox_version}_BUILD1.zip -o firefox-android.zip
+      - name: Setup files
+        run: |
+          unzip -q -o firefox-android.zip -d firefox-android
+          cd firefox-android
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
