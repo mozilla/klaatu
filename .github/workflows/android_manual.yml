@@ -37,7 +37,7 @@ jobs:
     strategy:
         matrix:
           firefox: ${{ fromJSON(inputs.firefox-version) }}
-    name: ${{ inputs.feature-name }} tests for ${{ inputs.slug }} on firefox ${{ matrix.firefox }}
+    name: ${{ inputs.feature-name }} tests for ${{ inputs.slug }} on firefox android ${{ matrix.firefox }}
     steps:
       - name: Clone android branch
         run: |
@@ -46,6 +46,8 @@ jobs:
       - name: Setup files
         run: |
           unzip -q -o firefox-android.zip -d firefox-android
+          ls -l
+          pwd
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
