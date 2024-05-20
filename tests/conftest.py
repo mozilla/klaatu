@@ -74,7 +74,6 @@ def pytest_addoption(parser) -> None:
     )
 
 
-
 def start_process(path, command):
     module_path = Path(path)
 
