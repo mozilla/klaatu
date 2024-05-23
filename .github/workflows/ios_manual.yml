@@ -56,6 +56,9 @@ jobs:
         run: sudo rm -rf /Applications/Xcode.app
       - name: Set Xcode version
         run: sudo xcode-select -switch /Applications/Xcode_15.3.app && xcodebuild -version
+      - name: Cherry-pick recent test changes
+        run: git cherry-pick d49462c40930611886c8e97031e1244a7f22bc32
+        continue-on-error: true
       - name: Setup build
         run: |
           sh ./bootstrap.sh  
@@ -72,7 +75,6 @@ jobs:
       - name: Run Tests
         run: |
           cd firefox-ios/firefox-ios-tests/Tests/ExperimentIntegrationTests
-          ls -la
           poetry install
           export SIMULATOR_UDID=$(python get_specific_device_udid.py)
           poetry run python generate_smoke_tests.py
