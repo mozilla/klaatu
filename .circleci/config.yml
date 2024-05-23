@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  android: circleci/android@2.5.0
+
 jobs:
   build-nightly: # build for the main branch
     machine:
@@ -40,6 +43,21 @@ jobs:
             docker build -t mozilla/klaatu:firefox-release -f Dockerfile.desktop .
             docker login -u "${DOCKERHUB_USER}" -p "${DOCKERHUB_PASS}"
             docker push mozilla/klaatu:firefox-release
+  build-android:
+    working_directory: ~/klaatu
+    executor:
+      name: android/android-machine
+      resource-class: large
+      tag: default
+    steps:
+      - checkout
+      - android/create-avd:
+          avd-name: myavd
+          install: true
+          system-image: system-images;android-34;default;x86_64
+      - android/start-emulator:
+          avd-name: myavd
+          no-window: true
   lint:
     docker:
       - image: cimg/python:3.11
@@ -122,13 +140,13 @@ jobs:
       - store_artifacts:
           path: tests/report.html
 workflows:
-  version: 2.1
   lint_test_release:
     jobs:
       - lint
       - test-release-firefox
       - test-beta-firefox
       - test-nightly-firefox
+      - build-android
       - build-nightly:
            requires:
               - lint
