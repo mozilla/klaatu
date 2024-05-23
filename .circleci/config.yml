@@ -1,8 +1,5 @@
 version: 2.1
 
-orbs:
-  android: circleci/android@2.5.0
-
 jobs:
   build-nightly: # build for the main branch
     machine:
@@ -125,6 +122,7 @@ jobs:
       - store_artifacts:
           path: tests/report.html
 workflows:
+  version: 2.1
   lint_test_release:
     jobs:
       - lint
