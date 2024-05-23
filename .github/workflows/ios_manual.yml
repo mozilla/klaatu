@@ -41,7 +41,8 @@ jobs:
         uses: actions/checkout@v4
         with:
             repository: mozilla-mobile/firefox-ios
-            ref: "release/v${{ inputs.firefox-version }}"
+            fetch-depth: 0
+           # ref: "release/v${{ inputs.firefox-version }}"
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
@@ -56,6 +57,8 @@ jobs:
         run: sudo rm -rf /Applications/Xcode.app
       - name: Set Xcode version
         run: sudo xcode-select -switch /Applications/Xcode_15.3.app && xcodebuild -version
+      - name: Checkout target branch
+        run: git checkout release/v${{ inputs.firefox-version }}
       - name: Cherry-pick recent test changes
         run: git cherry-pick d49462c40930611886c8e97031e1244a7f22bc32
         continue-on-error: true
