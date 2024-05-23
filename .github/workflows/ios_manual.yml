@@ -60,7 +60,7 @@ jobs:
       - name: Checkout target branch
         run: git checkout release/v${{ inputs.firefox-version }}
       - name: Cherry-pick recent test changes
-        run: git cherry-pick d49462c40930611886c8e97031e1244a7f22bc32
+        run: git cherry-pick -X theirs d49462c40930611886c8e97031e1244a7f22bc32
         continue-on-error: true
       - name: Setup build
         run: |
