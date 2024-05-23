@@ -40,13 +40,14 @@ jobs:
       - name: Clone firefox-ios repo
         uses: actions/checkout@v4
         with:
-            repository: jrbenny35/firefox-ios
+            repository: mozilla-mobile/firefox-ios
             ref: "release/v${{ inputs.firefox-version }}"
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
       - name: Cache
+        id: app-cache
         uses: actions/cache@v4.0.2
         with:
           path: /Users/runner/Library/Developer/Xcode/DerivedData/**/
@@ -61,16 +62,8 @@ jobs:
           cd firefox-ios
           brew update
           pip3 install virtualenv poetry
-      - name: Check if cache loaded correctly
-        id: check_cache
-        run: |
-          if [ -d /Users/runner/Library/Developer/Xcode/DerivedData/Client-*/ ]; then
-            echo "::set-output name=cache_loaded::true"
-          else
-            echo "::set-output name=cache_loaded::false"
-          fi
       - name: Build app
-        if: steps.check_cache.outputs.cache_loaded == 'false'
+        if: steps.app-cache.outputs.cache-hit != 'true'
         run: |
           cd firefox-ios
           xcodebuild build-for-testing -project Client.xcodeproj -scheme Fennec -configuration Fennec -sdk iphonesimulator -quiet -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.2'
