@@ -43,21 +43,6 @@ jobs:
             docker build -t mozilla/klaatu:firefox-release -f Dockerfile.desktop .
             docker login -u "${DOCKERHUB_USER}" -p "${DOCKERHUB_PASS}"
             docker push mozilla/klaatu:firefox-release
-  build-android:
-    working_directory: ~/klaatu
-    executor:
-      name: android/android-machine
-      resource-class: large
-      tag: default
-    steps:
-      - checkout
-      - android/create-avd:
-          avd-name: myavd
-          install: true
-          system-image: system-images;android-34;default;x86_64
-      - android/start-emulator:
-          avd-name: myavd
-          no-window: true
   lint:
     docker:
       - image: cimg/python:3.11
@@ -146,7 +131,6 @@ workflows:
       - test-release-firefox
       - test-beta-firefox
       - test-nightly-firefox
-      - build-android
       - build-nightly:
            requires:
               - lint
