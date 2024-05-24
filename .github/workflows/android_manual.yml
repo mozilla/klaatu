@@ -121,7 +121,8 @@ jobs:
           pip3 install virtualenv poetry pipenv
           pipenv install
           pipenv run python generate_smoke_tests.py
+          echo "PIPENV COMMAND: 'pipenv run pytest --experiment ${{ inputs.slug }} --experiment-branch ${{ inputs.branch }} --experiment-feature ${{ inputs.feature-name }} ${{ inputs.extra-arguments }}'"
           pipenv run pytest --experiment ${{ inputs.slug }} --experiment-branch ${{ inputs.branch }} --experiment-feature ${{ inputs.feature-name }} ${{ inputs.extra-arguments }}
       - name: HTML Test Report
         if: ${{ always() }}
-        run: zip -r results.zip ~/gecko-dev/mobile/android/fenix/app/src/androidTest/java/org/mozilla/fenix/experimentintegration/results/index.html
+        run: zip -r results.zip /home/runner/work/klaatu/klaatu/gecko-dev/mobile/android/fenix/app/src/androidTest/java/org/mozilla/fenix/experimentintegration/results/index.html
