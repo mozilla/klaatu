@@ -23,7 +23,7 @@ on:
         required: true
         type: choice
         options:
-          - smoke
+          - smoke_test
           - messaging_survey
           - messaging_homescreen
       extra-arguments:
