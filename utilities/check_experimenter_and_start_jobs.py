@@ -33,13 +33,13 @@ def trigger_github_action(slug, branch, firefox_version, workflow_id):
     }
     print(f"Running tests for {inputs['slug']} with data {data}")
 
-    response = requests.post(url, headers=headers, data=json.dumps(data))
+    # response = requests.post(url, headers=headers, data=json.dumps(data))
     
-    if response.status_code == 204:
-        print('Workflow triggered successfully!')
-    else:
-        print(f'Failed to trigger workflow: {response.status_code}')
-        print(response.text)
+    # if response.status_code == 204:
+    #     print('Workflow triggered successfully!')
+    # else:
+    #     print(f'Failed to trigger workflow: {response.status_code}')
+    #     print(response.text)
 
 def get_latest_versions(versions, min_version):
     # Parse versions and group by major.minor

@@ -20,6 +20,7 @@ jobs_filter = ["signing-apk-fenix-debug", "signing-apk-fenix-android-test-debug"
 download_ids = {}
 task_ids = {}
 path = Path().cwd()
+final_version = None
 
 firefox_version = args.firefox_version.replace(".", "_")
 hg_url = requests.get("https://hg.mozilla.org/releases/mozilla-release/tags").content
@@ -29,17 +30,24 @@ soup = BeautifulSoup(hg_url, 'html.parser')
 versions = soup.find_all('b', string=re.compile("FIREFOX-ANDROID"))
 beta_versions = sorted([_.get_text() for _ in versions if "b" in _.get_text()])  # Latest build is last
 release_versions = sorted([_.get_text() for _ in versions if "b" not in _.get_text()], reverse=True)  # Latest build is last
-mc_versions = beta_versions + release_versions
 
 # MAYBE JOIN LIST SO IT'S EASIER TO MATCH VERSION REQUESTED
 if "b" in firefox_version:
-    firefox_version = beta_versions[-1]
+    for version in beta_versions:
+        if firefox_version in version:
+            final_version = version
 else:
-    firefox_version = release_versions[-1]
+    for version in release_versions:
+        if firefox_version in version:
+            final_version = version
 
-print(f"https://hg.mozilla.org/releases/mozilla-release/rev/{firefox_version}")
+if not final_version:
+    raise Exception("Firefox Version not found")
+    # firefox_version = release_versions[-1]
 
-hg_url = requests.get(f"https://hg.mozilla.org/releases/mozilla-release/rev/{firefox_version}").content
+print(f"https://hg.mozilla.org/releases/mozilla-release/rev/{final_version}")
+
+hg_url = requests.get(f"https://hg.mozilla.org/releases/mozilla-release/rev/{final_version}").content
 
 soup = BeautifulSoup(hg_url, 'html.parser')
 
