@@ -1,0 +1,30 @@
+name: Klaatu scheduler
+
+on:
+  # schedule:
+  #   - cron: '0 * * * *'  # Run every day at midnight
+  workflow_dispatch:
+
+jobs:
+  run-scheduled-task:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.x'
+    - name: Cache last experiment ran
+      id: cache_previous_experiment
+      uses: actions/cache@v2
+      with:
+          path: previous_experiment.txt
+          key: previous_experiment-${{ hashFiles('**/previous_experiment.txt') }}
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests
+    - name: Run Python Script
+      run: |
+        python utilities/check_experimenter_and_start_jobs.py
