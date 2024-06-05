@@ -24,7 +24,7 @@ jobs:
     - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install requests
+        pip install requests python-dateutil
     - name: Run Python Script
       run: |
         python utilities/check_experimenter_and_start_jobs.py
