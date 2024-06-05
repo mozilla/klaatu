@@ -35,7 +35,7 @@ on:
 jobs:
   iOS-klaatu-tests:
     runs-on: macos-14
-    name: ${{ inputs.feature-name }} tests for ${{ inputs.slug }}
+    name: ${{ inputs.feature-name }} tests for ${{ inputs.slug }} on firefox iOS v${{ inputs.firefox-version }}
     steps:
       - name: Clone firefox-ios repo
         uses: actions/checkout@v4
@@ -94,7 +94,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
-          name: HTML Test Report
+          name: ${{ inputs.slug }} HTML Test Report
           path: /Users/runner/work/klaatu/klaatu/firefox-ios/firefox-ios-tests/Tests/ExperimentIntegrationTests/results/index.html
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}

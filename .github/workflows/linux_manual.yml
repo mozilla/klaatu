@@ -30,7 +30,7 @@ jobs:
     strategy:
       matrix:
         firefox: ${{ fromJSON(inputs.firefox-version) }}
-    name: linux-klaatu-firefox-${{ matrix.firefox }}
+    name: Smoke tests on linux for slug ${{ inputs.slug }} on firefox v${{ matrix.firefox }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -50,3 +50,8 @@ jobs:
         run: ./setup_script.sh
       - name: Run Tests
         run: tox -e bdd-tests -- --experiment-branch ${{ inputs.branch }} --experiment-slug ${{ inputs.slug }} --private-browsing-enabled --firefox-path="/opt/hostedtoolcache/firefox/${{ matrix.firefox }}/x64/firefox" ${{ inputs.extra-arguments }}
+      - uses: actions/upload-artifact@v4
+        if: ${{ always() }}
+        with:
+          name: ${{ inputs.slug }} HTML Test Report 
+          path: home/runner/work/klaatu/klaatu/tests/report.htm
