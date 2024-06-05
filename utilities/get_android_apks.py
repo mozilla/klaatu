@@ -31,7 +31,7 @@ versions = soup.find_all('b', string=re.compile("FIREFOX-ANDROID"))
 beta_versions = sorted([_.get_text() for _ in versions if "b" in _.get_text()])  # Latest build is last
 release_versions = sorted([_.get_text() for _ in versions if "b" not in _.get_text()], reverse=True)  # Latest build is last
 
-# MAYBE JOIN LIST SO IT'S EASIER TO MATCH VERSION REQUESTED
+# Filter if they are asking for a beta version or not
 if "b" in firefox_version:
     for version in beta_versions:
         if firefox_version in version:
@@ -43,7 +43,6 @@ else:
 
 if not final_version:
     raise Exception("Firefox Version not found")
-    # firefox_version = release_versions[-1]
 
 print(f"https://hg.mozilla.org/releases/mozilla-release/rev/{final_version}")
 

@@ -1,9 +1,11 @@
 import json
 import os
 import re
+import subprocess
 import time
 from dateutil import parser
 from packaging.version import parse, Version
+from pathlib import Path
 from collections import defaultdict
 
 import requests
@@ -12,6 +14,7 @@ import requests
 experimenter_url = "https://experimenter.services.mozilla.com/api/v6/experiments/?=status=Preview"
 run_flag = True
 testing_list = {}
+path = Path().cwd()
 
 def trigger_github_action(slug, branch, firefox_version, workflow_id):
     url = f'https://api.github.com/repos/jrbenny35/klaatu/actions/workflows/{workflow_id}/dispatches'
@@ -31,15 +34,15 @@ def trigger_github_action(slug, branch, firefox_version, workflow_id):
         'ref': 'main',
         'inputs': inputs or {}
     }
-    print(f"Running tests for {inputs['slug']} with data {data}")
+    print(f"Running tests for {inputs['slug']}, with data {data}, on workflow {workflow_id}")
 
-    # response = requests.post(url, headers=headers, data=json.dumps(data))
+    response = requests.post(url, headers=headers, data=json.dumps(data))
     
-    # if response.status_code == 204:
-    #     print('Workflow triggered successfully!')
-    # else:
-    #     print(f'Failed to trigger workflow: {response.status_code}')
-    #     print(response.text)
+    if response.status_code == 204:
+        print('Workflow triggered successfully!')
+    else:
+        print(f'Failed to trigger workflow: {response.status_code}')
+        print(response.text)
 
 def get_latest_versions(versions, min_version):
     # Parse versions and group by major.minor
@@ -71,13 +74,17 @@ def get_firefox_verions(app_name, channel, min_version):
     test_versions = set()
     versions = requests.get("https://whattrainisitnow.com/api/firefox/releases/").json()
     non_desktop_beta = [f"{Version(list(versions.keys())[-1]).major +1}.0b"]
+    
     if "firefox_ios" in app_name:
         # Get list of versions from requested to current based on whattrainisitnow
         for version in reversed(versions.keys()):
             version = Version(version)
             if version.major > Version(min_version).major:
                 test_versions.add(version.major)
-        return [f"{_}" for _ in test_versions]
+        if not test_versions: # if the version doesn't exist in whattrainisitnow just return it
+           return [f"{Version(min_version)}"]
+        else:
+            return [f"{_}" for _ in test_versions]
     else:
         match channel:
             case "release":
@@ -93,11 +100,14 @@ def get_firefox_verions(app_name, channel, min_version):
                 return non_desktop_beta
 
 # Load string of last experiment
-with open('previous_experiment.txt') as f:
-    previous_experiment = f.read()
+try:
+    with open('previous_experiment.txt') as f:
+        previous_experiment = f.read()
+except FileNotFoundError:
+    subprocess.run([f"touch {path}"], encoding="utf8", shell=True)
 
 # Query Experimenter API
-current_experiments = [requests.get(experimenter_url).json()]
+current_experiments = requests.get(experimenter_url).json()
 
 # check if newest experiment is different
 if current_experiments[-1]["slug"] not in previous_experiment:
@@ -121,14 +131,21 @@ for experiment in reversed(current_experiments):
 
 
 for slug, data in testing_list.items():
-    ff_version = [re.search(r"versionCompare\('(\d+).!'\)", data["targeting"]).group(1)]
+    ff_version = None
+    desktop_workflows = ["windows_manual.yml", "linux_manual.yml"]
+
+    try:
+        ff_version = [re.search(r"versionCompare\('(\d+).!'\)", data["targeting"]).group(1)]
+    except AttributeError:
+        continue  # Don't test experiments with no target version
+
     match data["appName"]:
         case "firefox_desktop":
             for branch in data["branches"]:
-                workflow_id = "windows_manual.yml"
-                trigger_github_action(
-                    slug, branch["slug"], get_firefox_verions(data["appName"], data["channel"], ff_version), workflow_id
-                )
+                for workflow_id in desktop_workflows:
+                    trigger_github_action(
+                        slug, branch["slug"], get_firefox_verions(data["appName"], data["channel"], ff_version), workflow_id
+                    )
         case "firefox_ios":
             for branch in data["branches"]:
                 workflow_id = "ios_manual.yml"
@@ -147,3 +164,5 @@ for slug, data in testing_list.items():
 #  Write last experiment to file for next cron run
 with open('previous_experiment.txt', 'w') as f:
     f.writelines(current_experiments[-1]["slug"])
+
+print(f"Last experiment tested was {current_experiments[-1]["slug"]}")
