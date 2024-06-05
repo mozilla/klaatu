@@ -105,6 +105,7 @@ try:
         previous_experiment = f.read()
 except FileNotFoundError:
     subprocess.run([f"touch {path}"], encoding="utf8", shell=True)
+    previous_experiment = []
 
 # Query Experimenter API
 current_experiments = requests.get(experimenter_url).json()
