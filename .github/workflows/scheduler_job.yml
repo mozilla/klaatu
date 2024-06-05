@@ -28,3 +28,5 @@ jobs:
     - name: Run Python Script
       run: |
         python utilities/check_experimenter_and_start_jobs.py
+      env:
+        BEARER_TOKEN: ${{ secrets.BEARER_TOKEN }}
