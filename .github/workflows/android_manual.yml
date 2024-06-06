@@ -44,14 +44,13 @@ jobs:
         with:
           path: klaatu
       - name: Checkout android github Repository
-        if: ${{ matrix.firefox }} < 126
+        if: ${{ matrix.firefox < 126 }}
         uses: actions/checkout@v4
         with:
           repository: mozilla-mobile/firefox-android
           ref: "releases_v${{ matrix.firefox }}"
           path: fenix
       - name: Clone gecko-dev
-        if: ${{ matrix.firefox }} > 125
         uses: actions/checkout@v4
         with:
           sparse-checkout: mobile/android/fenix/app/src/androidTest/java/org/mozilla/fenix
@@ -108,7 +107,7 @@ jobs:
               fi
           done
       - name: Download Android files and install
-        if: ${{ matrix.firefox }} > 125
+        if: ${{ matrix.firefox > 125 }}
         run: |
           cd klaatu
           pip3 install virtualenv poetry
@@ -122,7 +121,7 @@ jobs:
           ANDROID_SDK_HOME: $ANDROID_HOME
           ANDROID_NDK_HOME: $ANDROID_NDK_HOME
       - name: Build test files and install
-        if: ${{ matrix.firefox }} < 126 && steps.cache_test_apk.outputs.cache-hit != 'true'
+        if: ${{ matrix.firefox < 126 }} && steps.cache_test_apk.outputs.cache-hit != 'true'
         run: |
           cd fenix/fenix
           ls -la
