@@ -43,15 +43,15 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: klaatu
-      - name: Checkout Repository
-        if: ${{ inputs.firefox-version }} < 126
+      - name: Checkout android github Repository
+        if: ${{ matrix.firefox }} < 126
         uses: actions/checkout@v4
         with:
           sparse-checkout: firefox-android/fenix
           repository: mozilla-mobile/firefox-android
-          ref: "releases_v${{ inputs.firefox-version }}"
+          ref: "releases_v${{ matrix.firefox }}"
       - name: Clone gecko-dev
-        if: ${{ inputs.firefox-version }} > 126
+        if: ${{ matrix.firefox }} > 126
         uses: actions/checkout@v4
         with:
           sparse-checkout: mobile/android/fenix/app/src/androidTest/java/org/mozilla/fenix
@@ -68,13 +68,13 @@ jobs:
           java-version: '17'
       - name: Cache Fenix Test APK
         id: cache_test_apk
-        if: ${{ inputs.firefox-version }} > 126
+        if: ${{ matrix.firefox }} > 126
         uses: actions/cache@v2
         with:
           path: klaatu/android-debug-test-v${{ matrix.firefox }}.apk
           key: android-debug-test-v${{ matrix.firefox }}
       - name: Cache Fenix APK
-        if: ${{ inputs.firefox-version }} > 126
+        if: ${{ matrix.firefox }} > 126
         uses: actions/cache@v2
         with:
           path: klaatu/fenix-debug-v${{ matrix.firefox }}.apk
@@ -108,7 +108,7 @@ jobs:
               fi
           done
       - name: Download Android files and install
-        if: steps.cache_test_apk.outputs.cache-hit != 'true' ||  ${{ inputs.firefox-version }} > 126
+        if: steps.cache_test_apk.outputs.cache-hit != 'true' ||  ${{ matrix.firefox }} > 126
         run: |
           cd klaatu
           pip3 install virtualenv poetry
@@ -122,7 +122,7 @@ jobs:
           ANDROID_SDK_HOME: $ANDROID_HOME
           ANDROID_NDK_HOME: $ANDROID_NDK_HOME
       - name: Build test files and install
-        if: ${{ inputs.firefox-version }} < 126
+        if: ${{ matrix.firefox }} < 126
         run: |
           ls -la
           cd firefox-fenix
