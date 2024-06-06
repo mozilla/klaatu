@@ -50,8 +50,9 @@ jobs:
           sparse-checkout: firefox-android/fenix
           repository: mozilla-mobile/firefox-android
           ref: "releases_v${{ matrix.firefox }}"
+          path: fenix
       - name: Clone gecko-dev
-        if: ${{ matrix.firefox }} > 126
+        if: ${{ matrix.firefox }} > 125
         uses: actions/checkout@v4
         with:
           sparse-checkout: mobile/android/fenix/app/src/androidTest/java/org/mozilla/fenix
@@ -83,7 +84,7 @@ jobs:
         if: ${{ matrix.firefox }} < 126
         run: |
           ls -la
-          cd firefox-fenix
+          cd fenix
           ./gradlew clean app:assembleFenixDebug
           ./gradlew clean app:assembleFenixDebugAndroidTest
           adb install app/build/outputs/apk/fenix/debug/app-fenix-x86_64-debug.apk
