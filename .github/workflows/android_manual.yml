@@ -43,7 +43,15 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: klaatu
+      - name: Checkout Repository
+        if: ${{ inputs.firefox-version }} < 126
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: firefox-android/fenix
+          repository: mozilla-mobile/firefox-android
+          ref: "releases_v${{ inputs.firefox-version }}"
       - name: Clone gecko-dev
+        if: ${{ inputs.firefox-version }} > 126
         uses: actions/checkout@v4
         with:
           sparse-checkout: mobile/android/fenix/app/src/androidTest/java/org/mozilla/fenix
@@ -60,11 +68,13 @@ jobs:
           java-version: '17'
       - name: Cache Fenix Test APK
         id: cache_test_apk
+        if: ${{ inputs.firefox-version }} > 126
         uses: actions/cache@v2
         with:
           path: klaatu/android-debug-test-v${{ matrix.firefox }}.apk
           key: android-debug-test-v${{ matrix.firefox }}
       - name: Cache Fenix APK
+        if: ${{ inputs.firefox-version }} > 126
         uses: actions/cache@v2
         with:
           path: klaatu/fenix-debug-v${{ matrix.firefox }}.apk
@@ -97,22 +107,29 @@ jobs:
                   sleep 1
               fi
           done
-      - name: Download Android files
-        if: steps.cache_test_apk.outputs.cache-hit != 'true'
+      - name: Download Android files and install
+        if: steps.cache_test_apk.outputs.cache-hit != 'true' ||  ${{ inputs.firefox-version }} > 126
         run: |
           cd klaatu
           pip3 install virtualenv poetry
           poetry install --no-root
           firefox_version=$(echo "${{ matrix.firefox }}" | tr '.' '_')
           poetry run python utilities/get_android_apks.py --firefox-version=${{ matrix.firefox }}
-      - name: Install files onto emulator
-        run: |
           adb devices
           adb install klaatu/android-debug-test-v${{ matrix.firefox }}.apk
           adb install klaatu/fenix-debug-v${{ matrix.firefox }}.apk
         env:
           ANDROID_SDK_HOME: $ANDROID_HOME
           ANDROID_NDK_HOME: $ANDROID_NDK_HOME
+      - name: Build test files and install
+        if: ${{ inputs.firefox-version }} < 126
+        run: |
+          ls -la
+          cd firefox-fenix
+          ./gradlew clean app:assembleFenixDebug
+          ./gradlew clean app:assembleFenixDebugAndroidTest
+          adb install app/build/outputs/apk/fenix/debug/app-fenix-x86_64-debug.apk
+          adb install app/build/outputs/apk/androidTest/fenix/debug/app-fenix-debug-androidTest.apk
       - name: Install Nimbus CLI
         run: curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/mozilla/application-services/main/install-nimbus-cli.sh | bash  
       - name: Run Tests
