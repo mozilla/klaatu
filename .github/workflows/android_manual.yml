@@ -68,27 +68,17 @@ jobs:
           java-version: '17'
       - name: Cache Fenix Test APK
         id: cache_test_apk
-        if: ${{ matrix.firefox }} > 126
+        if: ${{ matrix.firefox }}
         uses: actions/cache@v2
         with:
           path: klaatu/android-debug-test-v${{ matrix.firefox }}.apk
           key: android-debug-test-v${{ matrix.firefox }}
       - name: Cache Fenix APK
-        if: ${{ matrix.firefox }} > 126
+        if: ${{ matrix.firefox }}
         uses: actions/cache@v2
         with:
           path: klaatu/fenix-debug-v${{ matrix.firefox }}.apk
           key: fenix-debug-v${{ matrix.firefox }}
-      - name: Build test files and install
-        if: ${{ matrix.firefox }} < 126
-        run: |
-          ls -la
-          cd fenix/fenix
-          ls -la
-          ./gradlew clean app:assembleFenixDebug
-          ./gradlew clean app:assembleFenixDebugAndroidTest
-          adb install app/build/outputs/apk/fenix/debug/app-fenix-x86_64-debug.apk
-          adb install app/build/outputs/apk/androidTest/fenix/debug/app-fenix-debug-androidTest.apk
       - name: Enable KVM group perms
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
@@ -118,7 +108,7 @@ jobs:
               fi
           done
       - name: Download Android files and install
-        if: ${{ matrix.firefox }} > 125 || steps.cache_test_apk.outputs.cache-hit != 'true'
+        if: ${{ matrix.firefox }} > 125
         run: |
           cd klaatu
           pip3 install virtualenv poetry
@@ -131,15 +121,18 @@ jobs:
         env:
           ANDROID_SDK_HOME: $ANDROID_HOME
           ANDROID_NDK_HOME: $ANDROID_NDK_HOME
-      # - name: Build test files and install
-      #   if: ${{ matrix.firefox }} < 126
-      #   run: |
-      #     ls -la
-      #     cd firefox-fenix
-      #     ./gradlew clean app:assembleFenixDebug
-      #     ./gradlew clean app:assembleFenixDebugAndroidTest
-      #     adb install app/build/outputs/apk/fenix/debug/app-fenix-x86_64-debug.apk
-      #     adb install app/build/outputs/apk/androidTest/fenix/debug/app-fenix-debug-androidTest.apk
+      - name: Build test files and install
+        if: ${{ matrix.firefox }} < 126 && steps.cache_test_apk.outputs.cache-hit != 'true'
+        run: |
+          cd fenix/fenix
+          ls -la
+          ./gradlew clean app:assembleFenixDebug
+          ./gradlew clean app:assembleFenixDebugAndroidTest
+          adb install app/build/outputs/apk/fenix/debug/app-fenix-x86_64-debug.apk
+          adb install app/build/outputs/apk/androidTest/fenix/debug/app-fenix-debug-androidTest.apk
+        env:
+          ANDROID_SDK_HOME: $ANDROID_HOME
+          ANDROID_NDK_HOME: $ANDROID_NDK_HOME
       - name: Install Nimbus CLI
         run: curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/mozilla/application-services/main/install-nimbus-cli.sh | bash  
       - name: Run Tests
