@@ -126,8 +126,7 @@ jobs:
           cd fenix/fenix
           ls -la
           ./gradlew clean app:assembleFenixDebug
-          ./gradlew clean app:assembleFenixDebugAndroidTest
-          ls app/build/outputs/apk/fenix/debug/
+          ls app/build/outputs/apk/
           adb install app/build/outputs/apk/fenix/debug/app-fenix-x86_64-debug.apk
           adb install app/build/outputs/apk/androidTest/fenix/debug/app-fenix-debug-androidTest.apk
         env:
