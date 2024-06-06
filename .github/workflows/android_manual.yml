@@ -84,7 +84,7 @@ jobs:
         if: ${{ matrix.firefox }} < 126
         run: |
           ls -la
-          cd fenix
+          cd fenix/fenix
           ./gradlew clean app:assembleFenixDebug
           ./gradlew clean app:assembleFenixDebugAndroidTest
           adb install app/build/outputs/apk/fenix/debug/app-fenix-x86_64-debug.apk
