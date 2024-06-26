@@ -31,7 +31,7 @@ def test_experiment_does_not_drastically_slow_firefox():
     pass
 
 
-@pytest.mark.xfail("Weird behavior with firefox and displaying the string")
+@pytest.mark.xfail(reason="Weird behavior with firefox and displaying the string")
 @scenario("../features/user_interface.feature", "The experiment shows on the studies page")
 def test_experiment_shows_on_studies_page():
     pass
