@@ -75,4 +75,4 @@ jobs:
         if: ${{ always() }}
         with:
           name: ${{ inputs.slug }} HTML Test Report 
-          path: home/runner/work/klaatu/klaatu/tests/report.htm
+          path: D:/a/klaatu/klaatu/tests/report.html
