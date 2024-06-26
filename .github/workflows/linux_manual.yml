@@ -53,5 +53,5 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
-          name: ${{ inputs.slug }} HTML Test Report 
+          name: ${{ inputs.slug }} Firefox-${{ matrix.firefox }} HTML Test Report
           path: home/runner/work/klaatu/klaatu/tests/report.htm
