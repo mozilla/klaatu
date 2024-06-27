@@ -104,7 +104,7 @@ jobs:
           done
       - name: Download and install Android files
         if: |
-          steps.cache_test_apk.outputs.cache-hit != 'true' ||
+          steps.cache_test_apk.outputs.cache-hit != 'true' &&
           (${{ matrix.firefox }} > 125.0.0)
         run: |
           cd klaatu
