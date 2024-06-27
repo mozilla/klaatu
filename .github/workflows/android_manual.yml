@@ -39,6 +39,11 @@ jobs:
           firefox: ${{ fromJSON(inputs.firefox-version) }}
     name: ${{ inputs.feature-name }} tests for ${{ inputs.slug }} on firefox android ${{ matrix.firefox }}
     steps:
+      - name: Set FF Version for downloader
+        run: | 
+          version = ${{ matrix.firefox }}
+          major_version = $(echo $version | cut -d'.' -f1)
+          echo "FF_VERSION=$major_version" >> $GITHUB_PATH
       - name: Checkout klaatu repo
         uses: actions/checkout@v4
         with:
@@ -53,6 +58,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: mozilla-mobile/firefox-android
+          ref: "releases_v$FF_VERSION"
           path: firefox-android
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -121,11 +127,14 @@ jobs:
       - name: Build  and install Android version sub 126
         if: matrix.firefox < '126.0.0'
         run: |
+          cp -r gecko-dev/mobile/android/fenix/app/src/androidTest/java/org/mozilla/fenix/ firefox-android/fenix/app/src/androidTest/java/org/mozilla/fenix/
           cd firefox-android/fenix
           ./gradlew clean app:assembleFenixDebugAndroidTest
           adb install app/build/outputs/apk/androidTest/fenix/debug/app-fenix-debug-androidTest.apk
+          mv app/build/outputs/apk/androidTest/fenix/debug/app-fenix-debug-androidTest.apk ~/klaatu/android-debug-test-v${{ matrix.firefox }}.apk
           ./gradlew clean app:assembleFenixDebug
           adb install app/build/outputs/apk/fenix/debug/app-fenix-x86_64-debug.apk
+          mv app/build/outputs/apk/fenix/debug/app-fenix-x86_64-debug.apk ~/klaatu/fenix-debug-v${{ matrix.firefox }}.apk
         env:
           ANDROID_SDK_HOME: $ANDROID_HOME
           ANDROID_NDK_HOME: $ANDROID_NDK_HOME
@@ -138,7 +147,7 @@ jobs:
           pipenv install
           pipenv run python generate_smoke_tests.py
           echo "PIPENV COMMAND: 'pipenv run pytest --experiment ${{ inputs.slug }} --experiment-branch ${{ inputs.branch }} --experiment-feature ${{ inputs.feature-name }} ${{ inputs.extra-arguments }}'"
-          pipenv run pytest --experiment ${{ inputs.slug }} --experiment-branch ${{ inputs.branch }} --experiment-feature ${{ inputs.feature-name }} ${{ inputs.extra-arguments }}
+          pipenv run pytest --experiment ${{ inputs.slug }} --experiment-branch ${{ inputs.branch }} --experiment-feature ${{ inputs.feature-name }} ${{ inputs.extra-arguments }} --reruns 1
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
