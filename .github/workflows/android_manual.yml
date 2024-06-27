@@ -129,7 +129,6 @@ jobs:
       - name: Build  and install Android version sub 126
         if: matrix.firefox < '126.0.0'
         run: |
-          cp -r gecko-dev/mobile/android/fenix/app/src/androidTest/java/org/mozilla/fenix/ firefox-android/fenix/app/src/androidTest/java/org/mozilla/fenix/
           cd firefox-android/fenix
           ./gradlew clean app:assembleFenixDebugAndroidTest
           adb install app/build/outputs/apk/androidTest/fenix/debug/app-fenix-debug-androidTest.apk
