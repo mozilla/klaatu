@@ -40,10 +40,11 @@ jobs:
     name: ${{ inputs.feature-name }} tests for ${{ inputs.slug }} on firefox android ${{ matrix.firefox }}
     steps:
       - name: Set FF Version for downloader
+        id: ff-version
         run: | 
           version=${{ matrix.firefox }}
           major_version=$(echo $version | cut -d'.' -f1)
-          echo "FF_VERSION=$major_version" >> $GITHUB_PATH
+          echo "FF_VERSION=$major_version" >> "$GITHUB_OUTPUT"
       - name: Checkout klaatu repo
         uses: actions/checkout@v4
         with:
@@ -56,9 +57,10 @@ jobs:
           path: gecko-dev
       - name: Clone firefox-android-github
         uses: actions/checkout@v4
+        if: matrix.firefox < '126.0.0'
         with:
           repository: mozilla-mobile/firefox-android
-          ref: "releases_v$FF_VERSION"
+          ref: "releases_v${{ steps.ff-version.outputs.FF_VERSION }}"
           path: firefox-android
       - name: Setup Python
         uses: actions/setup-python@v5
