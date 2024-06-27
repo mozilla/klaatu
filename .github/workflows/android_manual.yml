@@ -41,8 +41,8 @@ jobs:
     steps:
       - name: Set FF Version for downloader
         run: | 
-          version = ${{ matrix.firefox }}
-          major_version = $(echo $version | cut -d'.' -f1)
+          version=${{ matrix.firefox }}
+          major_version=$(echo $version | cut -d'.' -f1)
           echo "FF_VERSION=$major_version" >> $GITHUB_PATH
       - name: Checkout klaatu repo
         uses: actions/checkout@v4
