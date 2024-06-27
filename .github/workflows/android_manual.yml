@@ -49,6 +49,11 @@ jobs:
           sparse-checkout: mobile/android/fenix/app/src/androidTest/java/org/mozilla/fenix
           repository: mozilla/gecko-dev
           path: gecko-dev
+      - name: Clone firefox-android-github
+        uses: actions/checkout@v4
+        with:
+          repository: mozilla-mobile/firefox-android
+          path: firefox-android
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
@@ -97,19 +102,30 @@ jobs:
                   sleep 1
               fi
           done
-      - name: Download Android files
-        if: steps.cache_test_apk.outputs.cache-hit != 'true'
+      - name: Download and install Android files
+        if: |
+          steps.cache_test_apk.outputs.cache-hit != 'true' ||
+          (${{ matrix.firefox }} > 125.0.0)
         run: |
           cd klaatu
           pip3 install virtualenv poetry
           poetry install --no-root
           firefox_version=$(echo "${{ matrix.firefox }}" | tr '.' '_')
           poetry run python utilities/get_android_apks.py --firefox-version=${{ matrix.firefox }}
-      - name: Install files onto emulator
-        run: |
           adb devices
           adb install klaatu/android-debug-test-v${{ matrix.firefox }}.apk
           adb install klaatu/fenix-debug-v${{ matrix.firefox }}.apk
+        env:
+          ANDROID_SDK_HOME: $ANDROID_HOME
+          ANDROID_NDK_HOME: $ANDROID_NDK_HOME
+      - name: Build  and install Android version sub 126
+        if: ${{ matrix.firefox }} < 126.0.0
+        run: |
+          cd firefox-android/fenix
+          ./gradlew clean app:assembleFenixDebugAndroidTest
+          adb install app/build/outputs/apk/androidTest/fenix/debug/app-fenix-debug-androidTest.apk
+          ./gradlew clean app:assembleFenixDebug
+          adb install app/build/outputs/apk/fenix/debug/app-fenix-x86_64-debug.apk
         env:
           ANDROID_SDK_HOME: $ANDROID_HOME
           ANDROID_NDK_HOME: $ANDROID_NDK_HOME
