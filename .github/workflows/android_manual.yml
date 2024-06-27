@@ -132,10 +132,10 @@ jobs:
           cd firefox-android/fenix
           ./gradlew clean app:assembleFenixDebugAndroidTest
           adb install app/build/outputs/apk/androidTest/fenix/debug/app-fenix-debug-androidTest.apk
-          mv app/build/outputs/apk/androidTest/fenix/debug/app-fenix-debug-androidTest.apk ~/klaatu/android-debug-test-v${{ matrix.firefox }}.apk
+          mv app/build/outputs/apk/androidTest/fenix/debug/app-fenix-debug-androidTest.apk /home/runner/work/klaatu/klaatu/android-debug-test-v${{ matrix.firefox }}.apk
           ./gradlew clean app:assembleFenixDebug
           adb install app/build/outputs/apk/fenix/debug/app-fenix-x86_64-debug.apk
-          mv app/build/outputs/apk/fenix/debug/app-fenix-x86_64-debug.apk ~/klaatu/fenix-debug-v${{ matrix.firefox }}.apk
+          mv app/build/outputs/apk/fenix/debug/app-fenix-x86_64-debug.apk /home/runner/work/klaatu/klaatu/fenix-debug-v${{ matrix.firefox }}.apk
         env:
           ANDROID_SDK_HOME: $ANDROID_HOME
           ANDROID_NDK_HOME: $ANDROID_NDK_HOME
