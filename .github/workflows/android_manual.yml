@@ -104,8 +104,8 @@ jobs:
           done
       - name: Download and install Android files
         if: |
-          steps.cache_test_apk.outputs.cache-hit != 'true' &&
-          (${{ matrix.firefox }} > 125.0.0)
+          (steps.cache_test_apk.outputs.cache-hit != 'true') &&
+          (matrix.firefox > '125.0.0')
         run: |
           cd klaatu
           pip3 install virtualenv poetry
@@ -119,7 +119,7 @@ jobs:
           ANDROID_SDK_HOME: $ANDROID_HOME
           ANDROID_NDK_HOME: $ANDROID_NDK_HOME
       - name: Build  and install Android version sub 126
-        if: ${{ matrix.firefox }} < 126.0.0
+        if: matrix.firefox < '126.0.0'
         run: |
           cd firefox-android/fenix
           ./gradlew clean app:assembleFenixDebugAndroidTest
