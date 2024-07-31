@@ -130,7 +130,6 @@ for experiment in reversed(current_experiments):
     else:
         break
 
-
 for slug, data in testing_list.items():
     ff_version = None
     desktop_workflows = ["windows_manual.yml", "linux_manual.yml"]
@@ -159,11 +158,11 @@ for slug, data in testing_list.items():
                 workflow_id = "android_manual.yml"
                 _ff_version = Version(ff_version[0])
                 trigger_github_action(
-                    slug, branch["slug"], get_firefox_verions(data["appName"], data["channel"], f"{_ff_version.major}"), workflow_id
+                    slug, branch["slug"], get_firefox_verions(data["appName"], data["channel"], ff_version), workflow_id
                 )
     time.sleep(30)
 #  Write last experiment to file for next cron run
 with open('previous_experiment.txt', 'w') as f:
     f.writelines(current_experiments[-1]["slug"])
 
-print(f"Last experiment tested was {current_experiments[-1]["slug"]}")
+print(f"Last experiment tested was {current_experiments[-1]['slug']}")

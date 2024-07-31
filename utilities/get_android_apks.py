@@ -28,8 +28,8 @@ hg_url = requests.get("https://hg.mozilla.org/releases/mozilla-release/tags").co
 soup = BeautifulSoup(hg_url, 'html.parser')
 
 versions = soup.find_all('b', string=re.compile("FIREFOX-ANDROID"))
-beta_versions = sorted([_.get_text() for _ in versions if "b" in _.get_text()])  # Latest build is last
-release_versions = sorted([_.get_text() for _ in versions if "b" not in _.get_text()], reverse=True)  # Latest build is last
+beta_versions = sorted([_.get_text() for _ in versions if "b" in _.get_text()])
+release_versions = sorted([_.get_text() for _ in versions if "b" not in _.get_text()])
 
 # Filter if they are asking for a beta version or not
 if "b" in firefox_version:
@@ -78,9 +78,9 @@ fenix_apk = requests.get(
     headers=headers
 )
 
-with open(path.resolve() / f"android-debug-test-v{args.firefox_version}.apk", "wb") as file:
-    file.write(test_apk.content)
-with open(path.resolve() / f"fenix-debug-v{args.firefox_version}.apk", "wb") as file:
-    file.write(fenix_apk.content)
+# with open(path.resolve() / f"android-debug-test-v{args.firefox_version}.apk", "wb") as file:
+#     file.write(test_apk.content)
+# with open(path.resolve() / f"fenix-debug-v{args.firefox_version}.apk", "wb") as file:
+#     file.write(fenix_apk.content)
 
 print("APKS DOWNLOADED SUCCESSFULLY!")
