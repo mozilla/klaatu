@@ -39,6 +39,12 @@ jobs:
           firefox: ${{ fromJSON(inputs.firefox-version) }}
     name: ${{ inputs.feature-name }} tests for ${{ inputs.slug }} on firefox android ${{ matrix.firefox }}
     steps:
+      - name: Set FF Version for downloader
+        id: ff-version
+        run: | 
+          version=${{ matrix.firefox }}
+          major_version=$(echo $version | cut -d'.' -f1)
+          echo "FF_VERSION=$major_version" >> "$GITHUB_OUTPUT"
       - name: Checkout klaatu repo
         uses: actions/checkout@v4
         with:
@@ -49,6 +55,13 @@ jobs:
           sparse-checkout: mobile/android/fenix/app/src/androidTest/java/org/mozilla/fenix
           repository: mozilla/gecko-dev
           path: gecko-dev
+      - name: Clone firefox-android-github
+        uses: actions/checkout@v4
+        if: matrix.firefox < '126.0.0'
+        with:
+          repository: mozilla-mobile/firefox-android
+          ref: "releases_v${{ steps.ff-version.outputs.FF_VERSION }}"
+          path: firefox-android
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
@@ -97,19 +110,32 @@ jobs:
                   sleep 1
               fi
           done
-      - name: Download Android files
-        if: steps.cache_test_apk.outputs.cache-hit != 'true'
+      - name: Download and install Android files
+        if: |
+          (steps.cache_test_apk.outputs.cache-hit != 'true') &&
+          (matrix.firefox > '125.0.0')
         run: |
           cd klaatu
           pip3 install virtualenv poetry
           poetry install --no-root
           firefox_version=$(echo "${{ matrix.firefox }}" | tr '.' '_')
           poetry run python utilities/get_android_apks.py --firefox-version=${{ matrix.firefox }}
-      - name: Install files onto emulator
-        run: |
           adb devices
           adb install klaatu/android-debug-test-v${{ matrix.firefox }}.apk
           adb install klaatu/fenix-debug-v${{ matrix.firefox }}.apk
+        env:
+          ANDROID_SDK_HOME: $ANDROID_HOME
+          ANDROID_NDK_HOME: $ANDROID_NDK_HOME
+      - name: Build  and install Android version sub 126
+        if: matrix.firefox < '126.0.0'
+        run: |
+          cd firefox-android/fenix
+          ./gradlew clean app:assembleFenixDebugAndroidTest
+          adb install app/build/outputs/apk/androidTest/fenix/debug/app-fenix-debug-androidTest.apk
+          mv app/build/outputs/apk/androidTest/fenix/debug/app-fenix-debug-androidTest.apk /home/runner/work/klaatu/klaatu/android-debug-test-v${{ matrix.firefox }}.apk
+          ./gradlew clean app:assembleFenixDebug
+          adb install app/build/outputs/apk/fenix/debug/app-fenix-x86_64-debug.apk
+          mv app/build/outputs/apk/fenix/debug/app-fenix-x86_64-debug.apk /home/runner/work/klaatu/klaatu/fenix-debug-v${{ matrix.firefox }}.apk
         env:
           ANDROID_SDK_HOME: $ANDROID_HOME
           ANDROID_NDK_HOME: $ANDROID_NDK_HOME
@@ -120,9 +146,10 @@ jobs:
           cd gecko-dev/mobile/android/fenix/app/src/androidTest/java/org/mozilla/fenix/experimentintegration
           pip3 install virtualenv poetry pipenv
           pipenv install
+          pipenv install pytest-rerunfailures
           pipenv run python generate_smoke_tests.py
           echo "PIPENV COMMAND: 'pipenv run pytest --experiment ${{ inputs.slug }} --experiment-branch ${{ inputs.branch }} --experiment-feature ${{ inputs.feature-name }} ${{ inputs.extra-arguments }}'"
-          pipenv run pytest --experiment ${{ inputs.slug }} --experiment-branch ${{ inputs.branch }} --experiment-feature ${{ inputs.feature-name }} ${{ inputs.extra-arguments }}
+          pipenv run pytest --experiment ${{ inputs.slug }} --experiment-branch ${{ inputs.branch }} --experiment-feature ${{ inputs.feature-name }} ${{ inputs.extra-arguments }} --reruns 1
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:

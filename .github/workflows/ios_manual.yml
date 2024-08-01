@@ -40,7 +40,7 @@ jobs:
       - name: Clone firefox-ios repo
         uses: actions/checkout@v4
         with:
-            repository: jrbenny35/firefox-ios
+            repository: mozilla-mobile/firefox-ios
             ref: "release/v${{ inputs.firefox-version }}"
       - name: Setup Python
         uses: actions/setup-python@v5
