@@ -464,6 +464,26 @@ def fixture_setup_search_test(selenium):
     return _
 
 
+@pytest.fixture(name="enable_search_bar")
+def fixture_enable_search_bar(selenium):
+    def _enable_search_bar():
+        script = """
+        const { CustomizableUI } = ChromeUtils.importESModule(
+            "resource:///modules/CustomizableUI.sys.mjs",
+        );
+
+        CustomizableUI.addWidgetToArea(
+            "search-container",
+            CustomizableUI.AREA_NAVBAR,
+            CustomizableUI.getPlacementOfWidget("urlbar-container").position + 1
+        );
+        """
+        with selenium.context(selenium.CONTEXT_CHROME):
+            selenium.execute_script(script)
+
+    return _enable_search_bar
+
+
 @pytest.fixture(name="static_server", autouse=True, scope="session")
 def fixture_static_server():
     if os.environ.get("DEBIAN_FRONTEND") and not os.environ.get("CI"):
@@ -486,12 +506,13 @@ def fixture_ping_server():
         process.terminate()
 
 
-@pytest.fixture(name="echo_firefox_version", autouse=True)
-def fixture_echo_firefox_version(selenium):
+@pytest.fixture(name="firefox_version", autouse=True)
+def fixture_firefox_version(selenium):
     script = """return navigator.userAgent"""
     version = selenium.execute_script(script)
     version = [item for item in version.split() if "Firefox" in item][0]
     logging.info(f"Firefox version {version}")
+    return version
 
 
 @then("Firefox should be allowed to open a new tab")
