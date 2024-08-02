@@ -75,3 +75,16 @@ You should now be able to run the tests in the git bash shell: `tox -e bdd-tests
 - `--experiment-slug`: The experiments slug from experimenter to load the experiment into the test.
 - `--experiment-server`: The server where the experiment is located, either `stage` or `prod`.
 - `--experiment-json`: The experiments JSON path on your local system.
+
+## Running on Github Actions
+
+Using Github actions to run the tests is the easiest and fastest way. It also allows you to run a test against a mobile app (Firefox for Android and iOS).
+
+1. Click the `Actions` tab at the top of this page. Here you will find a few different actions listed on the left side.
+2. Choose the workflow you want to run. If you want to run on a Windows machine, select `Windows Klaatu Tests`.
+3. Click the `Run Workflow` tab on the right side of the center column to open the dialog box to configure the run.
+4. Configure the run by adding the slug you want to test in `Experiment Slug`. Add the branch for this run in `Experiment Branch` and add the Firefox versions within the `Firefox Versions` list.
+
+Note: For the firefox versions, add a list within square brackets of either version types: `latest`, `latest-beta`, or specific version numbers: `123.0`. Behind the scenes this uses [this github action](https://github.com/browser-actions/setup-firefox), so you can reference that for more specifics on which firefox version to input into that list.
+
+5. You can then click `Run Workflow`. Wait a few seconds to see the workflow popup, if it doesn't just click refresh and you will see the job running.
