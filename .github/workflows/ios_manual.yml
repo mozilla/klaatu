@@ -14,8 +14,8 @@ on:
         required: true
         type: string
       firefox-version:
-        description: 'The Firefox Version you want to test'
-        default: "['123']"
+        description: 'The Firefox Version you want to test. v128 is the minimum.'
+        default: "['128']"
         required: false
         type: string
       feature-name:

@@ -85,7 +85,7 @@ def get_firefox_verions(app_name, channel, min_version):
         if not test_versions: # if the version doesn't exist in whattrainisitnow just return it
            return [f"{Version(min_version)}"]
         else:
-            return [f"{_}" for _ in test_versions]
+            return [f"{_}" for _ in test_versions if _ >= 128]
     else:
         match channel:
             case "release":
