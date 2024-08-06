@@ -19,7 +19,7 @@ path = Path().cwd()
 versions = requests.get("https://whattrainisitnow.com/api/firefox/releases/").json()
 
 def trigger_github_action(slug, branch, firefox_version, workflow_id):
-    url = f'https://api.github.com/repos/mozilla/jrbenny35/actions/workflows/{workflow_id}/dispatches'
+    url = f'https://api.github.com/repos/jrbenny35/klaatu/actions/workflows/{workflow_id}/dispatches'
     inputs = {
         'slug': slug,
         'branch': branch,
