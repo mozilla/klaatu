@@ -15,7 +15,7 @@ on:
         type: string
       firefox-version:
         description: 'The Firefox Version you want to test'
-        default: "123"
+        default: "['123']"
         required: false
         type: string
       feature-name:
@@ -35,13 +35,16 @@ on:
 jobs:
   iOS-klaatu-tests:
     runs-on: macos-14
-    name: ${{ inputs.feature-name }} tests for ${{ inputs.slug }} on firefox iOS v${{ inputs.firefox-version }}
+    strategy:
+      matrix:
+        firefox: ${{ fromJSON(inputs.firefox-version) }}
+    name: ${{ inputs.feature-name }} tests for ${{ inputs.slug }} on firefox iOS v${{ matrix.firefox }}
     steps:
       - name: Clone firefox-ios repo
         uses: actions/checkout@v4
         with:
             repository: mozilla-mobile/firefox-ios
-            ref: "release/v${{ inputs.firefox-version }}"
+            ref: "release/v${{ matrix.firefox }}"
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
@@ -50,7 +53,7 @@ jobs:
         uses: actions/cache@v4.0.2
         with:
           path: /Users/runner/Library/Developer/Xcode/DerivedData/**/
-          key: xcode-firefox-v${{ inputs.firefox-version }}-cache
+          key: xcode-firefox-v${{ matrix.firefox }}-cache
       - name: Delete Xcode App
         run: sudo rm -rf /Applications/Xcode.app
       - name: Set Xcode version
