@@ -16,8 +16,10 @@ run_flag = True
 testing_list = {}
 path = Path().cwd()
 
+versions = requests.get("https://whattrainisitnow.com/api/firefox/releases/").json()
+
 def trigger_github_action(slug, branch, firefox_version, workflow_id):
-    url = f'https://api.github.com/repos/jrbenny35/klaatu/actions/workflows/{workflow_id}/dispatches'
+    url = f'https://api.github.com/repos/mozilla/klaatu/actions/workflows/{workflow_id}/dispatches'
     inputs = {
         'slug': slug,
         'branch': branch,
@@ -72,7 +74,6 @@ def get_latest_versions(versions, min_version):
 
 def get_firefox_verions(app_name, channel, min_version):
     test_versions = set()
-    versions = requests.get("https://whattrainisitnow.com/api/firefox/releases/").json()
     non_desktop_beta = [f"{Version(list(versions.keys())[-1]).major +1}.0b"]
     
     if "firefox_ios" in app_name:
