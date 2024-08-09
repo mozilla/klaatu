@@ -274,6 +274,7 @@ def setup_experiment(experiment_slug, json_data, request, experiment_branch, nim
             universal_newlines=True,
             shell=True,
         )
+        logging.info(out)
 
     return _setup_experiment
 
