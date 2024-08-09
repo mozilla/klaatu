@@ -5,7 +5,7 @@ import os
 import subprocess
 
 device_name = os.environ.get("SIMULATOR_DEVICE", "iPhone 15")
-target_ios_version = os.environ.get("IOS_VERSION", "iOS 17.2")
+target_ios_version = os.environ.get("IOS_VERSION", "iOS 17.5")
 json_version = target_ios_version.replace(" ", "-").replace(".", "-")
 
 # Run xcrun simctl list devices and load the JSON output
