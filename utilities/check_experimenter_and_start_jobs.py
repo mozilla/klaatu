@@ -123,6 +123,14 @@ if not run_flag:
 current_experiments = [_ for _ in current_experiments if _['publishedDate'] is not None]
 current_experiments = sorted(current_experiments, key=lambda _: parser.isoparse(_.get('publishedDate')))
 
+temp_experiments_list = []
+for count, item in enumerate(current_experiments):
+    if not item.get('isRollout'):
+        temp_experiments_list.append(item)
+
+current_experiments = temp_experiments_list
+
+
 #  Trigger job based on application
 #  Get list of experiments to run tests on
 for experiment in reversed(current_experiments):
