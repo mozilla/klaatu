@@ -122,7 +122,18 @@ def xcrun():
 
 @pytest.fixture(name="device_control", scope="module", autouse=True)
 def fixture_device_control(xcrun):
+    xcrun.erase()
     xcrun.boot()
+    device = os.environ.get("SIMULATOR_UDID")
+    out = subprocess.check_output(
+            f"xcrun simctl listapps {device}",
+            cwd=here.parent,
+            stderr=subprocess.STDOUT,
+            universal_newlines=True,
+            shell=True,
+        )
+    logging.info(out)
+          
     yield
     xcrun.erase()
 
