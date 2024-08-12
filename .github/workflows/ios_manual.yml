@@ -86,10 +86,8 @@ jobs:
           cp -f tests/ios/ExperimentIntegrationTests.swift firefox-ios/firefox-ios/firefox-ios-tests/Tests/XCUITests/ExperimentIntegrationTests.swift
           cd firefox-ios/firefox-ios/firefox-ios-tests/Tests/ExperimentIntegrationTests
           poetry install
-          export SIMULATOR_UDID=$(python get_specific_device_udid.py)
-          xcrun simctl listapps $SIMULATOR_UDID
           xcrun simctl erase all
-          xcrun simctl listapps $SIMULATOR_UDID
+          export SIMULATOR_UDID=$(python get_specific_device_udid.py)
           poetry run python generate_smoke_tests.py
           poetry run pytest --experiment ${{ inputs.slug }} --experiment-branch ${{ inputs.branch }} --feature ${{ inputs.feature-name }} ${{ inputs.extra-arguments }}
       - name: Archive Results
