@@ -124,23 +124,15 @@ def xcrun():
 def fixture_device_control(xcrun):
     xcrun.erase()
     xcrun.boot()
-    device = os.environ.get("SIMULATOR_UDID")
-    out = subprocess.check_output(
-            f"xcrun simctl listapps {device}",
-            cwd=here.parent,
-            stderr=subprocess.STDOUT,
-            universal_newlines=True,
-            shell=True,
-        )
-    logging.info(out)
-          
     yield
     xcrun.erase()
 
 
 @pytest.fixture(name="start_app")
-def fixture_start_app(nimbus_cli_args):
+def fixture_start_app(nimbus_cli_args, start_app_enroll):
     def _():
+        start_app_enroll()
+        time.sleep(5)
         command = f"nimbus-cli --app firefox_ios --channel developer open -- {nimbus_cli_args}"
         out = subprocess.check_output(
             command,
@@ -157,7 +149,7 @@ def fixture_start_app(nimbus_cli_args):
 @pytest.fixture(name="start_app_enroll")
 def fixture_start_app_enroll(nimbus_cli_args, experiment_slug, experiment_branch, json_data):
     def _start_app_enroll():
-        command = f"nimbus-cli --app firefox_ios --channel developer enroll {experiment_slug} --branch {experiment_branch} --file {json_data} -- {nimbus_cli_args}"
+        command = f"nimbus-cli --app firefox_ios --channel developer enroll {experiment_slug} --branch {experiment_branch} --file {json_data} --reset-app -- {nimbus_cli_args}"
         out = subprocess.check_output(
             command,
             cwd=here.parent,
@@ -292,7 +284,7 @@ def fixture_check_ping_for_experiment(experiment_slug, variables):
 def setup_experiment(experiment_slug, json_data, request, experiment_branch, nimbus_cli_args):
     def _setup_experiment():
         logging.info(f"Testing experiment {experiment_slug}, BRANCH: {experiment_branch}")
-        command = f"nimbus-cli --app firefox_ios --channel developer enroll {experiment_slug} --branch {experiment_branch} --file {json_data} --reset-app -- {nimbus_cli_args}"
+        command = f"nimbus-cli --app firefox_ios --channel developer enroll {experiment_slug} --branch {experiment_branch} --file {json_data} -- {nimbus_cli_args}"
         logging.info(f"Nimbus CLI Command: {command}\n")
         out = subprocess.check_output(
             command,
