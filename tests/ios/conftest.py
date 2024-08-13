@@ -154,6 +154,22 @@ def fixture_start_app(nimbus_cli_args):
     return _
 
 
+@pytest.fixture(name="start_app_enroll")
+def fixture_start_app_enroll(nimbus_cli_args, experiment_slug, experiment_branch, json_data):
+    def _start_app_enroll():
+        command = f"nimbus-cli --app firefox_ios --channel developer enroll {experiment_slug} --branch {experiment_branch} --file {json_data} -- {nimbus_cli_args}"
+        out = subprocess.check_output(
+            command,
+            cwd=here.parent,
+            stderr=subprocess.STDOUT,
+            universal_newlines=True,
+            shell=True,
+        )
+        logging.debug(out)
+
+    return _start_app_enroll
+
+
 @pytest.fixture(name="experiment_data")
 def fixture_experiment_data(experiment_url, request):
     data = requests.get(experiment_url).json()

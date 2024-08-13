@@ -76,9 +76,11 @@ def generate_smoke_tests(tests_names=None):
         tests.append(
             f"""
 @pytest.mark.smoke
-def test_smoke_{test_name}(xcodebuild, setup_experiment, start_app, experiment_branch, check_ping_for_experiment):
+def test_smoke_{test_name}(xcodebuild, setup_experiment, start_app, start_app_enroll, experiment_branch, check_ping_for_experiment):
     xcodebuild.install(boot=False)
     setup_experiment()
+    time.sleep(5)
+    start_app_enroll()
     time.sleep(5)
     xcodebuild.test("XCUITests/ExperimentIntegrationTests/testVerifyExperimentEnrolled", build=False,erase=False)
     start_app()
