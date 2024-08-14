@@ -57,7 +57,7 @@ jobs:
       - name: Delete Xcode App
         run: sudo rm -rf /Applications/Xcode.app
       - name: Set Xcode version
-        run: sudo xcode-select -switch /Applications/Xcode_15.4.app && xcodebuild -version
+        run: sudo xcode-select -switch /Applications/Xcode_15.3.app && xcodebuild -version
       - name: Setup build
         run: |
           cd firefox-ios
