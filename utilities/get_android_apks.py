@@ -78,9 +78,9 @@ fenix_apk = requests.get(
     headers=headers
 )
 
-# with open(path.resolve() / f"android-debug-test-v{args.firefox_version}.apk", "wb") as file:
-#     file.write(test_apk.content)
-# with open(path.resolve() / f"fenix-debug-v{args.firefox_version}.apk", "wb") as file:
-#     file.write(fenix_apk.content)
+with open(path.resolve() / f"android-debug-test-v{args.firefox_version}.apk", "wb") as file:
+    file.write(test_apk.content)
+with open(path.resolve() / f"fenix-debug-v{args.firefox_version}.apk", "wb") as file:
+    file.write(fenix_apk.content)
 
 print("APKS DOWNLOADED SUCCESSFULLY!")
