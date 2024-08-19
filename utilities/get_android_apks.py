@@ -58,12 +58,16 @@ revision = treeherder_link.split('=')[-1]
 result_id_json = requests.get(f"https://treeherder.mozilla.org/api/project/mozilla-release/push/?full=true&count=10&revision={revision}", headers=headers).json()
 result_id = result_id_json.get("results")[0].get("id")
 
-fenix_jobs = requests.get("https://treeherder.mozilla.org/api/project/mozilla-release/jobs/?job_group_symbol=fenix-debug&count=100", headers=headers).json()
+fenix_jobs = requests.get("https://treeherder.mozilla.org/api/project/mozilla-release/jobs/?job_group_symbol=fenix-debug&count=1000", headers=headers).json()
 
 for item in fenix_jobs["results"]:
     for job in jobs_filter:
         if item.get("result_set_id") == result_id and job in item.get("job_type_name"):
             download_ids[job] = item.get("id")
+
+if not download_ids:
+    print("Build not found")
+    exit
 
 for job, id in download_ids.items():
     data = requests.get(f"https://treeherder.mozilla.org/api/project/mozilla-release/jobs/{id}/", headers=headers).json()
