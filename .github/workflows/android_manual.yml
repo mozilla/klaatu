@@ -121,8 +121,6 @@ jobs:
           firefox_version=$(echo "${{ matrix.firefox }}" | tr '.' '_')
           poetry run python utilities/get_android_apks.py --firefox-version=${{ matrix.firefox }}
           adb devices
-          ls
-          pwd
           adb install android-debug-test-v${{ matrix.firefox }}.apk
           adb install fenix-debug-v${{ matrix.firefox }}.apk
         env:
