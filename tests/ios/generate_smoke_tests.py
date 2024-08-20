@@ -84,7 +84,7 @@ def test_smoke_{test_name}(xcodebuild, setup_experiment, start_app, experiment_b
     xcodebuild.test("XCUITests/ExperimentIntegrationTests/testVerifyExperimentEnrolled", build=False,erase=False)
     start_app()
     xcodebuild.test("XCUITests/{module_name}/{test_name}", build=False, erase=False)
-"""
+"""  # noqa
         )
     with open(pytest_file, "a") as file:
         for item in tests:

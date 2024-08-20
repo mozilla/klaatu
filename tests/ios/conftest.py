@@ -6,8 +6,6 @@ import json
 import logging
 import os
 import subprocess
-
-## MUST REMOVE WHEN SYNCINTEGRATIONTEST FOLDER IS MOVED
 import sys
 import time
 from pathlib import Path
@@ -17,9 +15,9 @@ import requests
 
 sys.path.append("../../")
 
-from ExperimentIntegrationTests.models.models import TelemetryModel
-from SyncIntegrationTests.xcodebuild import XCodeBuild
-from SyncIntegrationTests.xcrun import XCRun
+from ExperimentIntegrationTests.models.models import TelemetryModel  # noqa
+from SyncIntegrationTests.xcodebuild import XCodeBuild  # noqa
+from SyncIntegrationTests.xcrun import XCRun  # noqa
 
 KLAATU_SERVER_URL = "http://localhost:1378"
 KLAATU_LOCAL_SERVER_URL = "http://localhost:1378"
@@ -96,11 +94,19 @@ def xcodebuild_log(request, tmp_path_factory):
 def fixture_build_fennec(request):
     if not request.config.getoption("--build-dev"):
         return
-    command = "xcodebuild build-for-testing -project Client.xcodeproj -scheme Fennec -configuration Fennec -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.4'"
+    command = [
+        "xcodebuild",
+        "build-for-testing",
+        "-project Client.xcodeproj",
+        "-scheme Fennec",
+        "-configuration Fennec",
+        "-sdk iphonesimulator",
+        "-destination 'platform=iOS Simulator,name=iPhone 15,OS=17.4'",
+    ]
     try:
         logging.info("Building app")
         subprocess.check_output(
-            command,
+            " ".join(command),
             cwd=here.parents[2],
             stderr=subprocess.STDOUT,
             universal_newlines=True,
@@ -129,7 +135,9 @@ def fixture_device_control(xcrun):
 
 
 @pytest.fixture(name="start_app")
-def fixture_start_app(nimbus_cli_args, ):
+def fixture_start_app(
+    nimbus_cli_args,
+):
     def _():
         command = f"nimbus-cli --app firefox_ios --channel developer open -- {nimbus_cli_args}"
         out = subprocess.check_output(
@@ -266,10 +274,18 @@ def fixture_check_ping_for_experiment(experiment_slug, variables):
 def setup_experiment(experiment_slug, json_data, experiment_branch, nimbus_cli_args):
     def _setup_experiment():
         logging.info(f"Testing experiment {experiment_slug}, BRANCH: {experiment_branch}")
-        command = f"nimbus-cli --app firefox_ios --channel developer enroll {experiment_slug} --branch {experiment_branch} --file {json_data} -- {nimbus_cli_args}"
-        logging.info(f"Nimbus CLI Command: {command}\n")
+        command = [
+            "nimbus-cli",
+            "--app firefox_ios",
+            "--channel developer",
+            f"enroll {experiment_slug}",
+            f"--branch {experiment_branch}",
+            f"--file {json_data}",
+            f"-- {nimbus_cli_args}",
+        ]
+        logging.info(f'Nimbus CLI Command: {" ".join(command)}\n')
         out = subprocess.check_output(
-            command,
+            " ".join(command),
             cwd=os.path.join(here, os.pardir),
             stderr=subprocess.STDOUT,
             universal_newlines=True,
