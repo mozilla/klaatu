@@ -78,7 +78,6 @@ def generate_smoke_tests(tests_names=None):
 @pytest.mark.smoke
 def test_smoke_{test_name}(xcodebuild, setup_experiment, start_app, experiment_branch, check_ping_for_experiment):
     xcodebuild.install(boot=False)
-    start_app()
     time.sleep(5)
     setup_experiment()
     time.sleep(5)

@@ -129,10 +129,8 @@ def fixture_device_control(xcrun):
 
 
 @pytest.fixture(name="start_app_")
-def fixture_start_app(nimbus_cli_args, start_app_enroll):
+def fixture_start_app(nimbus_cli_args, ):
     def _():
-        start_app_enroll()
-        time.sleep(5)
         command = f"nimbus-cli --app firefox_ios --channel developer open -- {nimbus_cli_args}"
         out = subprocess.check_output(
             command,
@@ -144,31 +142,6 @@ def fixture_start_app(nimbus_cli_args, start_app_enroll):
         logging.info(out)
 
     return _
-
-
-@pytest.fixture(name="start_app")
-def fixture_start_app_enroll(nimbus_cli_args, experiment_slug, experiment_branch, json_data):
-    def _start_app_enroll():
-        out = subprocess.check_output(
-            "xcrun simctl launch booted org.mozilla.ios.Fennec",
-            cwd=here.parent,
-            stderr=subprocess.STDOUT,
-            universal_newlines=True,
-            shell=True,
-        )
-        logging.info(out)
-        time.sleep(10)
-        command = f"nimbus-cli --app firefox_ios --channel developer enroll {experiment_slug} --branch {experiment_branch} --file {json_data} --reset-app -- {nimbus_cli_args}"
-        out = subprocess.check_output(
-            command,
-            cwd=here.parent,
-            stderr=subprocess.STDOUT,
-            universal_newlines=True,
-            shell=True,
-        )
-        logging.info(out)
-
-    return _start_app_enroll
 
 
 @pytest.fixture(name="experiment_data")
@@ -290,7 +263,7 @@ def fixture_check_ping_for_experiment(experiment_slug, variables):
 
 
 @pytest.fixture(name="setup_experiment")
-def setup_experiment(experiment_slug, json_data, request, experiment_branch, nimbus_cli_args):
+def setup_experiment(experiment_slug, json_data, experiment_branch, nimbus_cli_args):
     def _setup_experiment():
         logging.info(f"Testing experiment {experiment_slug}, BRANCH: {experiment_branch}")
         command = f"nimbus-cli --app firefox_ios --channel developer enroll {experiment_slug} --branch {experiment_branch} --file {json_data} -- {nimbus_cli_args}"
@@ -305,6 +278,3 @@ def setup_experiment(experiment_slug, json_data, request, experiment_branch, nim
         logging.info(out)
 
     return _setup_experiment
-
-
-# boot device xcrun simctl boot "iPhone 15 Pro Mox"
