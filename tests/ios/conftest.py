@@ -128,7 +128,7 @@ def fixture_device_control(xcrun):
     xcrun.erase()
 
 
-@pytest.fixture(name="start_app_")
+@pytest.fixture(name="start_app")
 def fixture_start_app(nimbus_cli_args, ):
     def _():
         command = f"nimbus-cli --app firefox_ios --channel developer open -- {nimbus_cli_args}"
