@@ -40,11 +40,11 @@ jobs:
         firefox: ${{ fromJSON(inputs.firefox-version) }}
     name: ${{ inputs.feature-name }} tests for ${{ inputs.slug }} on firefox iOS v${{ matrix.firefox }}
     steps:
-      - name: Clone firefox-ios repo
+      - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-            repository: mozilla-mobile/firefox-ios
-            ref: "release/v${{ matrix.firefox }}"
+      - name: Clone firefox-ios repo
+        run: |
+          git clone --depth 1 https://github.com/mozilla-mobile/firefox-ios.git -b release/v${{ matrix.firefox }}
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
@@ -60,6 +60,7 @@ jobs:
         run: sudo xcode-select -switch /Applications/Xcode_15.3.app && xcodebuild -version
       - name: Setup build
         run: |
+          cd firefox-ios
           sh ./bootstrap.sh  
           cd firefox-ios
           brew update
@@ -75,14 +76,18 @@ jobs:
       - name: Build app
         if: steps.check_cache.outputs.cache_loaded == 'false'
         run: |
-          cd firefox-ios
-          xcodebuild build-for-testing -project Client.xcodeproj -scheme Fennec -configuration Fennec -sdk iphonesimulator -quiet -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.2'
+          cd firefox-ios/firefox-ios
+          xcodebuild build-for-testing -project Client.xcodeproj -scheme Fennec -configuration Fennec -sdk iphonesimulator -quiet -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.4'
       - name: Install Nimbus CLI
         run: curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/mozilla/application-services/main/install-nimbus-cli.sh | bash  
       - name: Run Tests
         run: |
-          cd firefox-ios/firefox-ios-tests/Tests/ExperimentIntegrationTests
+          cp -rf tests/ios/* firefox-ios/firefox-ios/firefox-ios-tests/Tests/ExperimentIntegrationTests
+          cp -f tests/ios/ExperimentIntegrationTests.swift firefox-ios/firefox-ios/firefox-ios-tests/Tests/XCUITests/ExperimentIntegrationTests.swift
+          cd firefox-ios/firefox-ios/firefox-ios-tests/Tests/ExperimentIntegrationTests
           poetry install
+          xcrun simctl erase all
+          xcrun simctl shutdown all
           export SIMULATOR_UDID=$(python get_specific_device_udid.py)
           poetry run python generate_smoke_tests.py
           poetry run pytest --experiment ${{ inputs.slug }} --experiment-branch ${{ inputs.branch }} --feature ${{ inputs.feature-name }} ${{ inputs.extra-arguments }}
