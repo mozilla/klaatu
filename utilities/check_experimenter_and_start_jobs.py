@@ -4,6 +4,7 @@ import re
 import subprocess
 import time
 from dateutil import parser
+from datetime import datetime, timedelta
 from packaging.version import parse, Version
 from pathlib import Path
 from collections import defaultdict
@@ -120,8 +121,17 @@ if not run_flag:
     exit
 
 # Sorted list of experiments that have a publishedDate field
-current_experiments = [_ for _ in current_experiments if _['publishedDate'] is not None]
-current_experiments = sorted(current_experiments, key=lambda _: parser.isoparse(_.get('publishedDate')))
+experiments = [_ for _ in current_experiments if _['publishedDate'] is not None]
+experiments = sorted(experiments, key=lambda _: parser.isoparse(_.get('publishedDate')))
+current_experiments = []
+
+for experiment in experiments:
+    try:
+        if parser.parse(experiment.get("startDate")) >= datetime.now() - timedelta(days=30):
+            current_experiments.append(experiment)
+    except TypeError:
+        continue
+
 
 temp_experiments_list = []
 for count, item in enumerate(current_experiments):
