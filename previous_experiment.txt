@@ -1,1 +1,1 @@
-browser-value-survey-z-q3-2024
+glean-database-flush-time-based
