@@ -97,15 +97,15 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
-          name: xctest-results
+          name: xctest-results for Firefox v${{ matrix.firefox }}
           path: results.zip
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
-          name: ${{ inputs.slug }} HTML Test Report
+          name: ${{ inputs.slug }} HTML Test Report Firefox v${{ matrix.firefox }}
           path: /Users/runner/work/klaatu/klaatu/firefox-ios/firefox-ios-tests/Tests/ExperimentIntegrationTests/results/index.html
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
-          name: xcodebuild.log
+          name: xcodebuild.log for Firefox v${{ matrix.firefox }}
           path: /private/var/folders/3m/**/T/pytest-of-runner/pytest-*/**/xcodebuild.log
