@@ -127,7 +127,7 @@ current_experiments = []
 
 for experiment in experiments:
     try:
-        if parser.parse(experiment.get("startDate")) >= datetime.now() - timedelta(days=30):
+        if parser.parse(experiment.get("startDate")) >= datetime.now() - timedelta(days=7):
             current_experiments.append(experiment)
     except TypeError:
         continue
@@ -182,6 +182,6 @@ for slug, data in testing_list.items():
     time.sleep(30)
 #  Write last experiment to file for next cron run
 with open('previous_experiment.txt', 'w') as f:
-    f.writelines(current_experiments[-1]["slug"])
+    f.writelines(experiments[-1]["slug"])
 
-print(f"Last experiment tested was {current_experiments[-1]['slug']}")
+print(f"Last experiment checked was {experiments[-1]['slug']}")
