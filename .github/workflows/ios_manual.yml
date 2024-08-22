@@ -36,6 +36,7 @@ jobs:
   iOS-klaatu-tests:
     runs-on: macos-14
     strategy:
+      fail-fast: false
       matrix:
         firefox: ${{ fromJSON(inputs.firefox-version) }}
     name: ${{ inputs.feature-name }} tests for ${{ inputs.slug }} on firefox iOS v${{ matrix.firefox }}
