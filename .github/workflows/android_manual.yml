@@ -19,7 +19,7 @@ on:
         type: string
       feature-name:
         description: 'The Feature you want to test'
-        default: 'smoke'
+        default: 'smoke_test'
         required: true
         type: choice
         options:
