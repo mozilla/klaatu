@@ -36,6 +36,9 @@ if "b" in firefox_version:
     for version in beta_versions:
         if firefox_version in version:
             final_version = version
+elif "latest" in firefox_version:
+    final_version = beta_versions[-1]
+    print(final_version)
 else:
     for version in release_versions:
         if firefox_version in version:
