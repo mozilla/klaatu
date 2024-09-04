@@ -5,7 +5,7 @@ on:
     inputs:
       branch:
         description: 'Experiment Branch'
-        default: 'control'
+        default: "['control']"
         required: true
         type: string
       slug:
@@ -32,7 +32,8 @@ jobs:
       fail-fast: false
       matrix:
         firefox: ${{ fromJSON(inputs.firefox-version) }}
-    name: Smoke tests on windows for slug ${{ inputs.slug }} on firefox v${{ matrix.firefox }}
+        branch: ${{ fromJSON(inputs.branch) }}
+    name: Smoke tests on windows for slug ${{ inputs.slug }} on firefox v${{ matrix.firefox }} branch ${{ matrix.branch }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -68,7 +69,7 @@ jobs:
         shell: bash
         run: ./setup_script.sh
       - name: Run Tests
-        run: tox -e bdd-tests -- --experiment-branch ${{ inputs.branch }} --experiment-slug ${{ inputs.slug }} --private-browsing-enabled --firefox-path="C:\Program Files\Firefox_${{ matrix.firefox }}\firefox.exe" ${{ inputs.extra-arguments }}
+        run: tox -e bdd-tests -- --experiment-branch ${{ matrix.branch }} --experiment-slug ${{ inputs.slug }} --private-browsing-enabled --firefox-path="C:\Program Files\Firefox_${{ matrix.firefox }}\firefox.exe" ${{ inputs.extra-arguments }}
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
