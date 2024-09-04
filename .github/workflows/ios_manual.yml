@@ -5,7 +5,7 @@ on:
     inputs:
       branch:
         description: 'Experiment Branch'
-        default: 'control'
+        default: "['control']"
         required: true
         type: string
       slug:
@@ -39,7 +39,8 @@ jobs:
       fail-fast: false
       matrix:
         firefox: ${{ fromJSON(inputs.firefox-version) }}
-    name: ${{ inputs.feature-name }} tests for ${{ inputs.slug }} on firefox iOS v${{ matrix.firefox }}
+        branch: ${{ fromJSON(inputs.branch) }}
+    name: ${{ inputs.feature-name }} tests for ${{ inputs.slug }} on firefox iOS v${{ matrix.firefox }} branch ${{ matrix.branch }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -91,19 +92,19 @@ jobs:
           xcrun simctl shutdown all
           export SIMULATOR_UDID=$(python get_specific_device_udid.py)
           poetry run python generate_smoke_tests.py
-          poetry run pytest --experiment ${{ inputs.slug }} --experiment-branch ${{ inputs.branch }} --feature ${{ inputs.feature-name }} ${{ inputs.extra-arguments }}
+          poetry run pytest --experiment ${{ inputs.slug }} --experiment-branch ${{ matrix.branch }} --feature ${{ inputs.feature-name }} ${{ inputs.extra-arguments }}
       - name: Archive Results
         if: ${{ always() }}
         run: zip -r results.zip /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
-          name: xctest-results for Firefox v${{ matrix.firefox }}
+          name: xctest-results for Firefox v${{ matrix.firefox }} branch ${{ matrix.branch }}
           path: results.zip
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
-          name: ${{ inputs.slug }} HTML Test Report Firefox v${{ matrix.firefox }}
+          name: ${{ inputs.slug }} HTML Test Report on firefox v${{ matrix.firefox }} branch ${{ matrix.branch }}
           path: /Users/runner/work/klaatu/klaatu/firefox-ios/firefox-ios-tests/Tests/ExperimentIntegrationTests/results/index.html
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}
