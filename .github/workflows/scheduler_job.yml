@@ -17,7 +17,8 @@ jobs:
         python-version: '3.x'
     - name: Cache last experiment ran
       id: cache_previous_experiment
-      uses: actions/cache@v2
+      uses: actions/cache@v4
+      if: always()
       with:
           path: previous_experiment.txt
           key: previous_experiment-key

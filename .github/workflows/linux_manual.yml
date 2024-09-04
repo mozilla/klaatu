@@ -4,7 +4,7 @@ on:
     inputs:
       branch:
         description: 'Experiment Branch'
-        default: 'control'
+        default: "['control']"
         required: true
         type: string
       slug:
@@ -31,7 +31,8 @@ jobs:
       fail-fast: false
       matrix:
         firefox: ${{ fromJSON(inputs.firefox-version) }}
-    name: Smoke tests on linux for slug ${{ inputs.slug }} on firefox v${{ matrix.firefox }}
+        branch: ${{ fromJSON(inputs.branch) }}
+    name: Smoke tests on linux for slug ${{ inputs.slug }} on firefox v${{ matrix.firefox }} branch ${{ matrix.branch }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -50,9 +51,9 @@ jobs:
         shell: bash
         run: ./setup_script.sh
       - name: Run Tests
-        run: tox -e bdd-tests -- --experiment-branch ${{ inputs.branch }} --experiment-slug ${{ inputs.slug }} --private-browsing-enabled --firefox-path="/opt/hostedtoolcache/firefox/${{ matrix.firefox }}/x64/firefox" ${{ inputs.extra-arguments }}
+        run: tox -e bdd-tests -- --experiment-branch ${{ matrix.branch }} --experiment-slug ${{ inputs.slug }} --private-browsing-enabled --firefox-path="/opt/hostedtoolcache/firefox/${{ matrix.firefox }}/x64/firefox" ${{ inputs.extra-arguments }}
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
-          name: ${{ inputs.slug }} Firefox-${{ matrix.firefox }} HTML Test Report
+          name: ${{ inputs.slug }} HTML Test Report on firefox v${{ matrix.firefox }} branch ${{ matrix.branch }}
           path: /home/runner/work/klaatu/klaatu/tests/report.html

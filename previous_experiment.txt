@@ -1,1 +1,1 @@
-glean-database-flush-time-based
+whats-new-page-close-duplicate-tabs

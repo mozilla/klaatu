@@ -4,7 +4,7 @@ on:
     inputs:
       branch:
         description: 'Experiment Branch'
-        default: 'control'
+        default: "['control']"
         required: true
         type: string
       slug:
@@ -38,7 +38,8 @@ jobs:
         fail-fast: false
         matrix:
           firefox: ${{ fromJSON(inputs.firefox-version) }}
-    name: ${{ inputs.feature-name }} tests for ${{ inputs.slug }} on firefox android ${{ matrix.firefox }}
+          branch: ${{ fromJSON(inputs.branch) }}
+    name: ${{ inputs.feature-name }} tests for ${{ inputs.slug }} on firefox android ${{ matrix.firefox }} branch ${{ matrix.branch }}
     steps:
       - name: Set FF Version for downloader
         id: ff-version
@@ -150,9 +151,9 @@ jobs:
           pipenv install pytest-rerunfailures
           pipenv run python generate_smoke_tests.py
           echo "PIPENV COMMAND: 'pipenv run pytest --experiment ${{ inputs.slug }} --experiment-branch ${{ inputs.branch }} --experiment-feature ${{ inputs.feature-name }} ${{ inputs.extra-arguments }}'"
-          pipenv run pytest --experiment ${{ inputs.slug }} --experiment-branch ${{ inputs.branch }} --experiment-feature ${{ inputs.feature-name }} ${{ inputs.extra-arguments }} --reruns 1
+          pipenv run pytest --experiment ${{ inputs.slug }} --experiment-branch ${{ matrix.branch }} --experiment-feature ${{ inputs.feature-name }} ${{ inputs.extra-arguments }} --reruns 1
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
-          name: ${{ inputs.slug }} HTML Test Report on firefox v${{ matrix.firefox }}
+          name: ${{ inputs.slug }} HTML Test Report on firefox v${{ matrix.firefox }} branch ${{ matrix.branch }}
           path: /home/runner/work/klaatu/klaatu/gecko-dev/mobile/android/fenix/app/src/androidTest/java/org/mozilla/fenix/experimentintegration/results/index.html

@@ -13,7 +13,7 @@ import requests
 
 
 experimenter_url = "https://experimenter.services.mozilla.com/api/v6/experiments/?=status=Preview"
-run_flag = True
+run_flag = False
 testing_list = {}
 path = Path().cwd()
 
@@ -158,27 +158,25 @@ for slug, data in testing_list.items():
     except AttributeError:
         continue  # Don't test experiments with no target version
 
+    branches = f"{[item["slug"] for item in data["branches"]]}"
     match data["appName"]:
         case "firefox_desktop":
-            for branch in data["branches"]:
-                for workflow_id in desktop_workflows:
-                    trigger_github_action(
-                        slug, branch["slug"], get_firefox_verions(data["appName"], data["channel"], ff_version), workflow_id
-                    )
+            for workflow_id in desktop_workflows:
+                trigger_github_action(
+                    slug, branches, get_firefox_verions(data["appName"], data["channel"], ff_version), workflow_id
+                )
         case "firefox_ios":
-            for branch in data["branches"]:
-                workflow_id = "ios_manual.yml"
-                _ff_version = Version(ff_version[0])
-                trigger_github_action(
-                    slug, branch["slug"], get_firefox_verions(data["appName"], data["channel"], f"{_ff_version.major}"), workflow_id
-                )
+            workflow_id = "ios_manual.yml"
+            _ff_version = Version(ff_version[0])
+            trigger_github_action(
+                slug, branches, get_firefox_verions(data["appName"], data["channel"], f"{_ff_version.major}"), workflow_id
+            )
         case "fenix":
-            for branch in data["branches"]:
-                workflow_id = "android_manual.yml"
-                _ff_version = Version(ff_version[0])
-                trigger_github_action(
-                    slug, branch["slug"], get_firefox_verions(data["appName"], data["channel"], ff_version), workflow_id
-                )
+            workflow_id = "android_manual.yml"
+            _ff_version = Version(ff_version[0])
+            trigger_github_action(
+                slug, branches, get_firefox_verions(data["appName"], data["channel"], ff_version), workflow_id
+            )
     time.sleep(30)
 #  Write last experiment to file for next cron run
 with open('previous_experiment.txt', 'w') as f:
