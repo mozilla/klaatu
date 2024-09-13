@@ -145,6 +145,7 @@ jobs:
         run: curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/mozilla/application-services/main/install-nimbus-cli.sh | bash  
       - name: Run Tests
         run: |
+          cp -rf klaatu/tests/android/* gecko-dev/mobile/android/fenix/app/src/androidTest/java/org/mozilla/fenix/experimentintegration
           cd gecko-dev/mobile/android/fenix/app/src/androidTest/java/org/mozilla/fenix/experimentintegration
           pip3 install virtualenv poetry pipenv
           pipenv install
