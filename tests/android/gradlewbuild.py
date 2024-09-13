@@ -29,7 +29,7 @@ class GradlewBuild(object):
             "org.mozilla.fenix.debug.test/androidx.test.runner.AndroidJUnitRunner",
         ]
 
-        self.logger.info("Running cmd: {}".format(cmd))
+        self.logger.info("Running cmd: {}".format(" ".join(cmd)))
 
         out = ""
         try:
