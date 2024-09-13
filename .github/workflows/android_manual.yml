@@ -26,6 +26,15 @@ on:
           - smoke_test
           - messaging_survey
           - messaging_homescreen
+      experiment-server:
+        description: 'The server that the experiment exists on (stage/prod)'
+        default: 'prod'
+        required: true
+        type: choice
+        options:
+          - stage
+          - stage/preview
+          - prod
       extra-arguments:
         description: 'Additional testing arguments'
         default: ''
@@ -151,8 +160,8 @@ jobs:
           pipenv install
           pipenv install pytest-rerunfailures
           pipenv run python generate_smoke_tests.py
-          echo "PIPENV COMMAND: 'pipenv run pytest --experiment ${{ inputs.slug }} --experiment-branch ${{ inputs.branch }} --experiment-feature ${{ inputs.feature-name }} ${{ inputs.extra-arguments }}'"
-          pipenv run pytest --experiment ${{ inputs.slug }} --experiment-branch ${{ matrix.branch }} --experiment-feature ${{ inputs.feature-name }} ${{ inputs.extra-arguments }} --reruns 1
+          echo "PIPENV COMMAND: 'pipenv run pytest --experiment ${{ inputs.experiment-server }}/${{ inputs.slug }} --experiment-branch ${{ inputs.branch }} --experiment-feature ${{ inputs.feature-name }} ${{ inputs.extra-arguments }}'"
+          pipenv run pytest --experiment ${{ inputs.experiment-server }}/${{ inputs.slug }} --experiment-branch ${{ inputs.branch }} --experiment-feature ${{ inputs.feature-name }} ${{ inputs.extra-arguments }} --reruns 1
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
