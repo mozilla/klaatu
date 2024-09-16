@@ -2,7 +2,6 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-import json
 import logging
 import os
 import random
@@ -12,6 +11,7 @@ from pathlib import Path
 
 import pytest
 import requests
+
 from .gradlewbuild import GradlewBuild
 from .models.models import TelemetryModel
 
@@ -279,7 +279,7 @@ def fixture_setup_experiment(
     run_nimbus_cli_command,
     set_experiment_test_name,
     delete_telemetry_pings,
-    experiment_server
+    experiment_server,
 ):
     def _():
         delete_telemetry_pings()
