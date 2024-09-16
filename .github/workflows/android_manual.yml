@@ -161,7 +161,7 @@ jobs:
           pipenv install pytest-rerunfailures
           pipenv run python generate_smoke_tests.py
           echo "PIPENV COMMAND: 'pipenv run pytest --experiment ${{ inputs.experiment-server }}/${{ inputs.slug }} --experiment-branch ${{ inputs.branch }} --experiment-feature ${{ inputs.feature-name }} ${{ inputs.extra-arguments }}'"
-          pipenv run pytest --experiment ${{ inputs.experiment-server }}/${{ inputs.slug }} --experiment-branch ${{ inputs.branch }} --experiment-feature ${{ inputs.feature-name }} ${{ inputs.extra-arguments }} --reruns 1
+          pipenv run pytest --experiment ${{ inputs.slug }} --experiment-branch ${{ inputs.branch }} --experiment-server ${{ inputs.experiment-server }} --experiment-feature ${{ inputs.feature-name }} ${{ inputs.extra-arguments }} --reruns 1
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:

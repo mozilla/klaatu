@@ -22,7 +22,6 @@ here = Path().cwd()
 
 
 def pytest_addoption(parser):
-    parser.addoption("--stage", action="store_true", default=None, help="Use the stage server")
     parser.addoption(
         "--experiment-feature",
         action="store",
@@ -34,6 +33,12 @@ def pytest_addoption(parser):
         action="store",
         default="control",
         help="Experiment Branch you want to test on",
+    )
+    parser.addoption(
+        "--experiment-server",
+        action="store",
+        default="prod",
+        help="Experiment Server the experiment is hosted on",
     )
 
 
@@ -73,6 +78,11 @@ def fixture_nimbus_cli_args():
 @pytest.fixture(name="experiment_branch")
 def fixture_experiment_branch(request):
     return request.config.getoption("--experiment-branch")
+
+
+@pytest.fixture(name="experiment_server")
+def fixture_experiment_server(request):
+    return request.config.getoption("--experiment-server")
 
 
 @pytest.fixture(name="load_branches")
@@ -132,10 +142,11 @@ def fixture_experiment_url(request, variables):
 
     if slug := request.config.getoption("--experiment"):
         # Build URL from slug
-        if request.config.getoption("--stage"):
-            url = f"{variables['urls']['stage_server']}/api/v6/experiments/{slug}/"
-        else:
-            url = f"{variables['urls']['prod_server']}/api/v6/experiments/{slug}/"
+        match request.config.getoption("--experiment-server"):
+            case "prod":
+                url = f"{variables['urls']['prod_server']}/api/v6/experiments/{slug}/"
+            case "stage" | "stage/preview":
+                url = f"{variables['urls']['stage_server']}/api/v6/experiments/{slug}/"
     else:
         try:
             data = requests.get(f"{KLAATU_SERVER_URL}/experiment").json()
@@ -290,6 +301,7 @@ def fixture_setup_experiment(
     run_nimbus_cli_command,
     set_experiment_test_name,
     delete_telemetry_pings,
+    experiment_server
 ):
     def _():
         delete_telemetry_pings()
@@ -298,7 +310,7 @@ def fixture_setup_experiment(
             "nimbus-cli",
             "--app fenix",
             "--channel developer",
-            f"enroll {experiment_slug}",
+            f"enroll {experiment_server}/{experiment_slug}",
             f"--branch {experiment_branch}",
             f"--file {json_data}",
             "--reset-app",
