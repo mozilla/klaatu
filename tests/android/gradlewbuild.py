@@ -2,7 +2,7 @@ import logging
 import os
 import subprocess
 
-from experimentintegration.adbrun import ADBrun
+from .adbrun import ADBrun
 
 here = os.path.dirname(__file__)
 logging.getLogger(__name__).addHandler(logging.NullHandler())
@@ -18,9 +18,6 @@ class GradlewBuild(object):
 
     def test(self, identifier, smoke=None):
         # self.adbrun.launch()
-
-        # Change path accordingly to go to root folder to run gradlew
-        os.chdir("../../../../../../../..")
         test_type = "ui" if smoke else "experimentintegration"
         cmd = [
             "adb shell am instrument -w",
@@ -43,8 +40,5 @@ class GradlewBuild(object):
             out = e.output
             raise
         finally:
-            # Set the path correctly
-            tests_path = "app/src/androidTest/java/org/mozilla/fenix/experimentintegration/"
-            os.chdir(tests_path)
             with open(self.log, "w") as f:
                 f.write(str(out))

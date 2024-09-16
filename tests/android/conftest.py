@@ -12,13 +12,13 @@ from pathlib import Path
 
 import pytest
 import requests
-from experimentintegration.gradlewbuild import GradlewBuild
-from experimentintegration.models.models import TelemetryModel
+from .gradlewbuild import GradlewBuild
+from .models.models import TelemetryModel
 
 KLAATU_SERVER_URL = "http://localhost:1378"
 KLAATU_LOCAL_SERVER_URL = "http://localhost:1378"
 
-here = Path().cwd()
+here = Path()
 
 
 def pytest_addoption(parser):
@@ -122,16 +122,6 @@ def gradlewbuild(gradlewbuild_log):
 @pytest.fixture(name="experiment_data")
 def fixture_experiment_data(experiment_url, request):
     data = requests.get(experiment_url).json()
-    branches = next(iter(data.get("branches")), None)
-    features = next(iter(branches.get("features")), None)
-    match request.config.getoption("--experiment-feature"):
-        case "messaging_survey":
-            if features.get("value").get("messages"):
-                for item in features["value"]["messages"].values():
-                    if "USER_EN-US_SPEAKER" in item["trigger-if-all"]:
-                        item["trigger-if-all"] = ["ALWAYS"]
-        case _:
-            pass
     logging.debug(f"JSON Data used for this test: {data}")
     return [data]
 
@@ -167,21 +157,9 @@ def fixture_experiment_url(request, variables):
         pass
 
 
-@pytest.fixture(name="json_data")
-def fixture_json_data(tmp_path, experiment_data):
-    path = tmp_path / "data"
-    path.mkdir()
-    json_path = path / "data.json"
-    with open(json_path, "w", encoding="utf-8") as f:
-        # URL of experiment/klaatu server
-        data = {"data": experiment_data}
-        json.dump(data, f)
-    return json_path
-
-
 @pytest.fixture(name="experiment_slug")
-def fixture_experiment_slug(experiment_data):
-    return experiment_data[0]["slug"]
+def fixture_experiment_slug(request):
+    return request.config.getoption("--experiment")
 
 
 @pytest.fixture(name="ping_server", autouse=True, scope="session")
@@ -214,7 +192,7 @@ def fixture_send_test_results():
     yield
     here = Path()
 
-    with open(f"{here.resolve()}/results/index.html", "rb") as f:
+    with open(f"{here.resolve() / 'results' / 'index.html'}", "rb") as f:
         files = {"file": f}
         try:
             requests.post(f"{KLAATU_SERVER_URL}/test_results", files=files)
@@ -277,6 +255,7 @@ def fixture_run_nimbus_cli_command(gradlewbuild_log):
             out = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as e:
             out = e.output
+            logging.info(out)
             raise
         finally:
             with open(gradlewbuild_log, "w") as f:
@@ -295,7 +274,6 @@ def fixture_set_experiment_test_name(experiment_data):
 @pytest.fixture(name="setup_experiment")
 def fixture_setup_experiment(
     experiment_slug,
-    json_data,
     experiment_branch,
     nimbus_cli_args,
     run_nimbus_cli_command,
@@ -312,7 +290,7 @@ def fixture_setup_experiment(
             "--channel developer",
             f"enroll {experiment_server}/{experiment_slug}",
             f"--branch {experiment_branch}",
-            f"--file {json_data}",
+            f"--patch {here.resolve() / 'patch.json'}",
             "--reset-app",
             f"{nimbus_cli_args}",
         ]
