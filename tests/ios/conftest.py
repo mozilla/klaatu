@@ -34,7 +34,7 @@ def pytest_addoption(parser):
         default=False,
         help="Build the developer edition of Firefox",
     )
-    parser.addoption("--feature", action="store", help="Feature name you want to test against")
+    parser.addoption("--experiment-feature", action="store", help="Feature name you want to test against")
     parser.addoption(
         "--experiment-branch",
         action="store",
@@ -52,7 +52,7 @@ def pytest_addoption(parser):
 def pytest_runtest_setup(item):
     envnames = [mark.name for mark in item.iter_markers()]
     if envnames:
-        if item.config.getoption("--feature") not in envnames:
+        if item.config.getoption("--experiment-feature") not in envnames:
             pytest.skip("test does not match feature name")
 
 
@@ -262,7 +262,7 @@ def fixture_check_ping_for_experiment(experiment_slug, variables):
 
 
 @pytest.fixture(name="run_nimbus_cli_command")
-def fixture_run_nimbus_cli_command(gradlewbuild_log):
+def fixture_run_nimbus_cli_command():
     def _run_nimbus_cli_command(command):
         logging.info(f"Running command {command}")
         try:
@@ -271,9 +271,6 @@ def fixture_run_nimbus_cli_command(gradlewbuild_log):
             out = e.output
             logging.info(out)
             raise
-        finally:
-            with open(gradlewbuild_log, "w") as f:
-                f.write(f"{out}")
 
     return _run_nimbus_cli_command
 

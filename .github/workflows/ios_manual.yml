@@ -101,8 +101,8 @@ jobs:
           xcrun simctl shutdown all
           export SIMULATOR_UDID=$(python get_specific_device_udid.py)
           poetry run python generate_smoke_tests.py
-          echo "TEST COMMAND: poetry run pytest --experiment ${{inputs.experiment-server}}/${{ inputs.slug }} --experiment-branch ${{ matrix.branch }} --feature ${{ inputs.feature-name }} ${{ inputs.extra-arguments }}"
-          poetry run pytest --experiment ${{inputs.experiment-server}}/${{ inputs.slug }} --experiment-branch ${{ matrix.branch }} --feature ${{ inputs.feature-name }} ${{ inputs.extra-arguments }} --reruns 1
+          echo "TEST COMMAND: poetry run pytest --experiment ${{ inputs.slug }} --experiment-branch ${{ matrix.branch }} --experiment-server ${{ inputs.experiment-server }} --experiment-feature ${{ inputs.feature-name }} ${{ inputs.extra-arguments }} --reruns 1"
+          poetry run pytest --experiment ${{ inputs.slug }} --experiment-branch ${{ matrix.branch }} --experiment-server ${{ inputs.experiment-server }} --experiment-feature ${{ inputs.feature-name }} ${{ inputs.extra-arguments }} --reruns 1
       - name: Archive Results
         if: ${{ always() }}
         run: zip -r results.zip /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult
