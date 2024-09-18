@@ -268,7 +268,7 @@ def fixture_run_nimbus_cli_command(gradlewbuild_log):
 def fixture_set_experiment_test_name(experiment_data):
     # Get a random word from the experiments userFacingName attribute.
     exp_name = experiment_data[0]["userFacingName"].split()
-    os.environ["EXP_NAME"] = exp_name[random.randint(0, len(exp_name))]
+    os.environ["EXP_NAME"] = exp_name[random.randint(0, len(exp_name) - 1)]
 
 
 @pytest.fixture(name="setup_experiment")
