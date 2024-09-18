@@ -1,0 +1,379 @@
+{
+  "alternative-app-launcher-icon": {
+    "enabled": false,
+    "reset-to-default": false
+  },
+  "cookie-banners": {
+    "sections-enabled": {
+      "feature-ui": 1,
+      "feature-setting-value": 0,
+      "feature-setting-value-pbm": 1,
+      "feature-setting-detect-only": 0,
+      "feature-setting-global-rules": 1,
+      "feature-setting-global-rules-sub-frames": 1
+    }
+  },
+  "fingerprinting-protection": {
+    "enabled": false,
+    "enabled-normal": false,
+    "enabled-private": true,
+    "fdlibm-math": false,
+    "overrides": ""
+  },
+  "fx-suggest": {
+    "enabled": true
+  },
+  "glean": {
+    "delay-ping-lifetime-io": true,
+    "enable-event-timestamps": false,
+    "metrics-enabled": {},
+    "ping-lifetime-max-time": 0,
+    "ping-lifetime-threshold": 1000
+  },
+  "growth-data": {
+    "enabled": false
+  },
+  "homescreen": {
+    "sections-enabled": {
+      "top-sites": true,
+      "jump-back-in": true,
+      "bookmarks": true,
+      "recent-explorations": true,
+      "pocket": true,
+      "pocket-sponsored-stories": true
+    }
+  },
+  "juno-onboarding": {
+    "cards": {
+      "default-browser": {
+        "body": "juno_onboarding_default_browser_description_nimbus_3",
+        "card-type": "default-browser",
+        "disqualifiers": [
+          "NEVER"
+        ],
+        "enabled": true,
+        "image-res": "ic_onboarding_welcome",
+        "ordering": 10,
+        "prerequisites": [
+          "ALWAYS"
+        ],
+        "primary-button-label": "juno_onboarding_default_browser_positive_button",
+        "secondary-button-label": "juno_onboarding_default_browser_negative_button",
+        "title": "juno_onboarding_default_browser_title_nimbus_2"
+      },
+      "add-search-widget": {
+        "body": "juno_onboarding_add_search_widget_description",
+        "card-type": "add-search-widget",
+        "disqualifiers": [
+          "NEVER"
+        ],
+        "enabled": true,
+        "image-res": "ic_onboarding_search_widget",
+        "ordering": 15,
+        "prerequisites": [
+          "ALWAYS"
+        ],
+        "primary-button-label": "juno_onboarding_add_search_widget_positive_button",
+        "secondary-button-label": "juno_onboarding_add_search_widget_negative_button",
+        "title": "juno_onboarding_add_search_widget_title"
+      },
+      "sync-sign-in": {
+        "body": "juno_onboarding_sign_in_description_3",
+        "card-type": "sync-sign-in",
+        "disqualifiers": [
+          "NEVER"
+        ],
+        "enabled": true,
+        "image-res": "ic_onboarding_sync",
+        "ordering": 20,
+        "prerequisites": [
+          "ALWAYS"
+        ],
+        "primary-button-label": "juno_onboarding_sign_in_positive_button",
+        "secondary-button-label": "juno_onboarding_sign_in_negative_button",
+        "title": "juno_onboarding_sign_in_title_2"
+      },
+      "notification-permission": {
+        "body": "juno_onboarding_enable_notifications_description_nimbus_2",
+        "card-type": "notification-permission",
+        "disqualifiers": [
+          "NEVER"
+        ],
+        "enabled": true,
+        "image-res": "ic_notification_permission",
+        "ordering": 30,
+        "prerequisites": [
+          "ALWAYS"
+        ],
+        "primary-button-label": "juno_onboarding_enable_notifications_positive_button",
+        "secondary-button-label": "juno_onboarding_enable_notifications_negative_button",
+        "title": "juno_onboarding_enable_notifications_title_nimbus_2"
+      }
+    },
+    "conditions": {
+      "ALWAYS": "true",
+      "NEVER": "false"
+    }
+  },
+  "menu-redesign": {
+    "enabled": false
+  },
+  "microsurveys": {
+    "enabled": true
+  },
+  "mr2022": {
+    "sections-enabled": {
+      "home-onboarding-dialog-existing-users": true,
+      "sync-cfr": true,
+      "wallpapers-selection-tool": true,
+      "jump-back-in-cfr": true,
+      "tcp-cfr": true,
+      "tcp-feature": true
+    }
+  },
+  "navigation-toolbar": {
+    "enabled": true
+  },
+  "nimbus-is-ready": {
+    "event-count": 1
+  },
+  "nimbus-validation": {
+    "settings-icon": "mozac_ic_settings",
+    "settings-punctuation": "",
+    "settings-title": "browser_menu_settings"
+  },
+  "onboarding": {
+    "order": [
+      "themes",
+      "toolbar-placement",
+      "sync",
+      "tcp",
+      "privacy-notice"
+    ]
+  },
+  "one-click-search": {
+    "enabled": false
+  },
+  "print": {
+    "browser-print-enabled": true,
+    "share-print-enabled": true
+  },
+  "private-browsing": {
+    "felt-privacy-enabled": false
+  },
+  "query-parameter-stripping": {
+    "sections-enabled": {
+      "query-parameter-stripping": "0",
+      "query-parameter-stripping-pmb": "0",
+      "query-parameter-stripping-allow-list": "",
+      "query-parameter-stripping-strip-list": ""
+    }
+  },
+  "re-engagement-notification": {
+    "enabled": false,
+    "type": 0
+  },
+  "remote-tab-management": {
+    "close-tabs-enabled": true
+  },
+  "search-extra-params": {
+    "channel-id": {},
+    "enabled": false,
+    "feature-enabler": {},
+    "search-engine": ""
+  },
+  "search-term-groups": {
+    "enabled": true
+  },
+  "set-as-default-prompt": {
+    "app-cold-starts-between-prompts": 4,
+    "days-between-prompts": 14,
+    "enabled": true,
+    "max-number-of-times-to-display": 3
+  },
+  "ship": {
+    "disabled": true
+  },
+  "shopping-experience": {
+    "enabled": true,
+    "product-recommendations": true,
+    "product-recommendations-exposure": true
+  },
+  "splash-screen": {
+    "enabled": false,
+    "maximum_duration_ms": 0
+  },
+  "suggest-shipped-domains": {
+    "enabled": false
+  },
+  "toolbar": {
+    "toolbar-position-top": false
+  },
+  "translations": {
+    "downloads-enabled": true,
+    "global-lang-settings-enabled": true,
+    "global-settings-enabled": true,
+    "global-site-settings-enabled": true,
+    "main-flow-browser-menu-enabled": true,
+    "main-flow-toolbar-enabled": true,
+    "page-settings-enabled": true
+  },
+  "user-characteristics": {
+    "currentVersion": 0
+  },
+  "pdfjs": {
+    "download-button": true,
+    "open-in-app-button": true
+  },
+  "awesomebar-suggestion-provider": {
+    "available-suggestion-types": {
+      "amp": true,
+      "ampMobile": false,
+      "wikipedia": true
+    }
+  },
+  "messaging": {
+    "$$experiment": "{experiment}",
+    "$$surfaces": [
+      "homescreen",
+      "notification",
+      "survey",
+      "microsurvey"
+    ],
+    "actions": {
+      "OPEN_URL": "://open",
+      "ENABLE_PRIVATE_BROWSING": "://enable_private_browsing",
+      "INSTALL_SEARCH_WIDGET": "://install_search_widget",
+      "MAKE_DEFAULT_BROWSER": "://make_default_browser",
+      "VIEW_BOOKMARKS": "://urls_bookmarks",
+      "VIEW_COLLECTIONS": "://home_collections",
+      "VIEW_HISTORY": "://urls_history",
+      "VIEW_HOMESCREEN": "://home",
+      "OPEN_SETTINGS_ACCESSIBILITY": "://settings_accessibility",
+      "OPEN_SETTINGS_ADDON_MANAGER": "://settings_addon_manager",
+      "OPEN_SETTINGS_DELETE_BROWSING_DATA": "://settings_delete_browsing_data",
+      "OPEN_SETTINGS_LOGINS": "://settings_logins",
+      "OPEN_SETTINGS_NOTIFICATIONS": "://settings_notifications",
+      "OPEN_SETTINGS_PRIVACY": "://settings_privacy",
+      "OPEN_SETTINGS_SEARCH_ENGINE": "://settings_search_engine",
+      "OPEN_SETTINGS_TRACKING_PROTECTION": "://settings_tracking_protection",
+      "OPEN_SETTINGS_WALLPAPERS": "://settings_wallpapers",
+      "OPEN_SETTINGS": "://settings",
+      "TURN_ON_SYNC": "://turn_on_sync"
+    },
+    "message-under-experiment": null,
+    "messages": {
+      "default-browser": {
+        "title": "default_browser_experiment_card_title",
+        "text": "default_browser_experiment_card_text",
+        "surface": "homescreen",
+        "action": "MAKE_DEFAULT_BROWSER",
+        "trigger-if-all": [
+          "USER_ESTABLISHED_INSTALL",
+          "ANDROID_API_BELOW_29"
+        ],
+        "exclude-if-any": [
+          "I_AM_DEFAULT_BROWSER"
+        ],
+        "style": "PERSISTENT",
+        "button-label": "preferences_set_as_default_browser"
+      },
+      "default-browser-notification": {
+        "title": "nimbus_notification_default_browser_title",
+        "text": "nimbus_notification_default_browser_text",
+        "surface": "notification",
+        "style": "NOTIFICATION",
+        "trigger-if-all": [
+          "DAY_3_AFTER_INSTALL"
+        ],
+        "exclude-if-any": [
+          "I_AM_DEFAULT_BROWSER"
+        ],
+        "action": "MAKE_DEFAULT_BROWSER"
+      },
+      "microsurvey-printing-example": {
+        "title": "microsurvey_prompt_printing_title",
+        "text": "microsurvey_survey_printing_title",
+        "surface": "microsurvey",
+        "trigger-if-all": [
+          "RECENTLY_PRINTED"
+        ],
+        "style": "MICROSURVEY",
+        "microsurvey-config": {
+          "utm-content": "homepage",
+          "icon": "ic_print",
+          "answers": [
+            {
+              "text": "likert_scale_option_1",
+              "ordering": 0
+            },
+            {
+              "text": "likert_scale_option_2",
+              "ordering": 1
+            },
+            {
+              "text": "likert_scale_option_3",
+              "ordering": 2
+            },
+            {
+              "text": "likert_scale_option_4",
+              "ordering": 3
+            },
+            {
+              "text": "likert_scale_option_5",
+              "ordering": 4
+            },
+            {
+              "text": "likert_scale_option_6",
+              "ordering": 5
+            }
+          ]
+        }
+      }
+    },
+    "notification-config": {
+      "refresh-interval": 120
+    },
+    "on-control": "show-next-message",
+    "styles": {
+      "DEFAULT": {
+        "priority": 50,
+        "max-display-count": 100
+      },
+      "SURVEY": {
+        "priority": 55,
+        "max-display-count": 1
+      },
+      "PERSISTENT": {
+        "priority": 50,
+        "max-display-count": 20
+      },
+      "WARNING": {
+        "priority": 60,
+        "max-display-count": 10
+      },
+      "URGENT": {
+        "priority": 100,
+        "max-display-count": 10
+      },
+      "NOTIFICATION": {
+        "priority": 50,
+        "max-display-count": 1
+      },
+      "MICROSURVEY": {
+        "priority": 50,
+        "max-display-count": 5
+      },
+      "EXPIRES_QUICKLY": {
+        "priority": 100,
+        "max-display-count": 1
+      }
+    },
+    "triggers": {
+      "ALWAYS": "true"
+    }
+  },
+  "nimbus-system": {
+    "refresh-interval-foreground": 60
+  }
+}

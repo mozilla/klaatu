@@ -2,7 +2,6 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-import json
 import logging
 import os
 import random
@@ -12,17 +11,17 @@ from pathlib import Path
 
 import pytest
 import requests
-from experimentintegration.gradlewbuild import GradlewBuild
-from experimentintegration.models.models import TelemetryModel
+
+from .gradlewbuild import GradlewBuild
+from .models.models import TelemetryModel
 
 KLAATU_SERVER_URL = "http://localhost:1378"
 KLAATU_LOCAL_SERVER_URL = "http://localhost:1378"
 
-here = Path().cwd()
+here = Path()
 
 
 def pytest_addoption(parser):
-    parser.addoption("--stage", action="store_true", default=None, help="Use the stage server")
     parser.addoption(
         "--experiment-feature",
         action="store",
@@ -34,6 +33,12 @@ def pytest_addoption(parser):
         action="store",
         default="control",
         help="Experiment Branch you want to test on",
+    )
+    parser.addoption(
+        "--experiment-server",
+        action="store",
+        default="prod",
+        help="Experiment Server the experiment is hosted on",
     )
 
 
@@ -75,6 +80,11 @@ def fixture_experiment_branch(request):
     return request.config.getoption("--experiment-branch")
 
 
+@pytest.fixture(name="experiment_server")
+def fixture_experiment_server(request):
+    return request.config.getoption("--experiment-server")
+
+
 @pytest.fixture(name="load_branches")
 def fixture_load_branches(experiment_url):
     branches = []
@@ -112,16 +122,6 @@ def gradlewbuild(gradlewbuild_log):
 @pytest.fixture(name="experiment_data")
 def fixture_experiment_data(experiment_url, request):
     data = requests.get(experiment_url).json()
-    branches = next(iter(data.get("branches")), None)
-    features = next(iter(branches.get("features")), None)
-    match request.config.getoption("--experiment-feature"):
-        case "messaging_survey":
-            if features.get("value").get("messages"):
-                for item in features["value"]["messages"].values():
-                    if "USER_EN-US_SPEAKER" in item["trigger-if-all"]:
-                        item["trigger-if-all"] = ["ALWAYS"]
-        case _:
-            pass
     logging.debug(f"JSON Data used for this test: {data}")
     return [data]
 
@@ -132,10 +132,11 @@ def fixture_experiment_url(request, variables):
 
     if slug := request.config.getoption("--experiment"):
         # Build URL from slug
-        if request.config.getoption("--stage"):
-            url = f"{variables['urls']['stage_server']}/api/v6/experiments/{slug}/"
-        else:
-            url = f"{variables['urls']['prod_server']}/api/v6/experiments/{slug}/"
+        match request.config.getoption("--experiment-server"):
+            case "prod":
+                url = f"{variables['urls']['prod_server']}/api/v6/experiments/{slug}/"
+            case "stage" | "stage/preview":
+                url = f"{variables['urls']['stage_server']}/api/v6/experiments/{slug}/"
     else:
         try:
             data = requests.get(f"{KLAATU_SERVER_URL}/experiment").json()
@@ -156,21 +157,9 @@ def fixture_experiment_url(request, variables):
         pass
 
 
-@pytest.fixture(name="json_data")
-def fixture_json_data(tmp_path, experiment_data):
-    path = tmp_path / "data"
-    path.mkdir()
-    json_path = path / "data.json"
-    with open(json_path, "w", encoding="utf-8") as f:
-        # URL of experiment/klaatu server
-        data = {"data": experiment_data}
-        json.dump(data, f)
-    return json_path
-
-
 @pytest.fixture(name="experiment_slug")
-def fixture_experiment_slug(experiment_data):
-    return experiment_data[0]["slug"]
+def fixture_experiment_slug(request):
+    return request.config.getoption("--experiment")
 
 
 @pytest.fixture(name="ping_server", autouse=True, scope="session")
@@ -203,7 +192,7 @@ def fixture_send_test_results():
     yield
     here = Path()
 
-    with open(f"{here.resolve()}/results/index.html", "rb") as f:
+    with open(f"{here.resolve() / 'results' / 'index.html'}", "rb") as f:
         files = {"file": f}
         try:
             requests.post(f"{KLAATU_SERVER_URL}/test_results", files=files)
@@ -266,6 +255,7 @@ def fixture_run_nimbus_cli_command(gradlewbuild_log):
             out = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as e:
             out = e.output
+            logging.info(out)
             raise
         finally:
             with open(gradlewbuild_log, "w") as f:
@@ -278,18 +268,18 @@ def fixture_run_nimbus_cli_command(gradlewbuild_log):
 def fixture_set_experiment_test_name(experiment_data):
     # Get a random word from the experiments userFacingName attribute.
     exp_name = experiment_data[0]["userFacingName"].split()
-    os.environ["EXP_NAME"] = exp_name[random.randint(0, len(exp_name))]
+    os.environ["EXP_NAME"] = exp_name[random.randint(0, len(exp_name) - 1)]
 
 
 @pytest.fixture(name="setup_experiment")
 def fixture_setup_experiment(
     experiment_slug,
-    json_data,
     experiment_branch,
     nimbus_cli_args,
     run_nimbus_cli_command,
     set_experiment_test_name,
     delete_telemetry_pings,
+    experiment_server,
 ):
     def _():
         delete_telemetry_pings()
@@ -298,9 +288,9 @@ def fixture_setup_experiment(
             "nimbus-cli",
             "--app fenix",
             "--channel developer",
-            f"enroll {experiment_slug}",
+            f"enroll {experiment_server}/{experiment_slug}",
             f"--branch {experiment_branch}",
-            f"--file {json_data}",
+            f"--patch {here.resolve() / 'patch.json'}",
             "--reset-app",
             f"{nimbus_cli_args}",
         ]
