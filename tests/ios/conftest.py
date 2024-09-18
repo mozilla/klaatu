@@ -278,6 +278,7 @@ def fixture_run_nimbus_cli_command():
 @pytest.fixture(name="setup_experiment")
 def setup_experiment(experiment_slug, experiment_server, experiment_branch, run_nimbus_cli_command, nimbus_cli_args):
     def _setup_experiment():
+        logging.info(here.parents[1].glob('**/Tests/ExperimentIntegrationTests/patch.json'))
         logging.info(f"Testing experiment {experiment_slug}, BRANCH: {experiment_branch}")
         command = [
             "nimbus-cli",
@@ -285,7 +286,7 @@ def setup_experiment(experiment_slug, experiment_server, experiment_branch, run_
             "--channel developer",
             f"enroll {experiment_server}/{experiment_slug}",
             f"--branch {experiment_branch}",
-            f"--patch {here.resolve() / 'patch.json'}",
+            f"--patch {here.parents[1].glob('**/**/ExperimentIntegrationTests/patch.json')}",
             f"-- {nimbus_cli_args}",
         ]
         run_nimbus_cli_command(" ".join(command))
