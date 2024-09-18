@@ -170,12 +170,15 @@ def fixture_experiment_data(experiment_url):
 
 @pytest.fixture(name="experiment_url", scope="module")
 def fixture_experiment_url(request, variables):
+    url = None
+
     if slug := request.config.getoption("--experiment"):
         # Build URL from slug
-        if request.config.getoption("--stage"):
-            url = f"{variables['urls']['stage_server']}/api/v6/experiments/{slug}/"
-        else:
-            url = f"{variables['urls']['prod_server']}/api/v6/experiments/{slug}/"
+        match request.config.getoption("--experiment-server"):
+            case "prod":
+                url = f"{variables['urls']['prod_server']}/api/v6/experiments/{slug}/"
+            case "stage" | "stage/preview":
+                url = f"{variables['urls']['stage_server']}/api/v6/experiments/{slug}/"
     else:
         try:
             data = requests.get(f"{KLAATU_SERVER_URL}/experiment").json()
@@ -196,9 +199,10 @@ def fixture_experiment_url(request, variables):
         pass
 
 
+
 @pytest.fixture(name="experiment_slug")
-def fixture_experiment_slug(experiment_data):
-    return experiment_data[0]["slug"]
+def fixture_experiment_slug(request):
+    return request.config.getoption("--experiment")
 
 
 @pytest.fixture(name="send_test_results", scope="session")
