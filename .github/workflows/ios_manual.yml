@@ -27,15 +27,6 @@ on:
           - smoke
           - messaging_survey
           - messaging-new-tab-card
-      experiment-server:
-        description: 'The server that the experiment exists on (stage/prod)'
-        default: 'prod'
-        required: true
-        type: choice
-        options:
-          - stage
-          - stage/preview
-          - prod
       extra-arguments:
         description: 'Additional testing arguments'
         default: ''
@@ -101,8 +92,7 @@ jobs:
           xcrun simctl shutdown all
           export SIMULATOR_UDID=$(python get_specific_device_udid.py)
           poetry run python generate_smoke_tests.py
-          echo "TEST COMMAND: poetry run pytest --experiment ${{inputs.experiment-server}}/${{ inputs.slug }} --experiment-branch ${{ matrix.branch }} --feature ${{ inputs.feature-name }} ${{ inputs.extra-arguments }}"
-          poetry run pytest --experiment ${{inputs.experiment-server}}/${{ inputs.slug }} --experiment-branch ${{ matrix.branch }} --feature ${{ inputs.feature-name }} ${{ inputs.extra-arguments }} --reruns 1
+          poetry run pytest --experiment ${{ inputs.slug }} --experiment-branch ${{ matrix.branch }} --feature ${{ inputs.feature-name }} ${{ inputs.extra-arguments }}
       - name: Archive Results
         if: ${{ always() }}
         run: zip -r results.zip /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult
