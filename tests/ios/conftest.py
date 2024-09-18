@@ -15,14 +15,14 @@ import requests
 
 sys.path.append("../../")
 
-from ExperimentIntegrationTests.models.models import TelemetryModel  # noqa
+from .models.models import TelemetryModel  # noqa
 from SyncIntegrationTests.xcodebuild import XCodeBuild  # noqa
 from SyncIntegrationTests.xcrun import XCRun  # noqa
 
 KLAATU_SERVER_URL = "http://localhost:1378"
 KLAATU_LOCAL_SERVER_URL = "http://localhost:1378"
 
-here = Path().cwd()
+here = Path()
 
 
 def pytest_addoption(parser):
@@ -41,6 +41,12 @@ def pytest_addoption(parser):
         default="control",
         help="Experiment Branch you want to test on",
     )
+    parser.addoption(
+        "--experiment-server",
+        action="store",
+        default="prod",
+        help="Experiment Server the experiment is hosted on",
+    )
 
 
 def pytest_runtest_setup(item):
@@ -58,6 +64,11 @@ def fixture_nimbus_cli_args():
 @pytest.fixture(name="experiment_branch")
 def fixture_experiment_branch(request):
     return request.config.getoption("--experiment-branch")
+
+
+@pytest.fixture(name="experiment_server")
+def fixture_experiment_server(request):
+    return request.config.getoption("--experiment-server")
 
 
 @pytest.fixture(name="load_branches")
@@ -137,34 +148,22 @@ def fixture_device_control(xcrun):
 @pytest.fixture(name="start_app")
 def fixture_start_app(
     nimbus_cli_args,
+    run_nimbus_cli_command
 ):
-    def _():
-        command = f"nimbus-cli --app firefox_ios --channel developer open -- {nimbus_cli_args}"
-        out = subprocess.check_output(
-            command,
-            cwd=here.parent,
-            stderr=subprocess.STDOUT,
-            universal_newlines=True,
-            shell=True,
-        )
-        logging.info(out)
-
-    return _
+    def runner():
+        command = [
+            "nimbus-cli",
+            "--app firefox_ios",
+            "--channel developer",
+            f"open -- {nimbus_cli_args}"
+        ]
+        run_nimbus_cli_command(command)
+    return runner
 
 
 @pytest.fixture(name="experiment_data")
-def fixture_experiment_data(experiment_url, request):
+def fixture_experiment_data(experiment_url):
     data = requests.get(experiment_url).json()
-    match request.config.getoption("--feature"):
-        case "messaging_survey":
-            for branch in data.get("branches"):
-                for feature in branch.get("features"):
-                    for item in feature["value"]["messages"].values():
-                        if "USER_EN-US_SPEAKER" in item["trigger-if-all"]:
-                            item["trigger-if-all"] = ["ALWAYS"]
-        case _:
-            pass
-
     logging.debug(f"JSON Data used for this test: {data}")
     return [data]
 
@@ -197,18 +196,6 @@ def fixture_experiment_url(request, variables):
         pass
 
 
-@pytest.fixture(name="json_data")
-def fixture_json_data(tmp_path, experiment_data):
-    path = tmp_path / "data"
-    path.mkdir()
-    json_path = path / "data.json"
-    with open(json_path, "w", encoding="utf-8") as f:
-        # URL of experiment/klaatu server
-        data = {"data": experiment_data}
-        json.dump(data, f)
-    return json_path
-
-
 @pytest.fixture(name="experiment_slug")
 def fixture_experiment_slug(experiment_data):
     return experiment_data[0]["slug"]
@@ -218,9 +205,9 @@ def fixture_experiment_slug(experiment_data):
 def fixture_send_test_results(xcrun):
     yield
     xcrun.shutdown()
-    here = Path().cwd()
+    here = Path()
 
-    with open(f"{here.parent}/ExperimentIntegrationTests/results/index.html", "rb") as f:
+    with open(f"{here.parent / 'ExperimentIntegrationTests' / 'results' / 'index.html'}", "rb") as f:
         files = {"file": f}
         try:
             requests.post(f"{KLAATU_SERVER_URL}/test_results", files=files)
@@ -270,27 +257,36 @@ def fixture_check_ping_for_experiment(experiment_slug, variables):
     return _check_ping_for_experiment
 
 
+@pytest.fixture(name="run_nimbus_cli_command")
+def fixture_run_nimbus_cli_command(gradlewbuild_log):
+    def _run_nimbus_cli_command(command):
+        logging.info(f"Running command {command}")
+        try:
+            out = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT)
+        except subprocess.CalledProcessError as e:
+            out = e.output
+            logging.info(out)
+            raise
+        finally:
+            with open(gradlewbuild_log, "w") as f:
+                f.write(f"{out}")
+
+    return _run_nimbus_cli_command
+
+
 @pytest.fixture(name="setup_experiment")
-def setup_experiment(experiment_slug, json_data, experiment_branch, nimbus_cli_args):
+def setup_experiment(experiment_slug, experiment_server, experiment_branch, run_nimbus_cli_command, nimbus_cli_args):
     def _setup_experiment():
         logging.info(f"Testing experiment {experiment_slug}, BRANCH: {experiment_branch}")
         command = [
             "nimbus-cli",
             "--app firefox_ios",
             "--channel developer",
-            f"enroll {experiment_slug}",
+            f"enroll {experiment_server}/{experiment_slug}",
             f"--branch {experiment_branch}",
-            f"--file {json_data}",
+            f"--patch {here.resolve() / 'patch.json'}",
             f"-- {nimbus_cli_args}",
         ]
-        logging.info(f'Nimbus CLI Command: {" ".join(command)}\n')
-        out = subprocess.check_output(
-            " ".join(command),
-            cwd=os.path.join(here, os.pardir),
-            stderr=subprocess.STDOUT,
-            universal_newlines=True,
-            shell=True,
-        )
-        logging.info(out)
+        run_nimbus_cli_command(" ".join(command))
 
     return _setup_experiment
