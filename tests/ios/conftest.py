@@ -12,11 +12,9 @@ from pathlib import Path
 import pytest
 import requests
 
-sys.path.append("../../")
-
-from .models.models import TelemetryModel  # noqa
-from .xcodebuild import XCodeBuild  # noqa
-from .xcrun import XCRun  # noqa
+from models.models import TelemetryModel
+from xcodebuild import XCodeBuild
+from xcrun import XCRun
 
 KLAATU_SERVER_URL = "http://localhost:1378"
 KLAATU_LOCAL_SERVER_URL = "http://localhost:1378"
@@ -207,7 +205,6 @@ def fixture_experiment_slug(request):
 def fixture_send_test_results(xcrun):
     yield
     xcrun.shutdown()
-    here = Path()
 
     with open(
         f"{here.parent / 'ExperimentIntegrationTests' / 'results' / 'index.html'}", "rb"
@@ -287,7 +284,7 @@ def setup_experiment(
             "--channel developer",
             f"enroll {experiment_server}/{experiment_slug}",
             f"--branch {experiment_branch}",
-            f"--patch {Path() / 'patch.json'}",
+            f"--patch {here / 'patch.json'}",
             f"-- {nimbus_cli_args}",
         ]
         run_nimbus_cli_command(" ".join(command))
