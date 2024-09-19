@@ -2,7 +2,6 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-import json
 import logging
 import os
 import subprocess
@@ -16,8 +15,8 @@ import requests
 sys.path.append("../../")
 
 from .models.models import TelemetryModel  # noqa
-from SyncIntegrationTests.xcodebuild import XCodeBuild  # noqa
-from SyncIntegrationTests.xcrun import XCRun  # noqa
+from .xcodebuild import XCodeBuild  # noqa
+from .xcrun import XCRun  # noqa
 
 KLAATU_SERVER_URL = "http://localhost:1378"
 KLAATU_LOCAL_SERVER_URL = "http://localhost:1378"
@@ -34,7 +33,9 @@ def pytest_addoption(parser):
         default=False,
         help="Build the developer edition of Firefox",
     )
-    parser.addoption("--experiment-feature", action="store", help="Feature name you want to test against")
+    parser.addoption(
+        "--experiment-feature", action="store", help="Feature name you want to test against"
+    )
     parser.addoption(
         "--experiment-branch",
         action="store",
@@ -146,18 +147,16 @@ def fixture_device_control(xcrun):
 
 
 @pytest.fixture(name="start_app")
-def fixture_start_app(
-    nimbus_cli_args,
-    run_nimbus_cli_command
-):
+def fixture_start_app(nimbus_cli_args, run_nimbus_cli_command):
     def runner():
         command = [
             "nimbus-cli",
             "--app firefox_ios",
             "--channel developer",
-            f"open -- {nimbus_cli_args}"
+            f"open -- {nimbus_cli_args}",
         ]
-        run_nimbus_cli_command(command)
+        run_nimbus_cli_command(" ".join(command))
+
     return runner
 
 
@@ -199,7 +198,6 @@ def fixture_experiment_url(request, variables):
         pass
 
 
-
 @pytest.fixture(name="experiment_slug")
 def fixture_experiment_slug(request):
     return request.config.getoption("--experiment")
@@ -211,7 +209,9 @@ def fixture_send_test_results(xcrun):
     xcrun.shutdown()
     here = Path()
 
-    with open(f"{here.parent / 'ExperimentIntegrationTests' / 'results' / 'index.html'}", "rb") as f:
+    with open(
+        f"{here.parent / 'ExperimentIntegrationTests' / 'results' / 'index.html'}", "rb"
+    ) as f:
         files = {"file": f}
         try:
             requests.post(f"{KLAATU_SERVER_URL}/test_results", files=files)
@@ -276,9 +276,10 @@ def fixture_run_nimbus_cli_command():
 
 
 @pytest.fixture(name="setup_experiment")
-def setup_experiment(experiment_slug, experiment_server, experiment_branch, run_nimbus_cli_command, nimbus_cli_args):
+def setup_experiment(
+    experiment_slug, experiment_server, experiment_branch, run_nimbus_cli_command, nimbus_cli_args
+):
     def _setup_experiment():
-        logging.info(here.parents[1].glob('**/Tests/ExperimentIntegrationTests/patch.json'))
         logging.info(f"Testing experiment {experiment_slug}, BRANCH: {experiment_branch}")
         command = [
             "nimbus-cli",
@@ -286,7 +287,7 @@ def setup_experiment(experiment_slug, experiment_server, experiment_branch, run_
             "--channel developer",
             f"enroll {experiment_server}/{experiment_slug}",
             f"--branch {experiment_branch}",
-            f"--patch {here.parents[1].glob('**/**/ExperimentIntegrationTests/patch.json')}",
+            f"--patch {Path() / 'patch.json'}",
             f"-- {nimbus_cli_args}",
         ]
         run_nimbus_cli_command(" ".join(command))
