@@ -5,16 +5,15 @@
 import logging
 import os
 import subprocess
-import sys
 import time
 from pathlib import Path
 
 import pytest
 import requests
 
-from models.models import TelemetryModel
-from xcodebuild import XCodeBuild
-from xcrun import XCRun
+from .models.models import TelemetryModel
+from .xcodebuild import XCodeBuild
+from .xcrun import XCRun
 
 KLAATU_SERVER_URL = "http://localhost:1378"
 KLAATU_LOCAL_SERVER_URL = "http://localhost:1378"
