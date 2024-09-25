@@ -10,6 +10,7 @@ from pathlib import Path
 
 import pytest
 import requests
+from pytest_metadata.plugin import metadata_key
 
 from .models.models import TelemetryModel
 from .xcodebuild import XCodeBuild
@@ -22,7 +23,7 @@ here = Path()
 
 
 def pytest_addoption(parser):
-    parser.addoption("--experiment", action="store", help="The experiments experimenter URL")
+    parser.addoption("--experiment-slug", action="store", help="The experiments experimenter URL")
     parser.addoption("--stage", action="store_true", default=None, help="Use the stage server")
     parser.addoption(
         "--build-dev",
@@ -45,6 +46,12 @@ def pytest_addoption(parser):
         default="prod",
         help="Experiment Server the experiment is hosted on",
     )
+    parser.addoption(
+        "--firefox-version",
+        action="store",
+        default=None,
+        help="The Firefox Version you are testing on. This is just use for reporting",
+    )
 
 
 def pytest_runtest_setup(item):
@@ -59,9 +66,25 @@ def fixture_nimbus_cli_args():
     return "FIREFOX_SKIP_INTRO FIREFOX_TEST DISABLE_ANIMATIONS 'GCDWEBSERVER_PORT:7777'"
 
 
-@pytest.fixture(name="experiment_branch")
+@pytest.fixture(name="experiment_slug", scope="session", autouse=True)
+def fixture_experiment_slug(request):
+    slug = request.config.getoption("--experiment-slug")
+    os.environ["EXPERIMENT_SLUG"] = slug
+    return slug
+
+
+@pytest.fixture(name="experiment_branch", scope="session", autouse=True)
 def fixture_experiment_branch(request):
-    return request.config.getoption("--experiment-branch")
+    branch = request.config.getoption("--experiment-branch")
+    os.environ["EXPERIMENT_BRANCH"] = branch
+    return branch
+
+
+@pytest.fixture(name="firefox_version", scope="session", autouse=True)
+def fixture_firefox_version(request):
+    ff_version = request.config.getoption("--firefox-version")
+    os.environ["FIREFOX_VERSION"] = ff_version
+    return ff_version
 
 
 @pytest.fixture(name="experiment_server")
@@ -195,11 +218,6 @@ def fixture_experiment_url(request, variables):
         pass
 
 
-@pytest.fixture(name="experiment_slug")
-def fixture_experiment_slug(request):
-    return request.config.getoption("--experiment")
-
-
 @pytest.fixture(name="send_test_results", scope="session")
 def fixture_send_test_results(xcrun):
     yield
@@ -289,3 +307,17 @@ def setup_experiment(
         run_nimbus_cli_command(" ".join(command))
 
     return _setup_experiment
+
+
+@pytest.hookimpl(tryfirst=True)
+def pytest_sessionfinish(session, exitstatus):
+    # Add data to html report
+    session.config.stash[metadata_key]["Experiment Slug"] = os.environ.get(
+        "EXPERIMENT_SLUG", "N/A"
+    )
+    session.config.stash[metadata_key]["Experiment Branch"] = os.environ.get(
+        "EXPERIMENT_BRANCH", "N/A"
+    )
+    session.config.stash[metadata_key]["Firefox Version"] = os.environ.get(
+        "FIREFOX_VERSION", "N/A"
+    )

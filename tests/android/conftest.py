@@ -11,6 +11,7 @@ from pathlib import Path
 
 import pytest
 import requests
+from pytest_metadata.plugin import metadata_key
 
 from .gradlewbuild import GradlewBuild
 from .models.models import TelemetryModel
@@ -27,7 +28,6 @@ def pytest_addoption(parser):
         action="store",
         help="Feature name you want to test against",
     )
-    parser.addoption("--experiment", action="store", help="Feature name you want to test against")
     parser.addoption(
         "--experiment-branch",
         action="store",
@@ -39,6 +39,18 @@ def pytest_addoption(parser):
         action="store",
         default="prod",
         help="Experiment Server the experiment is hosted on",
+    )
+    parser.addoption(
+        "--experiment-slug",
+        action="store",
+        default=None,
+        help="Experiment slug from Experimenter",
+    )
+    parser.addoption(
+        "--firefox-version",
+        action="store",
+        default=None,
+        help="The Firefox Version you are testing on. This is just use for reporting",
     )
 
 
@@ -75,9 +87,25 @@ def fixture_nimbus_cli_args():
     return ""
 
 
-@pytest.fixture(name="experiment_branch")
+@pytest.fixture(name="experiment_branch", scope="session", autouse=True)
 def fixture_experiment_branch(request):
-    return request.config.getoption("--experiment-branch")
+    branch = request.config.getoption("--experiment-branch")
+    os.environ["EXPERIMENT_BRANCH"] = branch
+    return branch
+
+
+@pytest.fixture(name="experiment_slug", scope="session", autouse=True)
+def fixture_experiment_slug(request):
+    slug = request.config.getoption("--experiment-slug")
+    os.environ["EXPERIMENT_SLUG"] = slug
+    return slug
+
+
+@pytest.fixture(name="firefox_version", scope="session", autouse=True)
+def fixture_firefox_version(request):
+    ff_version = request.config.getoption("--firefox-version")
+    os.environ["FIREFOX_VERSION"] = ff_version
+    return ff_version
 
 
 @pytest.fixture(name="experiment_server")
@@ -155,11 +183,6 @@ def fixture_experiment_url(request, variables):
         requests.put(f"{KLAATU_SERVER_URL}/experiment", json=return_data)
     except requests.exceptions.ConnectionError:
         pass
-
-
-@pytest.fixture(name="experiment_slug")
-def fixture_experiment_slug(request):
-    return request.config.getoption("--experiment")
 
 
 @pytest.fixture(name="ping_server", autouse=True, scope="session")
@@ -269,6 +292,20 @@ def fixture_set_experiment_test_name(experiment_data):
     # Get a random word from the experiments userFacingName attribute.
     exp_name = experiment_data[0]["userFacingName"].split()
     os.environ["EXP_NAME"] = exp_name[random.randint(0, len(exp_name) - 1)]
+
+
+@pytest.hookimpl(tryfirst=True)
+def pytest_sessionfinish(session, exitstatus):
+    # Add data to html report
+    session.config.stash[metadata_key]["Experiment Slug"] = os.environ.get(
+        "EXPERIMENT_SLUG", "N/A"
+    )
+    session.config.stash[metadata_key]["Experiment Branch"] = os.environ.get(
+        "EXPERIMENT_BRANCH", "N/A"
+    )
+    session.config.stash[metadata_key]["Firefox Version"] = os.environ.get(
+        "FIREFOX_VERSION", "N/A"
+    )
 
 
 @pytest.fixture(name="setup_experiment")
