@@ -155,10 +155,10 @@ def fixture_experiment_data(experiment_url, request):
 
 
 @pytest.fixture(name="experiment_url", scope="module")
-def fixture_experiment_url(request, variables):
+def fixture_experiment_url(request, variables, experiment_slug):
     url = None
 
-    if slug := request.config.getoption("--experiment"):
+    if slug := experiment_slug:
         # Build URL from slug
         match request.config.getoption("--experiment-server"):
             case "prod":

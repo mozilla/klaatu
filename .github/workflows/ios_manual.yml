@@ -115,7 +115,7 @@ jobs:
         if: ${{ always() }}
         with:
           name: ${{ inputs.slug }} HTML Test Report on firefox v${{ matrix.firefox }} branch ${{ matrix.branch }}
-          path: /Users/runner/work/klaatu/klaatu/firefox-ios/firefox-ios-tests/Tests/ExperimentIntegrationTests/results/index.html
+          path: /Users/runner/work/klaatu/klaatu/firefox-ios/firefox-ios/firefox-ios-tests/Tests/ExperimentIntegrationTests/results/index.html
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
