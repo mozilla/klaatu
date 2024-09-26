@@ -101,8 +101,8 @@ jobs:
           xcrun simctl shutdown all
           export SIMULATOR_UDID=$(python get_specific_device_udid.py)
           poetry run python generate_smoke_tests.py
-          echo "TEST COMMAND: poetry run pytest --experiment ${{ inputs.slug }} --experiment-branch ${{ matrix.branch }} --experiment-server ${{ inputs.experiment-server }} --experiment-feature ${{ inputs.feature-name }} ${{ inputs.extra-arguments }} --reruns 1"
-          poetry run pytest --experiment ${{ inputs.slug }} --experiment-branch ${{ matrix.branch }} --experiment-server ${{ inputs.experiment-server }} --experiment-feature ${{ inputs.feature-name }} ${{ inputs.extra-arguments }} --reruns 1
+          echo "TEST COMMAND: poetry run pytest --experiment-slug ${{ inputs.slug }} --experiment-branch ${{ matrix.branch }} --experiment-server ${{ inputs.experiment-server }} --experiment-feature ${{ inputs.feature-name }} --firefox-version ${{ matrix.firefox }}  ${{ inputs.extra-arguments }} --reruns 1"
+          poetry run pytest --experiment-slug ${{ inputs.slug }} --experiment-branch ${{ matrix.branch }} --experiment-server ${{ inputs.experiment-server }} --experiment-feature ${{ inputs.feature-name }} --firefox-version ${{ matrix.firefox }}  ${{ inputs.extra-arguments }} --reruns 1
       - name: Archive Results
         if: ${{ always() }}
         run: zip -r results.zip /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult
@@ -115,7 +115,7 @@ jobs:
         if: ${{ always() }}
         with:
           name: ${{ inputs.slug }} HTML Test Report on firefox v${{ matrix.firefox }} branch ${{ matrix.branch }}
-          path: /Users/runner/work/klaatu/klaatu/firefox-ios/firefox-ios-tests/Tests/ExperimentIntegrationTests/results/index.html
+          path: /Users/runner/work/klaatu/klaatu/firefox-ios/firefox-ios/firefox-ios-tests/Tests/ExperimentIntegrationTests/results/index.html
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:

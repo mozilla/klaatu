@@ -15,6 +15,7 @@ from pathlib import Path
 import pytest
 import requests
 from pytest_bdd import given, then
+from pytest_metadata.plugin import metadata_key
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains, Keys
 from selenium.webdriver.common.by import By
@@ -148,9 +149,18 @@ def fixture_enroll_experiment(
         logging.info("Experiment loaded successfully!")
 
 
-@pytest.fixture(name="experiment_slug")
+@pytest.fixture(name="experiment_slug", scope="session", autouse=True)
 def fixture_experiment_slug(request) -> typing.Any:
-    return request.config.getoption("--experiment-slug")
+    slug = request.config.getoption("--experiment-slug")
+    os.environ["EXPERIMENT_SLUG"] = slug
+    return slug
+
+
+@pytest.fixture(name="experiment_branch", scope="session", autouse=True)
+def fixture_experiment_branch(request):
+    branch = request.config.getoption("--experiment-branch")
+    os.environ["EXPERIMENT_BRANCH"] = branch
+    return branch
 
 
 @pytest.fixture
@@ -512,7 +522,22 @@ def fixture_firefox_version(selenium):
     version = selenium.execute_script(script)
     version = [item for item in version.split() if "Firefox" in item][0]
     logging.info(f"Firefox version {version}")
+    os.environ["FIREFOX_VERSION"] = version.split("/")[-1]
     return version
+
+
+@pytest.hookimpl(tryfirst=True)
+def pytest_sessionfinish(session, exitstatus):
+    # Add data to html report
+    session.config.stash[metadata_key]["Experiment Slug"] = os.environ.get(
+        "EXPERIMENT_SLUG", "N/A"
+    )
+    session.config.stash[metadata_key]["Experiment Branch"] = os.environ.get(
+        "EXPERIMENT_BRANCH", "N/A"
+    )
+    session.config.stash[metadata_key]["Firefox Version"] = os.environ.get(
+        "FIREFOX_VERSION", "N/A"
+    )
 
 
 @then("Firefox should be allowed to open a new tab")
