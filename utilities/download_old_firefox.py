@@ -27,6 +27,8 @@ if __name__ == "__main__":
     if int(download_day) < 6:
         if int(current_month) < 10:
             download_month = f"0{int(current_month) - 1}"
+        else:
+             download_month = f"{int(current_month) - 1}"
         download_dir = f"{base_url}/pub/firefox/nightly/{today.year}/{download_month}/"
         html = requests.get(download_dir)
 
