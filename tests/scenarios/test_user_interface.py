@@ -42,6 +42,7 @@ def test_experiment_shows_on_support_page():
     pass
 
 
+@pytest.mark.xfail(reason="Within Docker the update tests might fail.")
 @scenario(
     "../features/user_interface.feature",
     "The experiment should not block Firefox updates",
