@@ -45,7 +45,7 @@ isort = "^5.13.2"
 flake8 = "^7.1.0"
 beautifulsoup4 = "^4.12.3"
 pytest-repeat = "^0.9.3"
-flask = "^3.0.2"
+flask = "^3.1.0"
 python-dateutil = "^2.9.0.post0"
 
 [build-system]
