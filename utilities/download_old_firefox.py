@@ -9,43 +9,19 @@ if __name__ == "__main__":
     today = date.today()
     # Set correct month for URL builder
     if len(f"{today.month}") < 2:
-        current_month = f"0{today.month}"
+        download_month = f"0{today.month - 1}"
     else:
-        current_month = f"{today.month}"
+        download_month = f"{today.month - 1}"
 
-    # Set correct month for URL builder
-    if len(f"{today.day}") < 2 and int(today.day - 5) < 0:
-        download_day = "01"
-    elif int(today.day) < 15:
-        download_day = f"0{today.day - 5}"
-    else:
-        download_day = f"{today.day - 5}"
+    download_dir = f"{base_url}/pub/firefox/nightly/{today.year}/{download_month}/"
+    html = requests.get(download_dir)
 
-    download_month = f"{current_month}"
-
-    # if its a new month just grab the 28th day build of last month and build URL
-    if int(download_day) < 6:
-        if int(current_month) < 10:
-            download_month = f"0{int(current_month) - 1}"
-        else:
-             download_month = f"{int(current_month) - 1}"
-        download_dir = f"{base_url}/pub/firefox/nightly/{today.year}/{download_month}/"
-        html = requests.get(download_dir)
-
-        soup = BeautifulSoup(html.text, "html.parser")
-        page_link = soup.find_all(
-            href=re.compile(f"{today.year}-{download_month}-28.*-mozilla-central")
+    soup = BeautifulSoup(html.text, "html.parser")
+    page_link = soup.find_all(
+        href=re.compile(
+            f"{today.year}-{download_month}-15.*-mozilla-central"
         )
-    else:
-        download_dir = f"{base_url}/pub/firefox/nightly/{today.year}/{download_month}/"
-        html = requests.get(download_dir)
-
-        soup = BeautifulSoup(html.text, "html.parser")
-        page_link = soup.find_all(
-            href=re.compile(
-                f"{today.year}-{download_month}-{download_day}.*-mozilla-central"
-            )
-        )
+    )
     page_link = page_link[1]
 
     html = requests.get(f'{base_url}{page_link["href"]}')
