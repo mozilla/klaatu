@@ -7,9 +7,12 @@ from bs4 import BeautifulSoup
 if __name__ == "__main__":
     base_url = "https://download-installer.cdn.mozilla.net"
     today = date.today()
+    download_month = None
     # Set correct month for URL builder
     if len(f"{today.month}") < 2:
         download_month = f"0{today.month - 1}"
+    elif today.month == 1: #  january
+        download_month == 12
     else:
         download_month = f"{today.month - 1}"
 
