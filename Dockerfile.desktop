@@ -2,13 +2,13 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-FROM ubuntu:mantic as moz-central
+FROM python:3-slim as moz-central
 
 RUN apt-get -qq update && apt-get -qq install -y git
 
 RUN git clone https://github.com/mozilla/gecko-dev.git --depth 1
 
-FROM ubuntu:mantic
+FROM python:3-slim
 
 USER root
 
@@ -26,25 +26,35 @@ ENV DEBIAN_FRONTEND=noninteractive \
 
 # Install requirements to install tools
 RUN dependencies=' \
-        bzip2 \
-        ca-certificates \
-        curl \
-        firefox \
-        python3-pip \
-        python3-setuptools \
-        python3-wheel \
-        sudo \
-        wget \
-        build-essential \
-        gcc \
-        python3 \
-        tox \
-        pipx \
-        libgtk-3-dev \
-        libasound2 \
-        libdbus-glib-1-dev \
-        xvfb \
-        libgl1-mesa-dri \
+    bzip2 \
+    curl \
+    gcc \
+    gnupg2 \
+    libasound2 \
+    libatspi2.0-0 \
+    libdbus-glib-1-2 \
+    libdrm2 \
+    libfontconfig1 \
+    libpango-1.0-0 \
+    libpangocairo-1.0-0 \
+    libgbm1 \
+    libglib2.0-0 \
+    libgtk-3-0 \
+    libgconf-2-4 \
+    libnss3 \
+    libxt6 \
+    libx11-xcb1 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxfixes3 \
+    libxrender1 \
+    libxext6 \
+    libxrandr2 \
+    musl-dev \
+    wget \
+    xauth \
+    xvfb \
+    xz-utils \
     ' \
     && set -x \
     && apt-get -qq update && apt-get -qq install -y software-properties-common \
@@ -63,10 +73,10 @@ WORKDIR /code
 
 # Download Firefox
 ARG FIREFOX_DOWNLOAD_URL=https://download.mozilla.org/?product=firefox${FIREFOX_VERSION}-latest-ssl&lang=en-US&os=linux64
-RUN wget --no-verbose -O /tmp/firefox.tar.bz2 $FIREFOX_DOWNLOAD_URL \
+RUN wget --no-verbose -O /tmp/firefox $FIREFOX_DOWNLOAD_URL \
     && rm -rf /opt/firefox \
-    && tar -C /opt -xjf /tmp/firefox.tar.bz2 \
-    && rm /tmp/firefox.tar.bz2 \
+    && tar -C /opt -xf /tmp/firefox \
+    && rm /tmp/firefox \
     && ln -fs /opt/firefox/firefox /usr/bin/firefox
 
 # @hackebrot
