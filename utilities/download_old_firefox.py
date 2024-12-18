@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 import re
 
 import requests
@@ -7,22 +7,17 @@ from bs4 import BeautifulSoup
 if __name__ == "__main__":
     base_url = "https://download-installer.cdn.mozilla.net"
     today = date.today()
-    download_month = None
-    # Set correct month for URL builder
-    if len(f"{today.month}") < 2:
-        download_month = f"0{today.month - 1}"
-    elif today.month == 1: #  january
-        download_month == 12
-    else:
-        download_month = f"{today.month - 1}"
+    download_date = today - timedelta(weeks=4)
+    download_date = download_date.replace(day=15)
 
-    download_dir = f"{base_url}/pub/firefox/nightly/{today.year}/{download_month}/"
+
+    download_dir = f"{base_url}/pub/firefox/nightly/{download_date.year}/{download_date.month}/"
     html = requests.get(download_dir)
 
     soup = BeautifulSoup(html.text, "html.parser")
     page_link = soup.find_all(
         href=re.compile(
-            f"{today.year}-{download_month}-15.*-mozilla-central"
+            f"{download_date.year}-{download_date.month}-{download_date.day}.*-mozilla-central"
         )
     )
     page_link = page_link[1]
