@@ -96,7 +96,7 @@ jobs:
           cp -rf tests/ios/* firefox-ios/firefox-ios/firefox-ios-tests/Tests/ExperimentIntegrationTests
           cp -f tests/ios/ExperimentIntegrationTests.swift firefox-ios/firefox-ios/firefox-ios-tests/Tests/XCUITests/ExperimentIntegrationTests.swift
           cd firefox-ios/firefox-ios/firefox-ios-tests/Tests/ExperimentIntegrationTests
-          poetry install
+          poetry install --no-root
           xcrun simctl erase all
           xcrun simctl shutdown all
           export SIMULATOR_UDID=$(python get_specific_device_udid.py)

@@ -95,16 +95,16 @@ RUN mv /usr/bin/geckodriver /usr/bin/geckodriver2 \
 
 # Install python deps
 RUN pip install poetry \
-    && poetry install
+    && poetry install --no-root
 
 # Download older firefox nightly
 RUN FIREFOX_OLD_DOWNLOAD_URL=$(python3 utilities/download_old_firefox.py) \
-    && wget -q -O /tmp/firefox_old.tar.bz2 $FIREFOX_OLD_DOWNLOAD_URL \
+    && wget -q -O /tmp/firefox_old $FIREFOX_OLD_DOWNLOAD_URL \
     && mkdir utilities/firefox-old-nightly \
     && mkdir utilities/firefox-old-nightly-disable-test \
-    && tar -C utilities/firefox-old-nightly -xjf /tmp/firefox_old.tar.bz2 \
-    && tar -C utilities/firefox-old-nightly-disable-test -xjf /tmp/firefox_old.tar.bz2 \
-    && rm /tmp/firefox_old.tar.bz2
+    && tar -C utilities/firefox-old-nightly -xf /tmp/firefox_old \
+    && tar -C utilities/firefox-old-nightly-disable-test -xf /tmp/firefox_old \
+    && rm /tmp/firefox_old
 
 # Create profile used for update tests
 RUN utilities/firefox-old-nightly/firefox/firefox -CreateProfile -headless "klaatu-profile-old-base /code/utilities/klaatu-profile-old-base"
