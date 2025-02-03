@@ -10,14 +10,22 @@ if __name__ == "__main__":
     download_date = today - timedelta(weeks=4)
     download_date = download_date.replace(day=15)
 
+    _date = {
+        "year": download_date.strftime("%Y"),
+        "month": download_date.strftime("%m"),
+        "day": download_date.strftime("%d")
+    }
 
-    download_dir = f"{base_url}/pub/firefox/nightly/{download_date.year}/{download_date.month}/"
+
+    download_dir = f"{base_url}/pub/firefox/nightly/{_date['year']}/{_date['month']}/"
     html = requests.get(download_dir)
+
+    download_date = download_date.strftime("%Y-%m-%d")
 
     soup = BeautifulSoup(html.text, "html.parser")
     page_link = soup.find_all(
         href=re.compile(
-            f"{download_date.year}-{download_date.month}-{download_date.day}.*-mozilla-central"
+            f"{_date['year']}-{_date['month']}-{_date['day']}.*-mozilla-central"
         )
     )
     page_link = page_link[1]
