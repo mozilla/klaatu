@@ -19,8 +19,6 @@ if __name__ == "__main__":
     download_dir = f"{base_url}/pub/firefox/nightly/{_date['year']}/{_date['month']}/"
     html = requests.get(download_dir)
 
-    download_date = download_date.strftime("%Y-%m-%d")
-
     soup = BeautifulSoup(html.text, "html.parser")
     page_link = soup.find_all(
         href=re.compile(
