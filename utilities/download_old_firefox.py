@@ -16,7 +16,6 @@ if __name__ == "__main__":
         "day": download_date.strftime("%d")
     }
 
-
     download_dir = f"{base_url}/pub/firefox/nightly/{_date['year']}/{_date['month']}/"
     html = requests.get(download_dir)
 
