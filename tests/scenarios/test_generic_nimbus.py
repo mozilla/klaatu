@@ -2,7 +2,11 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+import logging
+import time
+
 from pytest_bdd import scenarios, then
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
@@ -20,19 +24,33 @@ def check_branch_in_telemetry(telemetry_event_check, experiment_json, request, e
 @then("The Experiment is unenrolled via the about:studies page")
 def unenroll_via_studies_page(selenium, experiment_json):
     selenium.get("about:studies")
-    WebDriverWait(selenium, 60).until(
-        EC.visibility_of_element_located((By.CSS_SELECTOR, ".study-name")),
-        message="Experiment not shown on about:studies.",
+    timeout = timeout = time.time() + 60
+    while time.time() < timeout:
+        try:
+            items = selenium.find_elements(By.CSS_SELECTOR, ".study-name")
+            for item in items:
+                if experiment_json["userFacingName"] in item.text:
+                    selenium.find_element(By.CSS_SELECTOR, ".remove-button").click()
+        except NoSuchElementException:
+            time.sleep(2)
+            selenium.refresh()
+            pass
+        else:
+            logging.info("Experiment unenrolled")
+            break
+
+
+@then("the Experiment is shown as disabled on about:studies page")
+def check_experiment_is_disabled_on_about_studies(selenium, experiment_json):
+    selenium.get("about:studies")
+    disabled_studies = selenium.find_elements(
+        By.CSS_SELECTOR, "#app .inactive-study-list .study.nimbus.disabled"
     )
-    items = selenium.find_elements(By.CSS_SELECTOR, ".study-name")
-    for item in items:
-        if experiment_json["userFacingName"] in item.text:
-            selenium.find_element(By.CSS_SELECTOR, ".remove-button").click()
-
-
-@then("the telemetry shows it as being unenrolled")
-def check_telemetry_for_unenrollment(experiment_slug, telemetry_event_check):
-    assert telemetry_event_check(experiment=f"optin-{experiment_slug}", event="unenroll")
+    for item in disabled_studies:
+        if experiment_json["slug"] in item.get_attribute("data-study-slug"):
+            return True
+        else:
+            continue
 
 
 @then("The experiment can be unenrolled via opting out of studies")

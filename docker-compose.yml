@@ -18,7 +18,7 @@ services:
     ports:
       - "5000:5000"
   static-server:
-    image: python:3.11.3-alpine
+    image: python:3.12-alpine
     volumes:
       - ./tests/fixtures/:/code/fixtures
     working_dir: /code/fixtures

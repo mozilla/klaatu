@@ -2,13 +2,13 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-FROM python:3-slim as moz-central
+FROM python:3.12-slim as moz-central
 
 RUN apt-get -qq update && apt-get -qq install -y git
 
 RUN git clone https://github.com/mozilla/gecko-dev.git --depth 1
 
-FROM python:3-slim
+FROM python:3.12-slim
 
 USER root
 

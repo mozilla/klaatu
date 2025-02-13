@@ -17,7 +17,7 @@ profile = "black"
 skip_gitignore = true
 
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.12"
 disable_error_code = "attr-defined"
 disallow_untyped_calls = false
 follow_imports = "normal"
@@ -32,7 +32,7 @@ warn_unused_ignores = true
 warn_unreachable = true
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.12"
 pydocstyle = "^6.3.0"
 selenium = "^4.28.1"
 pytest-bdd = "^7.3.0"
