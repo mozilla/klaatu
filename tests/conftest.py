@@ -354,16 +354,12 @@ def fixture_telemetry_event_check(trigger_experiment_loader, selenium):
             while control and time.time() < timeout:
                 telemetry = selenium.execute_script(fetch_events)
                 logging.info(f"Event pings: {telemetry}\n")
-                try:
-                    next((item for item in telemetry if experiment in item["extra"]["experiment"]))
-                    next((item for item in telemetry if event in item["name"]))
-                except StopIteration as e:
-                    logging.info(f"ERROR IS {e}\n")
-                    time.sleep(1)
-                    trigger_experiment_loader()
-                    continue
-                else:
+                if any(
+                    experiment in item["extra"].get("experiment", "") for item in telemetry
+                ) and any(event in item["name"] for item in telemetry):
                     return True
+                time.sleep(1)
+                trigger_experiment_loader()
 
     return _telemetry_event_check
 

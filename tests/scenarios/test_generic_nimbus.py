@@ -6,7 +6,6 @@ import logging
 import time
 
 from pytest_bdd import scenarios, then
-from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
@@ -23,21 +22,17 @@ def check_branch_in_telemetry(telemetry_event_check, experiment_json, request, e
 
 @then("The Experiment is unenrolled via the about:studies page")
 def unenroll_via_studies_page(selenium, experiment_json):
-    selenium.get("about:studies")
+    study_name_locator = (By.CSS_SELECTOR, ".study-name")
+
     timeout = timeout = time.time() + 60
     while time.time() < timeout:
-        try:
-            items = selenium.find_elements(By.CSS_SELECTOR, ".study-name")
-            for item in items:
-                if experiment_json["userFacingName"] in item.text:
-                    selenium.find_element(By.CSS_SELECTOR, ".remove-button").click()
-        except NoSuchElementException:
-            time.sleep(2)
-            selenium.refresh()
-            pass
-        else:
+        selenium.get("about:studies")
+        WebDriverWait(selenium, 10).until(EC.presence_of_element_located(study_name_locator))
+        items = selenium.find_elements(*study_name_locator)
+        if any(item for item in items if experiment_json["userFacingName"] in item.text):
             logging.info("Experiment unenrolled")
-            break
+            return True
+        time.sleep(2)
 
 
 @then("the Experiment is shown as disabled on about:studies page")
@@ -46,11 +41,12 @@ def check_experiment_is_disabled_on_about_studies(selenium, experiment_json):
     disabled_studies = selenium.find_elements(
         By.CSS_SELECTOR, "#app .inactive-study-list .study.nimbus.disabled"
     )
-    for item in disabled_studies:
-        if experiment_json["slug"] in item.get_attribute("data-study-slug"):
-            return True
-        else:
-            continue
+    if any(
+        item
+        for item in disabled_studies
+        if experiment_json["slug"] in item.get_attribute("data-study-slug")
+    ):
+        return True
 
 
 @then("The experiment can be unenrolled via opting out of studies")
