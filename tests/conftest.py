@@ -126,14 +126,14 @@ def fixture_enroll_experiment(
     if experiment_branch == "":
         pytest.raises("The experiment branch must be declared")
     script = """
-        const ExperimentManager = ChromeUtils.import(
-            "resource://nimbus/lib/ExperimentManager.jsm"
+        const ExperimentManager = ChromeUtils.importESModule(
+            "resource://nimbus/lib/ExperimentManager.sys.mjs"
         );
         const branchSlug = arguments[1];
         ExperimentManager.ExperimentManager.store._deleteForTests(arguments[1])
         const recipe = JSON.parse(arguments[0]);
         let branch = recipe.branches.find(b => b.slug == branchSlug);
-        ExperimentManager.ExperimentManager.forceEnroll(recipe, branch);
+        return ExperimentManager.ExperimentManager.forceEnroll(recipe, branch);
     """
 
     try:

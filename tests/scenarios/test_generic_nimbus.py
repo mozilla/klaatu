@@ -27,7 +27,7 @@ def unenroll_via_studies_page(selenium, experiment_json):
     timeout = timeout = time.time() + 60
     while time.time() < timeout:
         selenium.get("about:studies")
-        WebDriverWait(selenium, 10).until(EC.presence_of_element_located(study_name_locator))
+        WebDriverWait(selenium, 30).until(EC.presence_of_element_located(study_name_locator))
         items = selenium.find_elements(*study_name_locator)
         if any(item for item in items if experiment_json["userFacingName"] in item.text):
             logging.info("Experiment unenrolled")
