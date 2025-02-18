@@ -42,7 +42,7 @@ jobs:
             docker push mozilla/klaatu:firefox-release
   lint:
     docker:
-      - image: cimg/python:3.11
+      - image: cimg/python:3.12
     steps:
       - checkout
       - restore_cache:

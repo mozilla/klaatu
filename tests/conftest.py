@@ -126,14 +126,14 @@ def fixture_enroll_experiment(
     if experiment_branch == "":
         pytest.raises("The experiment branch must be declared")
     script = """
-        const ExperimentManager = ChromeUtils.import(
-            "resource://nimbus/lib/ExperimentManager.jsm"
+        const ExperimentManager = ChromeUtils.importESModule(
+            "resource://nimbus/lib/ExperimentManager.sys.mjs"
         );
         const branchSlug = arguments[1];
         ExperimentManager.ExperimentManager.store._deleteForTests(arguments[1])
         const recipe = JSON.parse(arguments[0]);
         let branch = recipe.branches.find(b => b.slug == branchSlug);
-        ExperimentManager.ExperimentManager.forceEnroll(recipe, branch);
+        return ExperimentManager.ExperimentManager.forceEnroll(recipe, branch);
     """
 
     try:
@@ -297,11 +297,11 @@ def trigger_experiment_loader(selenium):
         with selenium.context(selenium.CONTEXT_CHROME):
             selenium.execute_script(
                 """
-                    const { RemoteSettings } = ChromeUtils.import(
-                        "resource://services-settings/remote-settings.js"
+                    const { RemoteSettings } = ChromeUtils.importESModule(
+                        "resource://services-settings/remote-settings.sys.mjs"
                     );
-                    const { RemoteSettingsExperimentLoader } = ChromeUtils.import(
-                        "resource://nimbus/lib/RemoteSettingsExperimentLoader.jsm"
+                    const { RemoteSettingsExperimentLoader } = ChromeUtils.importESModule(
+                        "resource://nimbus/lib/RemoteSettingsExperimentLoader.sys.mjs"
                     );
 
                     RemoteSettings.pollChanges();
@@ -344,24 +344,22 @@ def fixture_check_ping_for_experiment(trigger_experiment_loader, ping_server):
 def fixture_telemetry_event_check(trigger_experiment_loader, selenium):
     def _telemetry_event_check(experiment=None, event=None):
         fetch_events = """
-            return Services.telemetry.snapshotEvents(Ci.nsITelemetry.DATASET_ALL_CHANNELS);
+            return Glean.nimbusEvents.enrollment.testGetValue("events");
         """
 
         with selenium.context(selenium.CONTEXT_CHROME):
-            telemetry = selenium.execute_script(fetch_events)
-            logging.info(f"Event pings: {telemetry}\n")
             control = True
-            timeout = time.time() + 30
+            timeout = time.time() + 300
 
             while control and time.time() < timeout:
-                for item in telemetry.get("parent"):
-                    if (experiment and event) in item:
-                        return True
-                else:
-                    trigger_experiment_loader()
-                    continue
-            else:
-                return False
+                telemetry = selenium.execute_script(fetch_events)
+                logging.info(f"Event pings: {telemetry}\n")
+                if any(
+                    experiment in item["extra"].get("experiment", "") for item in telemetry
+                ) and any(event in item["name"] for item in telemetry):
+                    return True
+                time.sleep(1)
+                trigger_experiment_loader()
 
     return _telemetry_event_check
 
@@ -568,6 +566,10 @@ def setup_browser(selenium, setup_search_test):
         root.find_element(By.CSS_SELECTOR, ".popup-notification-primary-button").click()
     setup_search_test()
     logging.info("Custom search enabled\n")
+    script = """Services.fog.testResetFOG();"""
+    with selenium.context(selenium.CONTEXT_CHROME):
+        selenium.execute_script(script)
+    logging.info("Cleared Telemetry events\n")
     return selenium
 
 
