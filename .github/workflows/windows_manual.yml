@@ -39,7 +39,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup firefox
         id: setup-firefox
-        uses: ./.github/actions/setup_firefox/
+        uses: browser-actions/setup-firefox@v1
         with:
           firefox-version: ${{ matrix.firefox }}
       - run: |
@@ -47,7 +47,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.12'
       - name: Install Dependencies
         shell: pwsh
         run: choco install jdk8 selenium
@@ -68,11 +68,12 @@ jobs:
       - name: Setup tests
         shell: bash
         run: ./setup_script.sh
+      - name: Create SSL Certificate Files (Windows)
+        shell: bash
+        run: |
+          openssl req -x509 -newkey rsa:2048 -keyout search_files/server.key -out search_files/server.cert -days 365 -nodes -subj "//CN=localhost"
       - name: Run Tests
         run: tox -e bdd-tests -- --experiment-branch ${{ matrix.branch }} --experiment-slug ${{ inputs.slug }} --private-browsing-enabled --firefox-path="C:\Program Files\Firefox_${{ matrix.firefox }}\firefox.exe" ${{ inputs.extra-arguments }}
-        env:
-            SSL_CERT: ${{ secrets.SSL_CERT }}
-            SSL_KEY: ${{ secrets.SSL_KEY }}
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:

@@ -38,7 +38,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup firefox
         id: setup-firefox
-        uses: ./.github/actions/setup_firefox/
+        uses: browser-actions/setup-firefox@v1
         with:
           firefox-version: ${{ matrix.firefox }}
       - run: |
@@ -50,11 +50,12 @@ jobs:
       - name: Setup tests
         shell: bash
         run: ./setup_script.sh
+      - name: Create SSL Certificate Files
+        run: |
+            openssl req -x509 -newkey rsa:2048 -keyout search_files/server.key -out search_files/server.cert -days 365 -nodes -subj "/CN=localhost"
       - name: Run Tests
-        run: tox -e bdd-tests -- --experiment-branch ${{ matrix.branch }} --experiment-slug ${{ inputs.slug }} --private-browsing-enabled --firefox-path="/opt/hostedtoolcache/firefox/${{ matrix.firefox }}/x64/firefox" ${{ inputs.extra-arguments }}
-        env:
-            SSL_CERT: ${{ secrets.SSL_CERT }}
-            SSL_KEY: ${{ secrets.SSL_KEY }}
+        run: |
+          tox -e bdd-tests -- --experiment-branch ${{ matrix.branch }} --experiment-slug ${{ inputs.slug }} --private-browsing-enabled --firefox-path="/opt/hostedtoolcache/firefox/${{ matrix.firefox }}/x64/firefox" ${{ inputs.extra-arguments }}
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
