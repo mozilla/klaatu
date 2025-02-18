@@ -52,6 +52,9 @@ jobs:
         run: ./setup_script.sh
       - name: Run Tests
         run: tox -e bdd-tests -- --experiment-branch ${{ matrix.branch }} --experiment-slug ${{ inputs.slug }} --private-browsing-enabled --firefox-path="/opt/hostedtoolcache/firefox/${{ matrix.firefox }}/x64/firefox" ${{ inputs.extra-arguments }}
+        env:
+            SSL_CERT: ${{ secrets.SSL_CERT }}
+            SSL_KEY: ${{ secrets.SSL_KEY }}
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
