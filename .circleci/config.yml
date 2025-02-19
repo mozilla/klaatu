@@ -1,5 +1,14 @@
 version: 2.1
 
+commands:
+  generate_ssl_certs:
+    steps:
+      - run:
+          name: Generate Certs
+          command: |
+              openssl req -x509 -newkey rsa:2048 -keyout search_server/server.key -out search_server/server.cert -days 365 -nodes -subj "/CN=localhost"
+
+
 jobs:
   build-nightly: # build for the main branch
     machine:
@@ -65,6 +74,7 @@ jobs:
       FIREFOX_VERSION: -nightly
     steps:
       - checkout
+      - generate_ssl_certs
       - run:
           name: Build docker image
           command: docker compose up -d --build
@@ -87,6 +97,7 @@ jobs:
       FIREFOX_VERSION: -beta
     steps:
       - checkout
+      - generate_ssl_certs
       - run:
           name: Build docker image
           command: docker compose up -d --build
@@ -107,6 +118,7 @@ jobs:
       image: ubuntu-2204:2024.01.1
     steps:
       - checkout
+      - generate_ssl_certs
       - run: 
           name: Build docker image
           command: docker compose up -d --build
