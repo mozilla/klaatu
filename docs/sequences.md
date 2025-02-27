@@ -11,12 +11,10 @@ These are the available states and flows that Klaatu can execute. The system fol
         direction LR
         [*] --> Idle
 
-        Idle --> Running: Experiment Ready for Test
-        Running --> Completed : Job Executes
-        Completed --> Running: Job Retries
-        Completed --> Evaluate : Send Results
-        Evaluate --> [*] : Owner Receives Report
-        Evaluate --> Idle
+        Idle --> Ready: Experiment Ready for Test
+        Ready --> Completed : Job Executes
+        Completed --> Ready
+        Completed --> [*] : Owner Receives Report
 
 ```
 
@@ -26,26 +24,26 @@ The Experiment Owner requests a test run. Experimenter gathers the required info
 
 ```mermaid
     sequenceDiagram
-        participant GitHub Actions Test Runner
+        participant Experiment Owner
         participant Experimenter Backend
-        participant Experimenter Worker
         participant Experimenter UI
         participant Notification System
-        participant Experiment Owner
+        participant GitHub Actions Test Runner
 
-        Note left of Experiment Owner: State: IDLE
-        Experiment Owner ->> Experimenter Backend: Experiment Owner Requests a Test Run
+        Note over Experimenter Backend: State: IDLE
+        Experiment Owner ->> Experimenter UI: Experiment Owner Requests a Test Run
+        Experimenter UI ->> Experimenter Backend: Test request is forwarded
+        Note over Experimenter Backend: State: READY
         Experimenter Backend ->> GitHub Actions Test Runner: Provide Experiment Details
-        Note right of GitHub Actions Test Runner: State: RUNNING
+        GitHub Actions Test Runner ->> Experimenter Backend: Report Job Status
+        Note over Experimenter Backend: State: RUNNING
         GitHub Actions Test Runner ->> Experimenter Backend: Report Test Results
-        Note right of GitHub Actions Test Runner: State: COMPLETED
-        Experimenter Backend ->> Experimenter Worker: Process Results
-        Note right of Experimenter Backend: State: EVALUATE
-        Experimenter Backend ->> Notification System: Send Notification
-        Notification System ->> Experiment Owner: Notify Test Completion
+        Note over Experimenter Backend: State: COMPLETED
         Experimenter Backend ->> Experimenter UI: Store Report & Update UI
-        Experimenter UI ->> Experiment Owner: Show Test Results & Report
-        Note right of Experimenter UI: State: IDLE
+        Experimenter Backend ->> Notification System: Trigger Notification
+        Notification System ->> Experiment Owner: Notify Test Completion
+        Experiment Owner ->> Experimenter UI: View Test Results & Report
+
 ```
 
 ## Github Scheduler (Trigger/Test/Report)
@@ -54,28 +52,28 @@ The GitHub Actions Scheduler queries the experimenter API and finds experiments 
 
 ```mermaid
     sequenceDiagram
-        participant GitHub Actions Test Runner
-        participant GitHub Actions Scheduler
+        
+        participant Experiment Owner
         participant Experimenter Backend
-        participant Experimenter Worker
         participant Experimenter UI
         participant Notification System
-        participant Experiment Owner
+        participant GitHub Actions Test Runner
+        participant GitHub Actions Scheduler
 
-        Note right of GitHub Actions Scheduler: State: IDLE
+        Note over Experimenter Backend: State: IDLE
+        Experiment Owner ->> Experimenter UI: Experiment Owner Requests a Test Run
+        Experimenter UI ->> Experimenter Backend: Test request is forwarded
+        Note over Experimenter Backend: State: READY
         GitHub Actions Scheduler ->> Experimenter Backend: Check for Available Experiments
-        Experimenter Backend ->> GitHub Actions Scheduler: Provide Experiment Details
-        GitHub Actions Scheduler ->> GitHub Actions Test Runner: Start Test Execution
-        Note right of GitHub Actions Test Runner: State: RUNNING
+        Experimenter Backend ->> GitHub Actions Test Runner: Provide Experiment Details
+        GitHub Actions Test Runner ->> Experimenter Backend: Report Job Status
+        Note over Experimenter Backend: State: RUNNING
         GitHub Actions Test Runner ->> Experimenter Backend: Report Test Results
-        Note right of GitHub Actions Test Runner: State: COMPLETED
-        Experimenter Backend ->> Experimenter Worker: Process Results
-        Note right of Experimenter Backend: State: EVALUATE
-        Experimenter Backend ->> Notification System: Send Notification
-        Notification System ->> Experiment Owner: Notify Test Completion
+        Note over Experimenter Backend: State: COMPLETED
         Experimenter Backend ->> Experimenter UI: Store Report & Update UI
-        Experimenter UI ->> Experiment Owner: Show Test Results & Report
-        Note right of Experimenter UI: State: IDLE
+        Experimenter Backend ->> Notification System: Trigger Notification
+        Notification System ->> Experiment Owner: Notify Test Completion
+        Experiment Owner ->> Experimenter UI: View Test Results & Report
 ```
 
 ## Github Scheduler No Available Experiments (Trigger/Query)
@@ -87,16 +85,14 @@ The GitHub Actions Scheduler queries the experimenter API and finds experiments 
         participant GitHub Actions Test Runner
         participant GitHub Actions Scheduler
         participant Experimenter Backend
-        participant Experimenter Worker
-        participant Experimenter UI
         participant Notification System
+        participant Experimenter UI
         participant Experiment Owner
 
-        Note right of GitHub Actions Scheduler: State: IDLE
+        Note over Experimenter Backend: State: IDLE
         GitHub Actions Scheduler ->> Experimenter Backend: Check for Available Experiments
-        Note right of GitHub Actions Scheduler: State: RUNNING
         Note over Experimenter Backend: No Available Experiments
-        Note right of GitHub Actions Scheduler: State: IDLE
+        Note over Experimenter Backend: State: IDLE
 ```
 
 ## Timeout and No Retry (Trigger/Test/No Retry/Report)
@@ -108,32 +104,29 @@ The GitHub Actions Test Runner is triggered to run the tests. The test runner en
         participant GitHub Actions Test Runner
         participant GitHub Actions Scheduler
         participant Experimenter Backend
-        participant Experimenter Worker
-        participant Experimenter UI
         participant Notification System
+        participant Experimenter UI
         participant Experiment Owner
 
-
+        Note over Experimenter Backend: State: IDLE
         alt Automated Run
-            Note right of GitHub Actions Scheduler: State: IDLE
             GitHub Actions Scheduler ->> Experimenter Backend: Check for Available Experiments
         else Manual Run
-            Note left of Experiment Owner: State: IDLE
-            Experiment Owner ->> Experimenter Backend: Experiment Owner Requests a Test Run
+            Experiment Owner ->> Experimenter UI: Experiment Owner Requests a Test Run
+            Experimenter UI ->> Experimenter Backend: Test request is forwarded
         end
-        Experimenter Backend ->> GitHub Actions Scheduler: Provide Experiment Details
-        GitHub Actions Scheduler ->> GitHub Actions Test Runner: Start Test Execution
-        Note right of GitHub Actions Test Runner: State: RUNNING
+        Note over Experimenter Backend: State: READY
+        Experimenter Backend ->> GitHub Actions Test Runner: Provide Experiment Details
+        GitHub Actions Test Runner ->> Experimenter Backend: Report Job Status
+        Note over Experimenter Backend: State: RUNNING
         Experimenter Backend ->> GitHub Actions Test Runner: Detect Timeout
-        GitHub Actions Test Runner ->> Experimenter Backend: Report Timeout & Request Retry
-        Note right of GitHub Actions Test Runner: State: COMPLETED
 
         Note over Experimenter Backend: No Retries
-        Experimenter Backend ->> Experimenter Worker: Mark Test as Failed
-        Note right of Experimenter Backend: State: EVALUATE
         Experimenter Backend ->> Notification System: Send Failure Notification
-        Notification System ->> Experiment Owner: Notify Test Failure
-        Note right of Notification System: State: IDLE
+        Notification System ->> Experiment Owner: Notify Test Error
+        Experimenter Backend ->> Experimenter UI: Mark Test as Errored
+        Experiment Owner ->> Experimenter UI: View Test Results & Report
+        Note over Experimenter Backend: State: READY
 
 ```
 
@@ -146,36 +139,32 @@ The GitHub Actions Test Runner is triggered to run the tests. The test runner en
         participant GitHub Actions Test Runner
         participant GitHub Actions Scheduler
         participant Experimenter Backend
-        participant Experimenter Worker
-        participant Experimenter UI
         participant Notification System
+        participant Experimenter UI
         participant Experiment Owner
 
-
+        Note over Experimenter Backend: State: IDLE
         alt Automated Run
-            Note right of GitHub Actions Scheduler: State: IDLE
             GitHub Actions Scheduler ->> Experimenter Backend: Check for Available Experiments
         else Manual Run
-            Note left of Experiment Owner: State: IDLE
-            Experiment Owner ->> Experimenter Backend: Experiment Owner Requests a Test Run
+            Experiment Owner ->> Experimenter UI: Experiment Owner Requests a Test Run
+            Experimenter UI ->> Experimenter Backend: Test request is forwarded
         end
-        Experimenter Backend ->> GitHub Actions Scheduler: Provide Experiment Details
-        GitHub Actions Scheduler ->> GitHub Actions Test Runner: Start Test Execution
-        Note right of GitHub Actions Test Runner: State: RUNNING
+        Note over Experimenter Backend: State: READY
+        Experimenter Backend ->> GitHub Actions Test Runner: Provide Experiment Details
+        GitHub Actions Test Runner ->> Experimenter Backend: Report Job Status
+        Note over Experimenter Backend: State: RUNNING
         Note over GitHub Actions Test Runner: Timeout
         GitHub Actions Test Runner ->> Experimenter Backend: Report Timeout & Request Retry
 
         Note over Experimenter Backend: Check Retry Count
         Experimenter Backend ->> GitHub Actions Test Runner: Re-trigger Test Execution
         GitHub Actions Test Runner ->> Experimenter Backend: Report Test Results
-        Note right of GitHub Actions Test Runner: State: COMPLETED
-        Experimenter Backend ->> Experimenter Worker: Process Results
-        Note right of Experimenter Backend: State: EVALUATE
+        Note over Experimenter Backend: State: COMPLETED
         Experimenter Backend ->> Notification System: Send Notification
         Notification System ->> Experiment Owner: Notify Test Completion
         Experimenter Backend ->> Experimenter UI: Store Report & Update UI
-        Experimenter UI ->> Experiment Owner: Show Test Results & Report
-        Note right of Experimenter UI: State: IDLE
+        Experiment Owner ->> Experimenter UI: View Test Results & Report
 ```
 
 ## Cancelled (Trigger/Cancelled)
@@ -191,65 +180,28 @@ The GitHub Actions Test Runner is triggered to run the tests. The job is cancell
         participant Notification System
         participant Experiment Owner
 
+        Note over Experimenter Backend: State: IDLE
         alt Automated Run
-            Note right of GitHub Actions Scheduler: State: IDLE
             GitHub Actions Scheduler ->> Experimenter Backend: Check for Available Experiments
         else Manual Run
-            Note left of Experiment Owner: State: IDLE
-            Experiment Owner ->> Experimenter Backend: Experiment Owner Requests a Test Run
+            Experiment Owner ->> Experimenter UI: Experiment Owner Requests a Test Run
+            Experimenter UI ->> Experimenter Backend: Test request is forwarded
         end
+        Note over Experimenter Backend: State: READY
         Experimenter Backend ->> GitHub Actions Test Runner: Start Test Execution
-        Note right of GitHub Actions Test Runner: State: RUNNING
+        Note over Experimenter Backend: State: RUNNING
         alt Manually Canceled
-            Experiment Owner ->> GitHub Actions Test Runner: Cancel Running Test Job
+            Experiment Owner ->> Experimenter UI: Requests to Cancel Test
+            Experimenter UI ->> Experimenter Backend: Forwards test cancellation request
+            Experimenter Backend ->> GitHub Actions Test Runner: Cancel Running Test Job
+            GitHub Actions Test Runner ->> Experimenter Backend: Report Job Cancellation
         else Infrastructure Failure
-            Note right of GitHub Actions Test Runner: Infrastructure Failure
+            Note over Experimenter Backend: Infrastructure Failure
         end
-
-        GitHub Actions Test Runner ->> Experimenter Backend: Report Job Cancellation
-        Note right of GitHub Actions Test Runner: State: COMPLETED
-
-        Experimenter Backend ->> Experimenter UI: Process Results
-        Note right of Experimenter Backend: State: EVALUATE
+        Note over Experimenter Backend: State: READY
         Experimenter Backend ->> Notification System: Notify Experiment Owner
         Notification System ->> Experiment Owner: Test Canceled Notification
         Experimenter Backend ->> Experimenter UI: Store Report & Update UI
-        Experimenter UI ->> Experiment Owner: Show Test Results & Report
-        Note right of Experimenter UI: State: IDLE
-
-```
-
-## Experimenter results processing error
-
-The test results are pushed to Experimenter where they are processed. If they are processed successfully the results are pushed to the UI. If there is an error, the Experimenter Worker tries again. If the retry fails as well the test is marked as an Infrastructure fail and provided to the UI. Experimenter also sends a notification to the Experiment Owner.
-
-```mermaid
-    sequenceDiagram
-        participant GitHub Actions Test Runner
-        participant Experimenter Backend
-        participant Experimenter Worker
-        participant Notification System
-
-        Note right of GitHub Actions Test Runner: State: COMPLETED
-
-        GitHub Actions Test Runner ->> Experimenter Backend: Report Test Results
-        Experimenter Backend ->> Experimenter Worker: Process Results
-        Note right of Experimenter Backend: State: EVALUATE
-
-        alt Worker Fails
-            Experimenter Worker ->> Experimenter Backend: Error Processing Results
-            Experimenter Backend ->> Experimenter Worker: Retry Processing
-            alt Retry Succeeds
-                Experimenter Backend ->> Notification System: Send Notification
-                Experimenter Backend ->> Experimenter UI: Store Report & Update UI
-                Experimenter UI ->> Experiment Owner: Show Test Results & Report
-                Note right of Experimenter UI: State: IDLE
-            else Retry Fails
-                Experimenter Backend ->> Notification System: Send Failure Notification
-                Note over Notification System: Infrastructure fail
-                Notification System ->> Experiment Owner: Notify Backend Failure
-                Note right of Notification System: State: IDLE
-            end
-        end
+        Experiment Owner ->> Experimenter UI: View Test Results & Report
 
 ```
