@@ -4,7 +4,8 @@ This file contains a set of sequence diagrams to describe the integration of Kla
 
 ## State Diagram
 
-These are the available states and flows that Klaatu can execute. The system follows a structured lifecycle, transitioning between states as experiments are scheduled for testing, testing execution, test result evaluation and test reports are finalized. It starts in an Idle state, waiting for an available experiment or for an experiment to have testing requested on it. Once an experiment is requested, it moves into the Running state, where tests are actively executed. Upon completion, results are processed in the Evaluating state, determining success, failure, or retry conditions. Finally, once results are stored and available in the Experimenter UI, the system transitions back to Idle, ready for the next experiment.
+Klaatu follows a structured lifecycle, transitioning through defined states as experiments progress through testing. The system starts in the IDLE state, waiting for an experiment to be scheduled or requested for testing. Once an experiment is ready, it transitions to the READY state, preparing for execution. When testing begins, the Experiment's testing status moves into the RUNNING state, actively executing tests and collecting results. After execution, the Experiment's testing status transitions to the COMPLETED state, where results are finalized and made available in the Experimenter UI. Once complete, the experiment will remain
+in the COMPLETED state if testing has been successful. If the testing has errored in any way, the experiment will be put in a READY state, waiting for the next testing opportunity.
 
 ```mermaid
     stateDiagram-v2
@@ -12,8 +13,9 @@ These are the available states and flows that Klaatu can execute. The system fol
         [*] --> Idle
 
         Idle --> Ready: Experiment Ready for Test
-        Ready --> Completed : Job Executes
-        Completed --> Ready
+        Ready --> Running : Job Executes
+        Running --> Completed: Job Completes
+        Completed --> Ready: Experiment Ready for Test again if needed
         Completed --> [*] : Owner Receives Report
 
 ```
