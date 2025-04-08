@@ -23,6 +23,14 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
 
+logger = logging.getLogger('selenium')
+logger.setLevel(logging.DEBUG)
+handler = logging.StreamHandler()
+logger.addHandler(handler)
+logging.getLogger('selenium.webdriver.remote').setLevel(logging.DEBUG)
+logging.getLogger('selenium.webdriver.common').setLevel(logging.DEBUG)
+
+
 def pytest_addoption(parser) -> None:
     parser.addoption(
         "--experiment-recipe",
@@ -144,7 +152,7 @@ def fixture_enroll_experiment(
             raise (Exception("Experiment slug was not found in the experiment."))
     else:
         assert telemetry_event_check(
-            f"optin-{experiment_slug}", event="enroll"
+            f"optin-{experiment_slug}", event="enrollment"
         ), "Experiment not found in telemetry"
         logging.info("Experiment loaded successfully!")
 
@@ -347,6 +355,8 @@ def fixture_telemetry_event_check(trigger_experiment_loader, selenium):
         fetch_events = """
             return Glean.nimbusEvents.enrollment.testGetValue("events");
         """
+
+        logging.info("BEGIN TELEMETRY EVENT CHECKS")
 
         with selenium.context(selenium.CONTEXT_CHROME):
             control = True

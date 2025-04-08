@@ -73,7 +73,10 @@ jobs:
         run: |
           openssl req -x509 -newkey rsa:2048 -keyout search_files/server.key -out search_files/server.cert -days 365 -nodes -subj "//CN=localhost"
       - name: Run Tests
-        run: tox -e bdd-tests -- --experiment-branch ${{ matrix.branch }} --experiment-slug ${{ inputs.slug }} --private-browsing-enabled --firefox-path="C:\Program Files\Firefox_${{ matrix.firefox }}\firefox.exe" ${{ inputs.extra-arguments }}
+        run: tox -e bdd-tests -- --experiment-branch ${{ matrix.branch }} --experiment-slug ${{ inputs.slug }} --private-browsing-enabled --firefox-path "C:\Program Files\Firefox_${{ matrix.firefox }}\firefox.exe" --driver-path "C:\SeleniumWebDrivers\GeckoDriver\geckodriver.exe" ${{ inputs.extra-arguments }}
+        env:
+          SE_BROWSER_PATH: 'C:\Program Files\Firefox_${{ matrix.firefox }}\firefox.exe'
+          SE_OFFLINE: true
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
