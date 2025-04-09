@@ -448,18 +448,18 @@ def fixture_search_server():
 @pytest.fixture(name="setup_search_test")
 def fixture_setup_search_test(selenium, firefox):
     def _():
-        serp_import_uri = None
-
-        if firefox.browser.firefox_version >= 138:
-            serp_import_uri = "moz-src:///browser/components/search/SearchSERPTelemetry.sys.mjs"
-        else:
-            serp_import_uri = "resource:///modules/SearchSERPTelemetry.sys.mjs"
-
         test_data = """
-        const lazy = {};
-        ChromeUtils.defineESModuleGetters(lazy, {
-            SearchSERPTelemetry: arguments[0],
-        });
+        let SearchSERPTelemetry;
+
+        try {
+            SearchSERPTelemetry = ChromeUtils.importESModule(
+                "moz-src:///browser/components/search/SearchSERPTelemetry.sys.mjs"
+            ).SearchSERPTelemetry;
+        } catch (e) {
+            SearchSERPTelemetry = ChromeUtils.importESModule(
+                "resource:///modules/SearchSERPTelemetry.sys.mjs"
+            ).SearchSERPTelemetry;
+        }
         let testProvider = [
             {
                 telemetryId: "klaatu",
@@ -472,10 +472,10 @@ def fixture_setup_search_test(selenium, firefox):
                 extraAdServersRegexps: [/^https:\/\/example\.com\/ad2?/],
             },
         ];
-        lazy.SearchSERPTelemetry.overrideSearchTelemetryForTests(testProvider);
+        SearchSERPTelemetry.overrideSearchTelemetryForTests(testProvider);
         """
         with selenium.context(selenium.CONTEXT_CHROME):
-            selenium.execute_script(test_data, serp_import_uri)
+            selenium.execute_script(test_data)
 
     return _
 
