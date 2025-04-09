@@ -140,6 +140,9 @@ def fixture_enroll_experiment(
         const ExperimentManager = ChromeUtils.importESModule(
             "resource://nimbus/lib/ExperimentManager.sys.mjs"
         );
+
+        Services.fog.initializeFOG();
+
         const branchSlug = arguments[1];
         ExperimentManager.ExperimentManager.store._deleteForTests(arguments[1])
         const recipe = JSON.parse(arguments[0]);
@@ -154,6 +157,7 @@ def fixture_enroll_experiment(
         if "slug" in str(e):
             raise (Exception("Experiment slug was not found in the experiment."))
     while not control:
+        time.sleep(10)
         control = telemetry_event_check(f"optin-{experiment_slug}", "enrollment")
         if time.time() > timeout:
             raise AssertionError("Experiment enrollment was never seen in ping Data")
@@ -361,20 +365,12 @@ def fixture_check_ping_for_experiment(trigger_experiment_loader, ping_server):
 def fixture_telemetry_event_check(trigger_experiment_loader, selenium):
     def _telemetry_event_check(experiment=None, event=None):
         nimbus_events = None
+        script = f"return Glean.nimbusEvents.{event}.testGetValue('events')"
+
         try:
             with selenium.context(selenium.CONTEXT_CHROME):
-                if event == "enrollment":
-                    nimbus_events = selenium.execute_script(
-                        """
-                            return Glean.nimbusEvents.enrollment.testGetValue("events")
-                        """
-                    )
-                elif event == "unenrollment":
-                    nimbus_events = selenium.execute_script(
-                        """
-                            return Glean.nimbusEvents.unenrollment.testGetValue("events")
-                        """
-                    )
+                nimbus_events = selenium.execute_script(script)
+
             logging.info(f"nimbus events: {nimbus_events}")
             assert event in next(event["name"] for event in nimbus_events)
             assert experiment in next(
