@@ -23,14 +23,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
 
-logger = logging.getLogger('selenium')
-logger.setLevel(logging.DEBUG)
-handler = logging.StreamHandler()
-logger.addHandler(handler)
-logging.getLogger('selenium.webdriver.remote').setLevel(logging.DEBUG)
-logging.getLogger('selenium.webdriver.common').setLevel(logging.DEBUG)
-
-
 def pytest_addoption(parser) -> None:
     parser.addoption(
         "--experiment-recipe",
@@ -161,11 +153,6 @@ def fixture_enroll_experiment(
         control = telemetry_event_check(f"optin-{experiment_slug}", "enrollment")
         if time.time() > timeout:
             raise AssertionError("Experiment enrollment was never seen in ping Data")
-        time.sleep(5)
-
-    # assert telemetry_event_check(
-    #     f"optin-{experiment_slug}", event="enrollment"
-    # ), "Experiment not found in telemetry"
     logging.info("Experiment loaded successfully!")
 
 
@@ -372,9 +359,9 @@ def fixture_telemetry_event_check(trigger_experiment_loader, selenium):
                 nimbus_events = selenium.execute_script(script)
 
             logging.info(f"nimbus events: {nimbus_events}")
-            assert event in next(event["name"] for event in nimbus_events)
-            assert experiment in next(
-                event["extra"]["experiment"] for event in nimbus_events
+            assert any(
+                events["name"] == event and events["extra"]["experiment"] == experiment
+                for events in nimbus_events
             )
             return True
         except (AssertionError, TypeError):
