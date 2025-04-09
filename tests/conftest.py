@@ -123,12 +123,18 @@ def fixture_enroll_experiment(
 ) -> typing.Any:
     """Fixture to enroll into an experiment"""
     experiment_branch = request.config.getoption("--experiment-branch")
+    control = False
+    timeout = time.time() + 60 * 5
+
     if experiment_branch == "":
         pytest.raises("The experiment branch must be declared")
     script = """
         const ExperimentManager = ChromeUtils.importESModule(
             "resource://nimbus/lib/ExperimentManager.sys.mjs"
         );
+
+        Services.fog.initializeFOG();
+
         const branchSlug = arguments[1];
         ExperimentManager.ExperimentManager.store._deleteForTests(arguments[1])
         const recipe = JSON.parse(arguments[0]);
@@ -142,11 +148,12 @@ def fixture_enroll_experiment(
     except JavascriptException as e:
         if "slug" in str(e):
             raise (Exception("Experiment slug was not found in the experiment."))
-    else:
-        assert telemetry_event_check(
-            f"optin-{experiment_slug}", event="enroll"
-        ), "Experiment not found in telemetry"
-        logging.info("Experiment loaded successfully!")
+    while not control:
+        time.sleep(10)
+        control = telemetry_event_check(f"optin-{experiment_slug}", "enrollment")
+        if time.time() > timeout:
+            raise AssertionError("Experiment enrollment was never seen in ping Data")
+    logging.info("Experiment loaded successfully!")
 
 
 @pytest.fixture(name="experiment_slug", scope="session", autouse=True)
@@ -344,23 +351,22 @@ def fixture_check_ping_for_experiment(trigger_experiment_loader, ping_server):
 @pytest.fixture(name="telemetry_event_check")
 def fixture_telemetry_event_check(trigger_experiment_loader, selenium):
     def _telemetry_event_check(experiment=None, event=None):
-        fetch_events = """
-            return Glean.nimbusEvents.enrollment.testGetValue("events");
-        """
+        nimbus_events = None
+        script = f"return Glean.nimbusEvents.{event}.testGetValue('events')"
 
-        with selenium.context(selenium.CONTEXT_CHROME):
-            control = True
-            timeout = time.time() + 300
+        try:
+            with selenium.context(selenium.CONTEXT_CHROME):
+                nimbus_events = selenium.execute_script(script)
 
-            while control and time.time() < timeout:
-                telemetry = selenium.execute_script(fetch_events)
-                logging.info(f"Event pings: {telemetry}\n")
-                if any(
-                    experiment in item["extra"].get("experiment", "") for item in telemetry
-                ) and any(event in item["name"] for item in telemetry):
-                    return True
-                time.sleep(1)
-                trigger_experiment_loader()
+            logging.info(f"nimbus events: {nimbus_events}")
+            assert any(
+                events["name"] == event and events["extra"]["experiment"] == experiment
+                for events in nimbus_events
+            )
+            return True
+        except (AssertionError, TypeError):
+            trigger_experiment_loader()
+            return False
 
     return _telemetry_event_check
 
