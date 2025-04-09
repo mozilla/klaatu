@@ -260,6 +260,7 @@ def firefox_options(
     firefox_options.set_preference("browser.aboutConfig.showWarning", False)
     firefox_options.set_preference("browser.newtabpage.enabled", True)
     firefox_options.set_preference("privacy.query_stripping.enabled", False)
+    firefox_options.set_preference("remote.system-access-check.enabled", False)
     yield firefox_options
 
     # Delete old pings
@@ -445,13 +446,20 @@ def fixture_search_server():
 
 
 @pytest.fixture(name="setup_search_test")
-def fixture_setup_search_test(selenium):
+def fixture_setup_search_test(selenium, firefox):
     def _():
         test_data = """
-        const lazy = {};
-        ChromeUtils.defineESModuleGetters(lazy, {
-            SearchSERPTelemetry: "resource:///modules/SearchSERPTelemetry.sys.mjs",
-        });
+        let SearchSERPTelemetry;
+
+        try {
+            SearchSERPTelemetry = ChromeUtils.importESModule(
+                "moz-src:///browser/components/search/SearchSERPTelemetry.sys.mjs"
+            ).SearchSERPTelemetry;
+        } catch (e) {
+            SearchSERPTelemetry = ChromeUtils.importESModule(
+                "resource:///modules/SearchSERPTelemetry.sys.mjs"
+            ).SearchSERPTelemetry;
+        }
         let testProvider = [
             {
                 telemetryId: "klaatu",
@@ -464,7 +472,7 @@ def fixture_setup_search_test(selenium):
                 extraAdServersRegexps: [/^https:\/\/example\.com\/ad2?/],
             },
         ];
-        lazy.SearchSERPTelemetry.overrideSearchTelemetryForTests(testProvider);
+        SearchSERPTelemetry.overrideSearchTelemetryForTests(testProvider);
         """
         with selenium.context(selenium.CONTEXT_CHROME):
             selenium.execute_script(test_data)
