@@ -41,6 +41,9 @@ on:
         default: ''
         required: false
         type: string
+
+run-name: Experiment ${{ inputs.feature-name }} tests for ${{ inputs.slug }}
+
 jobs:
   iOS-klaatu-tests:
     runs-on: macos-14

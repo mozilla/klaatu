@@ -24,6 +24,9 @@ on:
         type: string
 env:
   MOZ_HEADLESS: 1
+
+run-name: Experiment Smoke tests for ${{ inputs.slug }}
+
 jobs:
   klaatu-tests:
     runs-on: ubuntu-latest

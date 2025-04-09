@@ -40,6 +40,9 @@ on:
         default: ''
         required: false
         type: string
+
+run-name: Experiment ${{ inputs.feature-name }} tests for ${{ inputs.slug }}
+
 jobs:
   android-klaatu-tests:
     runs-on: ubuntu-latest
