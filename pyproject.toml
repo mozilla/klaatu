@@ -34,7 +34,7 @@ warn_unreachable = true
 [tool.poetry.dependencies]
 python = "^3.12"
 pydocstyle = "^6.3.0"
-selenium = "^4.31.0"
+selenium = "^4.33.0"
 pytest-bdd = "^7.3.0"
 pytest-firefox = "^0.1.1"
 pytest-selenium = "^4.1.0"
