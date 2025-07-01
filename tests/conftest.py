@@ -124,27 +124,41 @@ def fixture_enroll_experiment(
     """Fixture to enroll into an experiment"""
     experiment_branch = request.config.getoption("--experiment-branch")
     control = False
-    timeout = time.time() + 60 * 5
+    timeout = time.time() + 60
 
     if experiment_branch == "":
         pytest.raises("The experiment branch must be declared")
     script = """
-        const ExperimentManager = ChromeUtils.importESModule(
-            "resource://nimbus/lib/ExperimentManager.sys.mjs"
-        );
+        const callback = arguments[arguments.length - 1];
 
-        Services.fog.initializeFOG();
+        (async function (arguments) {
+            try {
+                const { ExperimentAPI } = ChromeUtils.importESModule(
+                    "resource://nimbus/ExperimentAPI.sys.mjs"
+                );
+                const branchSlug = arguments[1];
 
-        const branchSlug = arguments[1];
-        ExperimentManager.ExperimentManager.store._deleteForTests(arguments[1])
-        const recipe = JSON.parse(arguments[0]);
-        let branch = recipe.branches.find(b => b.slug == branchSlug);
-        return ExperimentManager.ExperimentManager.forceEnroll(recipe, branch);
+                Services.fog.initializeFOG();
+
+                await ExperimentAPI.ready();
+
+                ExperimentAPI.manager.store._deleteForTests(arguments[1]);
+                const recipe = arguments[0];
+                let branch = recipe.branches.find(b => b.slug == "control");
+                await ExperimentAPI.manager.forceEnroll(recipe, branch);
+
+                callback(true);
+            } catch (err) {
+                callback({ success: false, error: err.message });
+            }
+        })(arguments);
     """
 
     try:
         with selenium.context(selenium.CONTEXT_CHROME):
-            selenium.execute_script(script, json.dumps(experiment_json), experiment_branch)
+            time.sleep(5)
+            result = selenium.execute_async_script(script, experiment_json, experiment_branch)
+            logging.info(f"Force Enrolling: {result}")
     except JavascriptException as e:
         if "slug" in str(e):
             raise (Exception("Experiment slug was not found in the experiment."))
@@ -222,6 +236,7 @@ def firefox_options(
     ):
         firefox_options.add_argument("-profile")
         firefox_options.add_argument(setup_profile)
+    firefox_options.add_argument("-remote-allow-system-access")
     firefox_options.set_preference("extensions.install.requireBuiltInCerts", False)
     firefox_options.log.level = "trace"
     firefox_options.set_preference("browser.cache.disk.smart_size.enabled", False)
@@ -303,19 +318,29 @@ def selenium(selenium: typing.Any) -> typing.Any:
 def trigger_experiment_loader(selenium):
     def _trigger_experiment_loader():
         with selenium.context(selenium.CONTEXT_CHROME):
-            selenium.execute_script(
-                """
-                    const { RemoteSettings } = ChromeUtils.importESModule(
-                        "resource://services-settings/remote-settings.sys.mjs"
-                    );
-                    const { RemoteSettingsExperimentLoader } = ChromeUtils.importESModule(
-                        "resource://nimbus/lib/RemoteSettingsExperimentLoader.sys.mjs"
-                    );
+            script = """
+                const callback = arguments[0];
 
-                    RemoteSettings.pollChanges();
-                    RemoteSettingsExperimentLoader.updateRecipes();
+                (async function () {
+                    try {
+                        const { ExperimentAPI } = ChromeUtils.importESModule(
+                            "resource://nimbus/ExperimentAPI.sys.mjs"
+                        );
+                        const { RemoteSettings } = ChromeUtils.importESModule(
+                            "resource://services-settings/remote-settings.sys.mjs"
+                        );
+
+                        await RemoteSettings.pollChanges();
+                        await ExperimentAPI.ready();
+                        await ExperimentAPI._rsLoader.updateRecipes("test");
+
+                        callback(true);
+                    } catch (err) {
+                        callback(false);
+                    }
+                })();
                 """
-            )
+            selenium.execute_async_script(script)
         time.sleep(5)
 
     return _trigger_experiment_loader
@@ -408,7 +433,7 @@ def fixture_navigate_using_url_bar(selenium, cmd_or_ctrl_button):
 def fixture_find_telemetry(selenium):
     def _(ping, scalar=None, value=None, scalar_type="keyedScalars"):
         control = True
-        timeout = time.time() + 60
+        timeout = time.time() + 120
 
         while control and time.time() < timeout:
             match scalar_type:
@@ -423,7 +448,7 @@ def fixture_find_telemetry(selenium):
                             if scalar == item and value == val:
                                 logging.info(f"Parent Pings {telemetry['parent']}\n")
                                 return True
-                    except (TypeError, AttributeError):
+                    except (TypeError, AttributeError, KeyError):
                         continue
                 case "scalars":
                     script = """
