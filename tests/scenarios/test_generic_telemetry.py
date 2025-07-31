@@ -5,6 +5,7 @@
 import logging
 import time
 
+import pytest
 import requests
 from pytest_bdd import parsers, scenarios, then
 from selenium.webdriver import ActionChains, Keys
@@ -81,11 +82,13 @@ def check_telemetry_for_with_ads_search(find_telemetry, search):
     assert find_telemetry(f"browser.search.withads.{search}", scalar="klaatu:tagged", value=1)
 
 
+@pytest.mark.xfail(reason="Fails on release due to telemetry restrictions")
 @then(parsers.parse("The browser reports correct telemetry for the {search:w} adclick event"))
 def check_telemetry_for_ad_click_search(find_telemetry, search):
     assert find_telemetry(f"browser.search.adclicks.{search}", scalar="klaatu:tagged", value=1)
 
 
+@pytest.mark.xfail(reason="Fails on release due to telemetry restrictions")
 @then(
     parsers.parse("The browser reports correct provider telemetry for the adclick {tag:w} event")
 )
@@ -93,6 +96,7 @@ def check_telemetry_for_ad_click_provider_search(find_telemetry, tag):
     assert find_telemetry("browser.search.adclicks.unknown", scalar=f"klaatu:{tag}", value=1)
 
 
+@pytest.mark.xfail(reason="Fails on release due to telemetry restrictions")
 @then(
     parsers.parse("The browser reports correct provider telemetry for the withads {tag:w} event")
 )

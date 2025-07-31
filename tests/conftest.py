@@ -435,6 +435,24 @@ def fixture_find_telemetry(selenium):
         control = True
         timeout = time.time() + 120
 
+        submit_ping_script = """
+            const callback = arguments[0];
+                (async function () {
+                    try {
+                        let telemetryController = ChromeUtils.importESModule(
+                            "resource://gre/modules/TelemetryControllerParent.sys.mjs"
+                        );
+                        await telemetryController.TelemetryController.submitExternalPing(
+                            "main", {reason: "testing"}
+                        )
+
+                        callback(true);
+                    } catch (err) {
+                        callback(false);
+                    }
+                })();
+        """
+
         while control and time.time() < timeout:
             match scalar_type:
                 case "keyedScalars":
@@ -449,7 +467,8 @@ def fixture_find_telemetry(selenium):
                                 logging.info(f"Parent Pings {telemetry['parent']}\n")
                                 return True
                     except (TypeError, AttributeError, KeyError):
-                        continue
+                        logging.info(f"Parent Pings {telemetry.get('parent')}\n")
+
                 case "scalars":
                     script = """
                             return Services.telemetry.getSnapshotForScalars()
@@ -461,7 +480,9 @@ def fixture_find_telemetry(selenium):
                     return True
                 case _:
                     pytest.raises("Incorrect Scalar type")
-            time.sleep(1)
+            time.sleep(5)
+            with selenium.context(selenium.CONTEXT_CHROME):
+                telemetry = selenium.execute_script(submit_ping_script)
         else:
             logging.info("Ping was not found\n")
             return False
