@@ -13,7 +13,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
-
 scenarios(
     "../features/withads_search.feature",
     "../features/adclick_search.feature",
@@ -23,20 +22,86 @@ scenarios(
 
 @pytest.mark.xfail(reason="Fails on release due to telemetry restrictions")
 @scenario("../features/generic_telemetry.feature", "Report correct telemetry for organic searches")
-def test_correct_telemetry_for_organic_searches():
-    ...
+def test_report_correct_telemetry_for_organic_searches():
+    pass
 
 
 @pytest.mark.xfail(reason="Fails on release due to telemetry restrictions")
-@scenario("../features/adclick_search.feature", "Telemetry reports correctly for background adclick search events")
+@scenario("../features/generic_telemetry.feature", "Report correct telemetry for tagged searches")
+def test_report_correct_telemetry_for_tagged_searches():
+    pass
+
+
+@pytest.mark.xfail(reason="Fails on release due to telemetry restrictions")
+@scenario(
+    "../features/generic_telemetry.feature",
+    "Report correct telemetry for tagged follow on searches",
+)
+def test_report_correct_telemetry_for_tagged_follow_on_searches():
+    pass
+
+
+@pytest.mark.xfail(reason="Fails on release due to telemetry restrictions")
+@scenario(
+    "../features/adclick_search.feature",
+    "Telemetry reports correctly for background adclick search events",
+)
 def test_telemetry_reports_correctly_for_background_adclick_search_events():
-    ...
+    pass
 
 
 @pytest.mark.xfail(reason="Fails on release due to telemetry restrictions")
-@scenario("../features/adclick_search.feature", "Telemetry reports correctly for page history adclick search events")
+@scenario(
+    "../features/adclick_search.feature",
+    "Telemetry reports correctly for page history adclick search events",
+)
 def test_telemetry_reports_correctly_for_page_history_adclick_search_events():
-    ...
+    pass
+
+
+@pytest.mark.xfail(reason="Fails on release due to telemetry restrictions")
+@scenario(
+    "../features/adclick_search.feature",
+    "Telemetry reports correctly for URL bar adclick search events",
+)
+def test_telemetry_reports_correctly_for_url_bar_adclick_search_events():
+    pass
+
+
+@pytest.mark.xfail(reason="Fails on release due to telemetry restrictions")
+@scenario(
+    "../features/adclick_search.feature",
+    "Telemetry reports correctly for context menu adclick search events",
+)
+def test_telemetry_reports_correctly_for_context_menu_adclick_search_events():
+    pass
+
+
+@pytest.mark.xfail(reason="Fails on release due to telemetry restrictions")
+@scenario(
+    "../features/adclick_search.feature",
+    "Telemetry reports correctly for new tab adclick search events",
+)
+def test_telemetry_reports_correctly_for_new_tab_adclick_search_events():
+    pass
+
+
+@pytest.mark.xfail(reason="Fails on release due to telemetry restrictions")
+@scenario(
+    "../features/adclick_search.feature",
+    "Telemetry reports correctly for reloaded page adclick search events",
+)
+def test_telemetry_reports_correctly_for_reloaded_page_adclick_search_events():
+    pass
+
+
+@pytest.mark.xfail(reason="Telemetry reports correctly for page history search events")
+@scenario(
+    "../features/adclick_search.feature",
+    "Telemetry reports correctly for reloaded page adclick search events",
+)
+def test_telemetry_reports_correctly_for_page_history_search_events():
+    pass
 
 
 @then("The user searches for something in the search bar that will return ads")

@@ -457,7 +457,7 @@ def fixture_find_telemetry(selenium):
             match scalar_type:
                 case "keyedScalars":
                     script = """
-                        return Services.telemetry.getSnapshotForKeyedScalars()
+                        return Services.telemetry.getSnapshotForKeyedScalars("main")
                     """
                     with selenium.context(selenium.CONTEXT_CHROME):
                         telemetry = selenium.execute_script(script)
@@ -471,7 +471,7 @@ def fixture_find_telemetry(selenium):
 
                 case "scalars":
                     script = """
-                            return Services.telemetry.getSnapshotForScalars()
+                            return Services.telemetry.getSnapshotForScalars("main")
                         """
                     with selenium.context(selenium.CONTEXT_CHROME):
                         telemetry = selenium.execute_script(script)
@@ -512,6 +512,9 @@ def fixture_setup_search_test(selenium, firefox):
                 "resource:///modules/SearchSERPTelemetry.sys.mjs"
             ).SearchSERPTelemetry;
         }
+        SearchSERPTelemetryUtils = ChromeUtils.importESModule(
+            "moz-src:///browser/components/search/SearchSERPTelemetry.sys.mjs"
+        ).SearchSERPTelemetryUtils
         let testProvider = [
             {
                 telemetryId: "klaatu",
@@ -520,8 +523,15 @@ def fixture_setup_search_test(selenium, firefox):
                 queryParamNames: ["s"],
                 codeParamName: "abc",
                 taggedCodes: ["ff"],
-                followOnParamNames: ["a"],
-                extraAdServersRegexps: [/^https:\/\/example\.com\/ad2?/],
+                adServerAttributes: ["mozAttr"],
+                nonAdsLinkRegexps: [],
+                extraAdServersRegexps: [/^https:\/\/example\.com\/ad/],
+                components: [
+                    {
+                        type: SearchSERPTelemetryUtils.COMPONENTS.AD_LINK,
+                        default: true,
+                    },
+                ],
             },
         ];
         SearchSERPTelemetry.overrideSearchTelemetryForTests(testProvider);
@@ -626,7 +636,10 @@ def setup_browser(selenium, setup_search_test):
         root.find_element(By.CSS_SELECTOR, ".popup-notification-primary-button").click()
     setup_search_test()
     logging.info("Custom search enabled\n")
-    script = """Services.fog.testResetFOG();"""
+    script = """
+        Services.fog.testResetFOG();
+        Services.telemetry.clearScalars();
+    """
     with selenium.context(selenium.CONTEXT_CHROME):
         selenium.execute_script(script)
     logging.info("Cleared Telemetry events\n")
