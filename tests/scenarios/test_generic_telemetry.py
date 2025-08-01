@@ -7,17 +7,36 @@ import time
 
 import pytest
 import requests
-from pytest_bdd import parsers, scenarios, then
+from pytest_bdd import parsers, scenario, scenarios, then
 from selenium.webdriver import ActionChains, Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
+
 
 scenarios(
     "../features/withads_search.feature",
     "../features/adclick_search.feature",
     "../features/generic_telemetry.feature",
 )
+
+
+@pytest.mark.xfail(reason="Fails on release due to telemetry restrictions")
+@scenario("../features/generic_telemetry.feature", "Report correct telemetry for organic searches")
+def test_correct_telemetry_for_organic_searches():
+    ...
+
+
+@pytest.mark.xfail(reason="Fails on release due to telemetry restrictions")
+@scenario("../features/adclick_search.feature", "Telemetry reports correctly for background adclick search events")
+def test_telemetry_reports_correctly_for_background_adclick_search_events():
+    ...
+
+
+@pytest.mark.xfail(reason="Fails on release due to telemetry restrictions")
+@scenario("../features/adclick_search.feature", "Telemetry reports correctly for page history adclick search events")
+def test_telemetry_reports_correctly_for_page_history_adclick_search_events():
+    ...
 
 
 @then("The user searches for something in the search bar that will return ads")
