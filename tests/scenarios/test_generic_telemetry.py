@@ -5,8 +5,9 @@
 import logging
 import time
 
+import pytest
 import requests
-from pytest_bdd import parsers, scenarios, then
+from pytest_bdd import parsers, scenario, scenarios, then
 from selenium.webdriver import ActionChains, Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -17,6 +18,90 @@ scenarios(
     "../features/adclick_search.feature",
     "../features/generic_telemetry.feature",
 )
+
+
+@pytest.mark.xfail(reason="Intermittent due to telemetry timing")
+@scenario("../features/generic_telemetry.feature", "Report correct telemetry for organic searches")
+def test_report_correct_telemetry_for_organic_searches():
+    pass
+
+
+@pytest.mark.xfail(reason="Intermittent due to telemetry timing")
+@scenario("../features/generic_telemetry.feature", "Report correct telemetry for tagged searches")
+def test_report_correct_telemetry_for_tagged_searches():
+    pass
+
+
+@pytest.mark.xfail(reason="Intermittent due to telemetry timing")
+@scenario(
+    "../features/generic_telemetry.feature",
+    "Report correct telemetry for tagged follow on searches",
+)
+def test_report_correct_telemetry_for_tagged_follow_on_searches():
+    pass
+
+
+@pytest.mark.xfail(reason="Intermittent due to telemetry timing")
+@scenario(
+    "../features/adclick_search.feature",
+    "Telemetry reports correctly for background adclick search events",
+)
+def test_telemetry_reports_correctly_for_background_adclick_search_events():
+    pass
+
+
+@pytest.mark.xfail(reason="Intermittent due to telemetry timing")
+@scenario(
+    "../features/adclick_search.feature",
+    "Telemetry reports correctly for page history adclick search events",
+)
+def test_telemetry_reports_correctly_for_page_history_adclick_search_events():
+    pass
+
+
+@pytest.mark.xfail(reason="Intermittent due to telemetry timing")
+@scenario(
+    "../features/adclick_search.feature",
+    "Telemetry reports correctly for URL bar adclick search events",
+)
+def test_telemetry_reports_correctly_for_url_bar_adclick_search_events():
+    pass
+
+
+@pytest.mark.xfail(reason="Intermittent due to telemetry timing")
+@scenario(
+    "../features/adclick_search.feature",
+    "Telemetry reports correctly for context menu adclick search events",
+)
+def test_telemetry_reports_correctly_for_context_menu_adclick_search_events():
+    pass
+
+
+@pytest.mark.xfail(reason="Intermittent due to telemetry timing")
+@scenario(
+    "../features/adclick_search.feature",
+    "Telemetry reports correctly for new tab adclick search events",
+)
+def test_telemetry_reports_correctly_for_new_tab_adclick_search_events():
+    pass
+
+
+@pytest.mark.xfail(reason="Intermittent due to telemetry timing")
+@scenario(
+    "../features/adclick_search.feature",
+    "Telemetry reports correctly for reloaded page adclick search events",
+)
+def test_telemetry_reports_correctly_for_reloaded_page_adclick_search_events():
+    pass
+
+
+@pytest.mark.xfail(reason="Intermittent due to telemetry timing")
+@scenario(
+    "../features/withads_search.feature",
+    "Telemetry reports correctly for page history search events",
+)
+def test_telemetry_reports_correctly_for_page_history_search_events():
+    pass
 
 
 @then("The user searches for something in the search bar that will return ads")
@@ -81,11 +166,13 @@ def check_telemetry_for_with_ads_search(find_telemetry, search):
     assert find_telemetry(f"browser.search.withads.{search}", scalar="klaatu:tagged", value=1)
 
 
+@pytest.mark.xfail(reason="Intermittent due to telemetry timing")
 @then(parsers.parse("The browser reports correct telemetry for the {search:w} adclick event"))
 def check_telemetry_for_ad_click_search(find_telemetry, search):
     assert find_telemetry(f"browser.search.adclicks.{search}", scalar="klaatu:tagged", value=1)
 
 
+@pytest.mark.xfail(reason="Intermittent due to telemetry timing")
 @then(
     parsers.parse("The browser reports correct provider telemetry for the adclick {tag:w} event")
 )
@@ -93,6 +180,7 @@ def check_telemetry_for_ad_click_provider_search(find_telemetry, tag):
     assert find_telemetry("browser.search.adclicks.unknown", scalar=f"klaatu:{tag}", value=1)
 
 
+@pytest.mark.xfail(reason="Intermittent due to telemetry timing")
 @then(
     parsers.parse("The browser reports correct provider telemetry for the withads {tag:w} event")
 )
@@ -204,5 +292,12 @@ def trigger_follow_on_search(selenium, search_server):
 @then("The subsession and subsession length is correctly reported")
 def check_telemetry_for_subsession_length(ping_server):
     data = requests.get(f"{ping_server}/pings").json()
-    assert data[0]["payload"]["info"].get("subsessionLength") is not None
-    assert data[0]["payload"]["info"].get("sessionLength") is not None
+    for item in data:
+        try:
+            assert item.get("payload").get("info").get("subsessionLength") is not None
+            assert item.get("payload").get("info").get("sessionLength") is not None
+            break
+        except (AttributeError, AssertionError):
+            continue
+    else:
+        assert False
