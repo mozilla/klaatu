@@ -546,9 +546,16 @@ def fixture_setup_search_test(selenium, firefox):
 def fixture_enable_search_bar(selenium):
     def _enable_search_bar():
         script = """
-        const { CustomizableUI } = ChromeUtils.importESModule(
-            "resource:///modules/CustomizableUI.sys.mjs",
-        );
+        try {
+            const { CustomizableUI } = ChromeUtils.importESModule(
+                "resource:///modules/CustomizableUI.sys.mjs",
+            );
+        }
+        catch (e) {
+            const { CustomizableUI } = ChromeUtils.importESModule(
+                "moz-src:///browser/components/customizableui/CustomizableUI.sys.mjs",
+            );
+        }
 
         CustomizableUI.addWidgetToArea(
             "search-container",
