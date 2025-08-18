@@ -40,7 +40,6 @@ RUN dependencies=' \
     libgbm1 \
     libglib2.0-0 \
     libgtk-3-0 \
-    libgconf-2-4 \
     libnss3 \
     libxt6 \
     libx11-xcb1 \
@@ -57,7 +56,6 @@ RUN dependencies=' \
     xz-utils \
     ' \
     && set -x \
-    && apt-get -qq update && apt-get -qq install -y software-properties-common \
     && apt-get -qq update && apt-get -qq install --no-install-recommends -y $dependencies \
     && apt-get -y purge firefox \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
