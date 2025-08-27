@@ -429,11 +429,65 @@ def fixture_navigate_using_url_bar(selenium, cmd_or_ctrl_button):
     return _navigate_function
 
 
+@pytest.fixture(name="find_impression")
+def fixture_find_impression(selenium, find_telemetry):
+    def fixture_find_impression_runner(source: str, provider: str, tagged: bool) -> bool:
+        control = True
+        timeout = time.time() + 120
+        script = "return Glean.serp.impression.testGetValue()"
+        flush_fog_ops = """
+            const callback = arguments[0];
+                (async function () {
+                    try {
+                        await Services.fog.testFlushAllChildren();
+                        callback(true);
+                    } catch (err) {
+                        callback(false);
+                    }
+                })();
+
+            """
+        clear_scalars = "Services.telemetry.clearScalars();"
+
+        while control and time.time() < timeout:
+            # flush pending FOG operations
+            with selenium.context(selenium.CONTEXT_CHROME):
+                selenium.execute_async_script(flush_fog_ops)
+
+            time.sleep(30)
+            with selenium.context(selenium.CONTEXT_CHROME):
+                impressions = selenium.execute_script(script)
+
+            logging.info(f"Impressions: {impressions}")
+            match_found = any(
+                isinstance(item, dict)
+                and isinstance(item.get("extra"), dict)
+                and item["extra"].get("provider") == provider
+                and item["extra"].get("source") == source
+                and item["extra"].get("tagged") == tagged
+                for item in impressions
+            )
+
+            if match_found:
+                # Clear scalars and exit
+                try:
+                    with selenium.context(selenium.CONTEXT_CHROME):
+                        selenium.execute_script(clear_scalars)
+                    logging.info("Cleared Impressions")
+                except Exception as e:
+                    logging.warning("Failed to clear scalars: %s", e)
+                return True
+        else:
+            return False
+
+    return fixture_find_impression_runner
+
+
 @pytest.fixture(name="find_telemetry")
 def fixture_find_telemetry(selenium):
     def _(ping, scalar=None, value=None, scalar_type="keyedScalars"):
         control = True
-        timeout = time.time() + 120
+        timeout = time.time() + 60
 
         submit_ping_script = """
             const callback = arguments[0];

@@ -49,5 +49,7 @@ Feature: Search tests that return ads to verify telemetry
         And The browser reports correct telemetry for the urlbar search event
         Then The user clicks on an ad
         And The page loads
+        And The browser reports correct telemetry for the urlbar search event
         Then The user goes back to the search page
+        Then The user clicks on an ad
         And The browser reports correct telemetry for the tabhistory search event

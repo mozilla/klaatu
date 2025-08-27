@@ -5,9 +5,9 @@ Feature: Generic Telemetry event tests
     Scenario: Report correct telemetry for organic searches
         Given Firefox is launched enrolled in an Experiment with custom search
         Then The user searches for something
-        And The browser reports correct provider telemetry for the withads organic event
+        And The browser reports correct provider telemetry for the withads false unknown event
         Then The user clicks on an ad
-        Then The browser reports correct provider telemetry for the adclick organic event
+        Then The browser reports correct provider telemetry for the adclick false unknown event
 
     @smoke
     Scenario: Report correct telemetry for tagged searches
@@ -21,7 +21,7 @@ Feature: Generic Telemetry event tests
     Scenario: Report correct telemetry for tagged follow on searches
         Given Firefox is launched enrolled in an Experiment with custom search
         Then The user searches for something
-        And The browser reports correct provider telemetry for the withads organic event
+        And The browser reports correct provider telemetry for the withads false unknown event
         Then The user triggers a follow-on search
         Then The browser reports correct provider telemetry for the withads unknown tagged follow on event
 
