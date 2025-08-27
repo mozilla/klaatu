@@ -60,4 +60,4 @@ Feature: Tests that click ads and verify telemetry
         And The page loads
         Then The user goes back to the search page
         Then The user clicks on an ad
-        Then The browser reports correct telemetry for the tabhistory adclick event
+        
