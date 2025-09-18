@@ -12,6 +12,14 @@ on:
         default: 'an-awesome-experiment'
         required: true
         type: string
+      server:
+        description: 'Experimenter Server'
+        default: 'prod'
+        required: false
+        type: choice
+        options:
+          - stage
+          - prod
       firefox-version:
         description: 'The Firefox Version(s) you want to test'
         default: "['latest-beta', 'latest', '123.0']"
@@ -58,7 +66,7 @@ jobs:
             openssl req -x509 -newkey rsa:2048 -keyout search_files/server.key -out search_files/server.cert -days 365 -nodes -subj "/CN=localhost"
       - name: Run Tests
         run: |
-          tox -e bdd-tests -- --experiment-branch ${{ matrix.branch }} --experiment-slug ${{ inputs.slug }} --private-browsing-enabled --firefox-path="/opt/hostedtoolcache/firefox/${{ matrix.firefox }}/x64/firefox" ${{ inputs.extra-arguments }}
+          tox -e bdd-tests -- --experiment-branch ${{ matrix.branch }} --experiment-slug ${{ inputs.slug }} --experiment-server ${{inputs.server}} --private-browsing-enabled --firefox-path="/opt/hostedtoolcache/firefox/${{ matrix.firefox }}/x64/firefox" ${{ inputs.extra-arguments }}
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
