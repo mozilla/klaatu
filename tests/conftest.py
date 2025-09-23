@@ -692,17 +692,18 @@ def setup_browser(selenium, setup_search_test):
     selenium.implicitly_wait(5)
     path = os.path.abspath("tests/fixtures/search_addon")
     time.sleep(5)
-    count = 12
-    while count >= 12:
-        try:
-            selenium.install_addon(path, temporary=True)
-            with selenium.context(selenium.CONTEXT_CHROME):
-                root = selenium.find_element(By.CSS_SELECTOR, "#addon-webext-defaultsearch-notification")
-                root.find_element(By.CSS_SELECTOR, ".popup-notification-primary-button").click()
-        except NoSuchElementException:
-            time.sleep(10)
-        else:
-            break
+    selenium.install_addon(path, temporary=True)
+    # count = 12
+    # while count >= 12:
+    #     try:
+    #         selenium.install_addon(path, temporary=True)
+    #         with selenium.context(selenium.CONTEXT_CHROME):
+    #             root = selenium.find_element(By.CSS_SELECTOR, "#addon-webext-defaultsearch-notification")
+    #             root.find_element(By.CSS_SELECTOR, ".popup-notification-primary-button").click()
+    #     except NoSuchElementException:
+    #         time.sleep(10)
+    #     else:
+    #         break
     setup_search_test()
     logging.info("Custom search enabled\n")
     script = """
