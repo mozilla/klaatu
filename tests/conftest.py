@@ -16,7 +16,7 @@ import pytest
 import requests
 from pytest_bdd import given, then
 from pytest_metadata.plugin import metadata_key
-from selenium.common.exceptions import JavascriptException
+from selenium.common.exceptions import JavascriptException, NoSuchElementException
 from selenium.webdriver import ActionChains, Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -691,10 +691,18 @@ def check_new_tab(selenium):
 def setup_browser(selenium, setup_search_test):
     selenium.implicitly_wait(5)
     path = os.path.abspath("tests/fixtures/search_addon")
-    selenium.install_addon(path, temporary=True)
-    with selenium.context(selenium.CONTEXT_CHROME):
-        root = selenium.find_element(By.CSS_SELECTOR, "#addon-webext-defaultsearch-notification")
-        root.find_element(By.CSS_SELECTOR, ".popup-notification-primary-button").click()
+    time.sleep(5)
+    count = 12
+    while count >= 12:
+        try:
+            selenium.install_addon(path, temporary=True)
+            with selenium.context(selenium.CONTEXT_CHROME):
+                root = selenium.find_element(By.CSS_SELECTOR, "#addon-webext-defaultsearch-notification")
+                root.find_element(By.CSS_SELECTOR, ".popup-notification-primary-button").click()
+        except NoSuchElementException:
+            time.sleep(10)
+        else:
+            break
     setup_search_test()
     logging.info("Custom search enabled\n")
     script = """
