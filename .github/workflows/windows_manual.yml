@@ -38,7 +38,7 @@ run-name: Experiment Smoke tests for ${{ inputs.slug }}
 
 jobs:
   klaatu-tests:
-    runs-on: windows-latest
+    runs-on: windows-2025
     strategy:
       fail-fast: false
       matrix:
