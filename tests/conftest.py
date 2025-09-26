@@ -168,6 +168,7 @@ def fixture_enroll_experiment(
         if time.time() > timeout:
             raise AssertionError("Experiment enrollment was never seen in ping Data")
     logging.info("Experiment loaded successfully!")
+    time.sleep(15)
 
 
 @pytest.fixture(name="experiment_slug", scope="session", autouse=True)
@@ -408,6 +409,7 @@ def fixture_navigate_using_url_bar(selenium, cmd_or_ctrl_button):
             text = "http://localhost:8000"
         with selenium.context(selenium.CONTEXT_CHROME):
             el = selenium.find_element(By.CSS_SELECTOR, "#urlbar-input")
+            WebDriverWait(selenium, 60).until(EC.element_to_be_clickable(el))
             if use_clipboard:
                 ActionChains(selenium).move_to_element(el).pause(1).click().pause(1).key_down(
                     cmd_or_ctrl_button
@@ -590,8 +592,32 @@ def fixture_setup_search_test(selenium, firefox):
         ];
         SearchSERPTelemetry.overrideSearchTelemetryForTests(testProvider);
         """
+
+        search_engine = """
+        const callback = arguments[0];
+            (async function () {
+                try {
+                    installedEngines = await Services.search.getAppProvidedEngines();
+                    userEngine = await Services.search.addUserEngine({
+                        name: "Moz Search",
+                        url: "https://localhost:8888/searchTelemetryAd.html?s={searchTerms}&abc=ff",
+                        suggest_url: "https://localhost:8888/searchSuggestionEngine.sjs?query={searchTerms}",
+                        alias: "mzsrch",
+                    });
+                    installedEngines.push(userEngine);
+                    Services.search.setDefault(
+                        Services.search.getEngineByName("Moz Search"),
+                        Ci.nsISearchService.CHANGE_REASON_USER_SEARCHBAR
+                        );
+                    callback(true);
+                } catch (err) {
+                    callback(false);
+                }
+            })();
+        """  # noqa
         with selenium.context(selenium.CONTEXT_CHROME):
             selenium.execute_script(test_data)
+            selenium.execute_async_script(search_engine)
 
     return _
 
@@ -690,11 +716,6 @@ def check_new_tab(selenium):
 )
 def setup_browser(selenium, setup_search_test):
     selenium.implicitly_wait(5)
-    path = os.path.abspath("tests/fixtures/search_addon")
-    selenium.install_addon(path, temporary=True)
-    with selenium.context(selenium.CONTEXT_CHROME):
-        root = selenium.find_element(By.CSS_SELECTOR, "#addon-webext-defaultsearch-notification")
-        root.find_element(By.CSS_SELECTOR, ".popup-notification-primary-button").click()
     setup_search_test()
     logging.info("Custom search enabled\n")
     script = """
