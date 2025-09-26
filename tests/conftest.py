@@ -16,7 +16,7 @@ import pytest
 import requests
 from pytest_bdd import given, then
 from pytest_metadata.plugin import metadata_key
-from selenium.common.exceptions import JavascriptException, NoSuchElementException
+from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains, Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -614,7 +614,7 @@ def fixture_setup_search_test(selenium, firefox):
                     callback(false);
                 }
             })();
-        """
+        """  # noqa
         with selenium.context(selenium.CONTEXT_CHROME):
             selenium.execute_script(test_data)
             selenium.execute_async_script(search_engine)

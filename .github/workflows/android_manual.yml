@@ -23,10 +23,10 @@ on:
         required: true
         type: choice
         options:
-          - smoke_test
+          - smoke
           - messaging_survey
           - messaging_homescreen
-      experiment-server:
+      server:
         description: 'The server that the experiment exists on (stage/prod)'
         default: 'prod'
         required: true
@@ -79,7 +79,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.12'
       - name: Setup JDK
         uses: actions/setup-java@v2
         with:
@@ -87,12 +87,12 @@ jobs:
           java-version: '17'
       - name: Cache Fenix Test APK
         id: cache_test_apk
-        uses: actions/cache@v2
+        uses: actions/cache@v4.3.0
         with:
           path: klaatu/android-debug-test-v${{ matrix.firefox }}.apk
           key: android-debug-test-v${{ matrix.firefox }}
       - name: Cache Fenix APK
-        uses: actions/cache@v2
+        uses: actions/cache@v4.3.0
         with:
           path: klaatu/fenix-debug-v${{ matrix.firefox }}.apk
           key: fenix-debug-v${{ matrix.firefox }}

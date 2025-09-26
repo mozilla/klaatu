@@ -27,7 +27,7 @@ on:
           - smoke
           - messaging_survey
           - messaging-new-tab-card
-      experiment-server:
+      server:
         description: 'The server that the experiment exists on (stage/prod)'
         default: 'prod'
         required: true
@@ -46,7 +46,7 @@ run-name: Experiment ${{ inputs.feature-name }} tests for ${{ inputs.slug }}
 
 jobs:
   iOS-klaatu-tests:
-    runs-on: macos-14
+    runs-on: macos-26
     strategy:
       fail-fast: false
       matrix:
@@ -62,9 +62,9 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.12'
       - name: Cache
-        uses: actions/cache@v4.0.2
+        uses: actions/cache@v4.3.0
         with:
           path: /Users/runner/Library/Developer/Xcode/DerivedData/**/
           key: xcode-firefox-v${{ matrix.firefox }}-cache
