@@ -58,7 +58,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Clone firefox-ios repo
         run: |
-          git clone --depth 1 https://github.com/mozilla-mobile/firefox-ios.git -b release/v${{ matrix.firefox }}
+          git clone --depth 1 https://github.com/mozilla-mobile/firefox-ios.git -b firefox-v${{ matrix.firefox }}
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
