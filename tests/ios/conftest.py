@@ -16,9 +16,6 @@ from .models.models import TelemetryModel
 from .xcodebuild import XCodeBuild
 from .xcrun import XCRun
 
-KLAATU_SERVER_URL = "http://localhost:1378"
-KLAATU_LOCAL_SERVER_URL = "http://localhost:1378"
-
 here = Path()
 
 
@@ -67,8 +64,10 @@ def fixture_nimbus_cli_args():
 
 
 @pytest.fixture(name="experiment_slug", scope="session", autouse=True)
-def fixture_experiment_slug(request):
+def fixture_experiment_slug(request, experiment_server):
     slug = request.config.getoption("--experiment-slug")
+    if experiment_server != "prod":
+        slug = f"{experiment_server}/{slug}"
     os.environ["EXPERIMENT_SLUG"] = slug
     return slug
 
@@ -87,31 +86,14 @@ def fixture_firefox_version(request):
     return ff_version
 
 
-@pytest.fixture(name="experiment_server")
+@pytest.fixture(name="experiment_server", scope="session", autouse=True)
 def fixture_experiment_server(request):
     return request.config.getoption("--experiment-server")
 
 
-@pytest.fixture(name="load_branches")
-def fixture_load_branches(experiment_url):
-    branches = []
-
-    if experiment_url:
-        data = experiment_url
-    else:
-        try:
-            data = requests.get(f"{KLAATU_SERVER_URL}/experiment").json()
-        except ConnectionRefusedError:
-            logging.warn("No URL or experiment slug provided, exiting.")
-            exit()
-        else:
-            for item in reversed(data):
-                data = item
-                break
-    experiment = requests.get(data).json()
-    for item in experiment["branches"]:
-        branches.append(item["slug"])
-    return branches
+@pytest.fixture(name="experiment_feature")
+def fixture_experiment_feature(request):
+    return request.config.getoption("--experiment-feature")
 
 
 @pytest.fixture()
@@ -162,6 +144,43 @@ def xcrun():
 def fixture_device_control(xcrun):
     xcrun.erase()
     xcrun.boot()
+
+    device_udid = os.environ.get("SIMULATOR_UDID", "booted")
+
+    # Disable slow animations
+    subprocess.run(
+        [
+            "xcrun",
+            "simctl",
+            "spawn",
+            device_udid,
+            "defaults",
+            "write",
+            "com.apple.springboard",
+            "FBLazyLoadingDelay",
+            "0",
+        ],
+        check=False,
+        capture_output=True,
+    )
+
+    # Speed up UIView animations
+    subprocess.run(
+        [
+            "xcrun",
+            "simctl",
+            "spawn",
+            device_udid,
+            "defaults",
+            "write",
+            "NSGlobalDomain",
+            "UIViewAnimationDurationMultiplier",
+            "0.1",
+        ],
+        check=False,
+        capture_output=True,
+    )
+
     yield
     xcrun.erase()
 
@@ -180,57 +199,27 @@ def fixture_start_app(nimbus_cli_args, run_nimbus_cli_command):
     return runner
 
 
-@pytest.fixture(name="experiment_data")
+@pytest.fixture(name="experiment_data", scope="session")
 def fixture_experiment_data(experiment_url):
-    data = requests.get(experiment_url).json()
+    data = requests.get(experiment_url, timeout=30).json()
     logging.debug(f"JSON Data used for this test: {data}")
     return [data]
 
 
-@pytest.fixture(name="experiment_url", scope="module")
-def fixture_experiment_url(request, variables, experiment_slug):
+@pytest.fixture(name="experiment_url", scope="session")
+def fixture_experiment_url(request, variables, experiment_slug, experiment_server):
     url = None
 
     if slug := experiment_slug:
         # Build URL from slug
         match request.config.getoption("--experiment-server"):
             case "prod":
-                url = f"{variables['urls']['prod_server']}/api/v6/experiments/{slug}/"
+                url = f"{variables['urls']['prod_server']}/api/v6/experiments/{slug.removeprefix(f'{experiment_server}/')}/"  # noqa
             case "stage" | "stage/preview":
-                url = f"{variables['urls']['stage_server']}/api/v6/experiments/{slug}/"
-    else:
-        try:
-            data = requests.get(f"{KLAATU_SERVER_URL}/experiment").json()
-        except requests.exceptions.ConnectionError:
-            logging.error("No URL or experiment slug provided, exiting.")
-            exit()
-        else:
-            for item in data:
-                if isinstance(item, dict):
-                    continue
-                else:
-                    url = item
+                url = f"{variables['urls']['stage_server']}/api/v6/experiments/{slug.removeprefix(f'{experiment_server}/')}/"  # noqa
     yield url
     return_data = {"url": url}
-    try:
-        requests.put(f"{KLAATU_SERVER_URL}/experiment", json=return_data)
-    except requests.exceptions.ConnectionError:
-        pass
-
-
-@pytest.fixture(name="send_test_results", scope="session")
-def fixture_send_test_results(xcrun):
-    yield
-    xcrun.shutdown()
-
-    with open(
-        f"{here.parent / 'ExperimentIntegrationTests' / 'results' / 'index.html'}", "rb"
-    ) as f:
-        files = {"file": f}
-        try:
-            requests.post(f"{KLAATU_SERVER_URL}/test_results", files=files)
-        except requests.exceptions.ConnectionError:
-            pass
+    return return_data
 
 
 @pytest.fixture(name="set_env_variables", autouse=True)
@@ -246,7 +235,9 @@ def fixture_check_ping_for_experiment(experiment_slug, variables):
 
         timeout = time.time() + 60 * 5
         while time.time() < timeout:
-            data = requests.get(f"{variables['urls']['telemetry_server']}/pings").json()
+            data = requests.get(
+                f"{variables['urls']['telemetry_server']}/pings", timeout=10
+            ).json()
             events = []
             for item in data:
                 event_items = item.get("events", [])
@@ -299,9 +290,8 @@ def setup_experiment(
             "nimbus-cli",
             "--app firefox_ios",
             "--channel developer",
-            f"enroll {experiment_server}/{experiment_slug}",
+            f"enroll {experiment_slug}",
             f"--branch {experiment_branch}",
-            f"--patch {here / 'patch.json'}",
             f"-- {nimbus_cli_args}",
         ]
         run_nimbus_cli_command(" ".join(command))
