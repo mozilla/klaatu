@@ -3,7 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 urls:
-  stage_server: "https://stage.experimenter.nonprod.dataops.mozgcp.net"
+  stage_server: "https://stage.experimenter.nonprod.webservices.mozgcp.net"
   prod_server: "https://experimenter.services.mozilla.com"
   telemetry_server: "http://127.0.0.1:5000"
 smoke_tests:

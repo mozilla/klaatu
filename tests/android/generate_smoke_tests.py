@@ -40,7 +40,38 @@ def search_for_smoke_tests(tests_name):
                 locations.append(count)
 
         for location in locations:
-            test_names.append(f"{class_name}#{code[location + 3].strip('()')}")
+            is_ignored = False
+            # Look backwards from @SmokeTest
+            for i in range(max(0, location - 10), location):
+                if "@Ignore" in code[i]:
+                    is_ignored = True
+                    break
+                # Stop searching if we hit another function definition
+                if "fun" in code[i]:
+                    break
+
+            # Also look forwards from @SmokeTest (until we hit the function definition)
+            if not is_ignored:
+                for i in range(location + 1, min(len(code), location + 10)):
+                    if "@Ignore" in code[i]:
+                        is_ignored = True
+                        break
+                    # Stop searching if we hit the function definition
+                    if "fun" in code[i]:
+                        break
+
+            if not is_ignored:
+                # Find the function name by searching forward for "fun" keyword
+                function_name = None
+                for i in range(location + 1, min(len(code), location + 20)):
+                    if "fun" in code[i]:
+                        # The function name should be the next token after "fun"
+                        if i + 1 < len(code):
+                            function_name = code[i + 1].strip("()")
+                        break
+
+                if function_name:
+                    test_names.append(f"{class_name}#{function_name}")
     return test_names
 
 
