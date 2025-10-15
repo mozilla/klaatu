@@ -23,7 +23,7 @@ on:
         required: true
         type: choice
         options:
-          - smoke
+          - smoke_test
           - messaging_survey
           - messaging_homescreen
       server:
@@ -51,11 +51,12 @@ jobs:
         matrix:
           firefox: ${{ fromJSON(inputs.firefox-version) }}
           branch: ${{ fromJSON(inputs.branch) }}
+          api-level: [34]
     name: ${{ inputs.feature-name }} tests for ${{ inputs.slug }} on firefox android ${{ matrix.firefox }} branch ${{ matrix.branch }}
     steps:
       - name: Set FF Version for downloader
         id: ff-version
-        run: | 
+        run: |
           version=${{ matrix.firefox }}
           major_version=$(echo $version | cut -d'.' -f1)
           echo "FF_VERSION=$major_version" >> "$GITHUB_OUTPUT"
@@ -63,110 +64,61 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: klaatu
-      - name: Clone gecko-dev
+      - name: Clone mozilla central
         uses: actions/checkout@v4
         with:
           sparse-checkout: mobile/android/fenix/app/src/androidTest/java/org/mozilla/fenix
-          repository: mozilla/gecko-dev
-          path: gecko-dev
-      - name: Clone firefox-android-github
-        uses: actions/checkout@v4
-        if: matrix.firefox < '126.0.0'
-        with:
-          repository: mozilla-mobile/firefox-android
-          ref: "releases_v${{ steps.ff-version.outputs.FF_VERSION }}"
-          path: firefox-android
+          repository: mozilla-firefox/firefox
+          path: firefox
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: '3.11'
       - name: Setup JDK
         uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
           java-version: '17'
-      - name: Cache Fenix Test APK
-        id: cache_test_apk
-        uses: actions/cache@v4.3.0
-        with:
-          path: klaatu/android-debug-test-v${{ matrix.firefox }}.apk
-          key: android-debug-test-v${{ matrix.firefox }}
-      - name: Cache Fenix APK
-        uses: actions/cache@v4.3.0
-        with:
-          path: klaatu/fenix-debug-v${{ matrix.firefox }}.apk
-          key: fenix-debug-v${{ matrix.firefox }}
       - name: Enable KVM group perms
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
-      - name: Download android images
-        run: |
-          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --update
-          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "system-images;android-34;google_apis;x86_64"
-          echo "y" | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "tools"
-      - name: Set PATHs
-        run: |
-          echo "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/" >> $GITHUB_PATH
-          echo "$ANDROID_SDK_ROOT/platform-tools" >> $GITHUB_PATH
-          echo "$ANDROID_SDK_ROOT/emulator" >> $GITHUB_PATH      
-      - name: Start emulator
-        run: |
-          avdmanager create avd -n pixel_3a -k "system-images;android-34;google_apis;x86_64" --device "pixel_3a"
-          emulator -avd pixel_3a -no-window -no-snapshot -screen no-touch -noaudio -memory 2048 -no-boot-anim -accel on -camera-back none -gpu off &
-          adb wait-for-device
-          boot_completed="0"
-          while [ "$boot_completed" != "1" ]; do
-              boot_completed=$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
-              if [ "$boot_completed" != "1" ]; then
-                  echo "Waiting for emulator to boot..."
-                  sleep 1
-              fi
-          done
-      - name: Download and install Android files
-        if: |
-          (steps.cache_test_apk.outputs.cache-hit != 'true') &&
-          (matrix.firefox > '125.0.0')
-        run: |
-          cd klaatu
-          pip3 install virtualenv poetry
-          poetry install --no-root
-          firefox_version=$(echo "${{ matrix.firefox }}" | tr '.' '_')
-          poetry run python utilities/get_android_apks.py --firefox-version=${{ matrix.firefox }}
-          adb devices
-          adb install android-debug-test-v${{ matrix.firefox }}.apk
-          adb install fenix-debug-v${{ matrix.firefox }}.apk
-        env:
-          ANDROID_SDK_HOME: $ANDROID_HOME
-          ANDROID_NDK_HOME: $ANDROID_NDK_HOME
-      - name: Build  and install Android version sub 126
-        if: matrix.firefox < '126.0.0'
-        run: |
-          cd firefox-android/fenix
-          ./gradlew clean app:assembleFenixDebugAndroidTest
-          adb install app/build/outputs/apk/androidTest/fenix/debug/app-fenix-debug-androidTest.apk
-          mv app/build/outputs/apk/androidTest/fenix/debug/app-fenix-debug-androidTest.apk /home/runner/work/klaatu/klaatu/android-debug-test-v${{ matrix.firefox }}.apk
-          ./gradlew clean app:assembleFenixDebug
-          adb install app/build/outputs/apk/fenix/debug/app-fenix-x86_64-debug.apk
-          mv app/build/outputs/apk/fenix/debug/app-fenix-x86_64-debug.apk /home/runner/work/klaatu/klaatu/fenix-debug-v${{ matrix.firefox }}.apk
-        env:
-          ANDROID_SDK_HOME: $ANDROID_HOME
-          ANDROID_NDK_HOME: $ANDROID_NDK_HOME
+
+      - name: AVD cache
+        uses: actions/cache@v4
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-${{ matrix.api-level }}
+
       - name: Install Nimbus CLI
-        run: curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/mozilla/application-services/main/install-nimbus-cli.sh | bash  
-      - name: Run Tests
-        run: |
-          cp -rf klaatu/tests/android/* gecko-dev/mobile/android/fenix/app/src/androidTest/java/org/mozilla/fenix/experimentintegration
-          cd gecko-dev/mobile/android/fenix/app/src/androidTest/java/org/mozilla/fenix/experimentintegration
-          pip3 install virtualenv poetry pipenv
-          pipenv install
-          pipenv install pytest-rerunfailures
-          pipenv run python generate_smoke_tests.py
-          echo "TEST COMMAND: pipenv run pytest --experiment-slug ${{ inputs.slug }} --experiment-branch ${{ matrix.branch }} --experiment-server ${{ inputs.experiment-server }} --experiment-feature ${{ inputs.feature-name }} --firefox-version ${{ matrix.firefox }} ${{ inputs.extra-arguments }} --reruns 1"
-          pipenv run pytest --experiment-slug ${{ inputs.slug }} --experiment-branch ${{ matrix.branch }} --experiment-server ${{ inputs.experiment-server }} --experiment-feature ${{ inputs.feature-name }} --firefox-version ${{ matrix.firefox }} ${{ inputs.extra-arguments }} --reruns 1
+        run: curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/mozilla/application-services/main/install-nimbus-cli.sh | bash
+      - name: Fetch Fenix APKs from CircleCI
+        env:
+          CIRCLECI_TOKEN: ${{ secrets.CIRCLECI_TOKEN }}
+          CIRCLECI_BRANCH: update_firefox_versions
+          CIRCLECI_OUTPUT_DIR: .
+          CIRCLECI_JOB_NAME: Build\ Fenix\ APKs
+        working-directory: klaatu
+        run: ./utilities/fetch_circleci_apks.sh
+      - name: Setup Emulator and run tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          target: google_apis
+          arch: x86_64
+          profile: pixel_3a
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          cores: 4
+          ram-size: 4096M
+          script: 'SLUG="${{ inputs.slug }}" BRANCH="${{ matrix.branch }}" EXPERIMENT_SERVER="${{ inputs.server }}" FEATURE_NAME="${{ inputs.feature-name }}" FIREFOX_VERSION="${{ matrix.firefox }}" EXTRA_ARGUMENTS="${{ inputs.extra-arguments }}" ./klaatu/utilities/start_android_klaatu_tests.sh'
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
           name: ${{ inputs.slug }} HTML Test Report on firefox v${{ matrix.firefox }} branch ${{ matrix.branch }}
-          path: /home/runner/work/klaatu/klaatu/gecko-dev/mobile/android/fenix/app/src/androidTest/java/org/mozilla/fenix/experimentintegration/results/index.html
+          path: /home/runner/work/klaatu/klaatu/firefox/mobile/android/fenix/app/src/androidTest/java/org/mozilla/fenix/experimentintegration/results/index.html
