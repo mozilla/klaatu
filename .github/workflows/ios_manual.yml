@@ -60,13 +60,23 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Clone firefox-ios repo
-        run: |
-          git clone --depth 1 https://github.com/mozilla-mobile/firefox-ios.git -b release/v${{ matrix.firefox }}
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Install Python dependencies
+        run: pip3 install requests packaging
+      - name: Determine Firefox-iOS branch version
+        id: ios-branch
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          IOS_BRANCH=$(python3 utilities/get_latest_firefox_ios_branch.py ${{ matrix.firefox }})
+          echo "branch=${IOS_BRANCH}" >> $GITHUB_OUTPUT
+          echo "Using Firefox-iOS branch: release/${IOS_BRANCH}"
+      - name: Clone firefox-ios repo
+        run: |
+          git clone --depth 1 https://github.com/mozilla-mobile/firefox-ios.git -b ${{ steps.ios-branch.outputs.branch }}
       - name: Cache
         uses: actions/cache@v4.3.0
         with:
