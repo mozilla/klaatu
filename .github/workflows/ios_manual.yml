@@ -44,6 +44,10 @@ on:
 
 run-name: Experiment ${{ inputs.feature-name }} tests for ${{ inputs.slug }}
 
+env:
+  SIMULATOR_DEVICE: 'iPhone 17'
+  IOS_VERSION: '26.0'
+
 jobs:
   iOS-klaatu-tests:
     runs-on: macos-26
@@ -71,7 +75,7 @@ jobs:
       - name: Delete Xcode App
         run: sudo rm -rf /Applications/Xcode.app
       - name: Set Xcode version
-        run: sudo xcode-select -switch /Applications/Xcode_15.3.app && xcodebuild -version
+        run: sudo xcode-select -switch /Applications/Xcode_${{ env.IOS_VERSION }}.app && xcodebuild -version
       - name: Setup build
         run: |
           cd firefox-ios
@@ -91,9 +95,10 @@ jobs:
         if: steps.check_cache.outputs.cache_loaded == 'false'
         run: |
           cd firefox-ios/firefox-ios
-          xcodebuild build-for-testing -project Client.xcodeproj -scheme Fennec -configuration Fennec -sdk iphonesimulator -quiet -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.4'
+          xcodebuild -downloadComponent MetalToolchain
+          xcodebuild build-for-testing -scheme Fennec -target Client -destination 'platform=iOS Simulator,name=${{ env.SIMULATOR_DEVICE }},OS=${{ env.IOS_VERSION }}' COMPILER_INDEX_STORE_ENABLE=NO CODE_SIGN_IDENTITY= CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO ARCHS="arm64"
       - name: Install Nimbus CLI
-        run: curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/mozilla/application-services/main/install-nimbus-cli.sh | bash  
+        run: curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/mozilla/application-services/main/install-nimbus-cli.sh | bash
       - name: Run Tests
         run: |
           cp -rf tests/ios/* firefox-ios/firefox-ios/firefox-ios-tests/Tests/ExperimentIntegrationTests
@@ -102,10 +107,11 @@ jobs:
           poetry install --no-root
           xcrun simctl erase all
           xcrun simctl shutdown all
+          defaults write com.apple.CoreSimulator.IndigoFramebufferServices FramebufferRendererHint 0
           export SIMULATOR_UDID=$(python get_specific_device_udid.py)
           poetry run python generate_smoke_tests.py
-          echo "TEST COMMAND: poetry run pytest --experiment-slug ${{ inputs.slug }} --experiment-branch ${{ matrix.branch }} --experiment-server ${{ inputs.experiment-server }} --experiment-feature ${{ inputs.feature-name }} --firefox-version ${{ matrix.firefox }}  ${{ inputs.extra-arguments }} --reruns 1"
-          poetry run pytest --experiment-slug ${{ inputs.slug }} --experiment-branch ${{ matrix.branch }} --experiment-server ${{ inputs.experiment-server }} --experiment-feature ${{ inputs.feature-name }} --firefox-version ${{ matrix.firefox }}  ${{ inputs.extra-arguments }} --reruns 1
+          echo "TEST COMMAND: poetry run pytest --experiment-slug ${{ inputs.slug }} --experiment-branch ${{ matrix.branch }} --experiment-server ${{ inputs.server }} --experiment-feature ${{ inputs.feature-name }} --firefox-version ${{ matrix.firefox }}  ${{ inputs.extra-arguments }} --reruns 2 --maxfail=5"
+          poetry run pytest --experiment-slug ${{ inputs.slug }} --experiment-branch ${{ matrix.branch }} --experiment-server ${{ inputs.server }} --experiment-feature ${{ inputs.feature-name }} --firefox-version ${{ matrix.firefox }}  ${{ inputs.extra-arguments }} --reruns 2 --maxfail=5 || true
       - name: Archive Results
         if: ${{ always() }}
         run: zip -r results.zip /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult

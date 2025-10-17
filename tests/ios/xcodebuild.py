@@ -1,4 +1,5 @@
 import logging
+import os
 import subprocess
 from pathlib import Path
 
@@ -9,20 +10,21 @@ logging.getLogger(__name__).addHandler(logging.NullHandler())
 
 
 class XCodeBuild(object):
-    binary = "xcodebuild"
-    destination = "platform=iOS Simulator,name=iPhone 15,OS=17.4"
-    logger = logging.getLogger()
-    scheme = "Fennec"
-    testPlan = "SyncIntegrationTestPlan"
-    xcrun = XCRun()
-
     def __init__(self, log, **kwargs):
+        self.device = os.getenv("SIMULATOR_DEVICE", "iPhone 17")
+        self.ios_version = os.getenv("IOS_VERSION", "26.0")
+        self.binary = "xcodebuild"
+        self.destination = f"platform=iOS Simulator,name={self.device},OS={self.ios_version}"
+        self.scheme = "Fennec"
+        self.testPlan = "ExperimentIntegrationTests"
+        self.xcrun = XCRun()
         self.scheme = kwargs.get("scheme", self.scheme)
-        self.testPlan = kwargs.get("test_plan", self.testPlan)
+        self.test_plan = kwargs.get("test_plan", self.testPlan)
         self.log = log
+        self.logger = logging.getLogger()
         self.firefox_app_path = next(
             Path("/Users").glob(
-                "**/Library/Developer/Xcode/DerivedData/Client-*/Build/Products/Fennec-*/Client.app"  # noqa
+                "**/Library/Developer/Xcode/DerivedData/Client-*/Build/Products/Fennec_Testing-*/Client.app"  # noqa: E501
             )
         )
 
