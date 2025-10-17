@@ -27,7 +27,7 @@ on:
           - smoke
           - messaging_survey
           - messaging-new-tab-card
-      server:
+      experiment-server:
         description: 'The server that the experiment exists on (stage/prod)'
         default: 'prod'
         required: true
@@ -110,8 +110,8 @@ jobs:
           defaults write com.apple.CoreSimulator.IndigoFramebufferServices FramebufferRendererHint 0
           export SIMULATOR_UDID=$(python get_specific_device_udid.py)
           poetry run python generate_smoke_tests.py
-          echo "TEST COMMAND: poetry run pytest --experiment-slug ${{ inputs.slug }} --experiment-branch ${{ matrix.branch }} --experiment-server ${{ inputs.server }} --experiment-feature ${{ inputs.feature-name }} --firefox-version ${{ matrix.firefox }}  ${{ inputs.extra-arguments }} --reruns 2 --maxfail=5"
-          poetry run pytest --experiment-slug ${{ inputs.slug }} --experiment-branch ${{ matrix.branch }} --experiment-server ${{ inputs.server }} --experiment-feature ${{ inputs.feature-name }} --firefox-version ${{ matrix.firefox }}  ${{ inputs.extra-arguments }} --reruns 2 --maxfail=5 || true
+          echo "TEST COMMAND: poetry run pytest --experiment-slug ${{ inputs.slug }} --experiment-branch ${{ matrix.branch }} --experiment-server ${{ inputs.experiment-server }} --experiment-feature ${{ inputs.feature-name }} --firefox-version ${{ matrix.firefox }}  ${{ inputs.extra-arguments }} --reruns 2 --maxfail=5"
+          poetry run pytest --experiment-slug ${{ inputs.slug }} --experiment-branch ${{ matrix.branch }} --experiment-server ${{ inputs.experiment-server }} --experiment-feature ${{ inputs.feature-name }} --firefox-version ${{ matrix.firefox }}  ${{ inputs.extra-arguments }} --reruns 2 --maxfail=5 || true
       - name: Archive Results
         if: ${{ always() }}
         run: zip -r results.zip /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult

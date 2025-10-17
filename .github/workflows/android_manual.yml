@@ -26,7 +26,7 @@ on:
           - smoke_test
           - messaging_survey
           - messaging_homescreen
-      server:
+      experiment-server:
         description: 'The server that the experiment exists on (stage/prod)'
         default: 'prod'
         required: true
@@ -116,7 +116,7 @@ jobs:
           disable-animations: true
           cores: 4
           ram-size: 4096M
-          script: 'SLUG="${{ inputs.slug }}" BRANCH="${{ matrix.branch }}" EXPERIMENT_SERVER="${{ inputs.server }}" FEATURE_NAME="${{ inputs.feature-name }}" FIREFOX_VERSION="${{ matrix.firefox }}" EXTRA_ARGUMENTS="${{ inputs.extra-arguments }}" ./klaatu/utilities/start_android_klaatu_tests.sh'
+          script: 'SLUG="${{ inputs.slug }}" BRANCH="${{ matrix.branch }}" EXPERIMENT_SERVER="${{ inputs.experiment-server }}" FEATURE_NAME="${{ inputs.feature-name }}" FIREFOX_VERSION="${{ matrix.firefox }}" EXTRA_ARGUMENTS="${{ inputs.extra-arguments }}" ./klaatu/utilities/start_android_klaatu_tests.sh'
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
