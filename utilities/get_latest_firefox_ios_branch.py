@@ -12,22 +12,21 @@ import sys
 import json
 import argparse
 import os
-from packaging.version import Version, parse as parse_version_str
-from typing import List, Optional
+from packaging.version import Version, parse
 
 import requests
 
 
-def parse_version(branch_name: str) -> Optional[Version]:
+def parse_version(branch_name: str) -> Version | None:
     """Parse a Firefox-iOS branch name into a Version object."""
 
-    if not branch_name.startswith('release/v'):
+    if not branch_name.startswith("release/v"):
         return None
 
-    version_str = branch_name.replace('release/v', '')
+    version_str = branch_name.replace("release/v", "")
 
     try:
-        parsed = parse_version_str(version_str)
+        parsed = parse(version_str)
         if isinstance(parsed, Version):
             return parsed
         return None
@@ -35,7 +34,7 @@ def parse_version(branch_name: str) -> Optional[Version]:
         return None
 
 
-def get_firefox_ios_branches(github_token: Optional[str] = None) -> List[str]:
+def get_firefox_ios_branches(github_token: str | None = None) -> list[str]:
     """Fetch all Firefox-iOS release branches from GitHub using the REST API."""
     base_url = "https://api.github.com/repos/mozilla-mobile/firefox-ios/branches"
     all_branches = []
@@ -43,17 +42,17 @@ def get_firefox_ios_branches(github_token: Optional[str] = None) -> List[str]:
     per_page = 100
 
     # Setup headers with optional authentication to avoid rate limits
-    headers = {'Accept': 'application/vnd.github.v3+json'}
+    headers = {"Accept": "application/vnd.github.v3+json"}
     if github_token:
-        headers['Authorization'] = f'token {github_token}'
+        headers["Authorization"] = f"token {github_token}"
 
     try:
         while True:
             response = requests.get(
                 base_url,
-                params={'per_page': per_page, 'page': page},
+                params={"per_page": per_page, "page": page},
                 headers=headers,
-                timeout=10
+                timeout=10,
             )
             response.raise_for_status()
             branches = response.json()
@@ -66,8 +65,7 @@ def get_firefox_ios_branches(github_token: Optional[str] = None) -> List[str]:
 
         # Filter for release branches only
         release_branches = [
-            b['name'] for b in all_branches
-            if b['name'].startswith('release/v')
+            b["name"] for b in all_branches if b["name"].startswith("release/v")
         ]
 
         return release_branches
@@ -80,7 +78,7 @@ def get_firefox_ios_branches(github_token: Optional[str] = None) -> List[str]:
         sys.exit(1)
 
 
-def find_latest_branch(major_version: int, branches: List[str]) -> str:
+def find_latest_branch(major_version: int, branches: list[str]) -> str:
     """Find the latest branch for the given major version."""
     matching_branches = []
 
@@ -103,17 +101,16 @@ def find_latest_branch(major_version: int, branches: List[str]) -> str:
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Find the latest Firefox-iOS release branch for a given major version'
+        description="Find the latest Firefox-iOS release branch for a given major version"
     )
     parser.add_argument(
-        'version',
-        help='Firefox major version number (e.g., 128 or 128.0)'
+        "version", help="Firefox major version number (e.g., 128 or 128.0)"
     )
 
     args = parser.parse_args()
 
     # Parse the input version to get major version
-    version_parts = args.version.split('.')
+    version_parts = args.version.split(".")
     try:
         major_version = int(version_parts[0])
     except ValueError:
@@ -121,7 +118,7 @@ def main():
         sys.exit(1)
 
     # Get GitHub token from environment variable (avoids rate limiting)
-    github_token = os.environ.get('GITHUB_TOKEN')
+    github_token = os.environ.get("GITHUB_TOKEN")
     branches = get_firefox_ios_branches(github_token)
 
     # Find the latest branch for this major version
@@ -134,5 +131,5 @@ def main():
         sys.exit(1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
