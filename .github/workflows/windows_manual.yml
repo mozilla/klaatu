@@ -53,8 +53,10 @@ jobs:
         uses: browser-actions/setup-firefox@v1
         with:
           firefox-version: ${{ matrix.firefox }}
+        env:
+          FIREFOX_VERSION: ${{ steps.setup-firefox.outputs.firefox-version }}
       - run: |
-          echo Installed firefox versions: ${{ steps.setup-firefox.outputs.firefox-version }}
+          echo Installed firefox versions: $FIREFOX_VERSION
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
