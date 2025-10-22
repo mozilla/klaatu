@@ -101,7 +101,7 @@ def generate_smoke_tests(tests_names=None):
         test_name = test.replace("#", "_").lower()
         tests.append(
             f"""
-@pytest.mark.smoke_test
+@pytest.mark.smoke
 def test_smoke_{test_name}(setup_experiment, gradlewbuild, open_app):
     setup_experiment()
     open_app()

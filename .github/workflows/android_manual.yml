@@ -19,11 +19,11 @@ on:
         type: string
       feature-name:
         description: 'The Feature you want to test'
-        default: 'smoke_test'
+        default: 'smoke'
         required: true
         type: choice
         options:
-          - smoke_test
+          - smoke
           - messaging_survey
           - messaging_homescreen
       experiment-server:
