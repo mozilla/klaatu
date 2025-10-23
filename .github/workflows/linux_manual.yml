@@ -38,9 +38,6 @@ on:
         default: ''
         required: false
         type: string
-env:
-  MOZ_HEADLESS: 1
-
 run-name: Experiment Smoke tests for ${{ inputs.slug }}
 
 jobs:
@@ -72,9 +69,11 @@ jobs:
       - name: Create SSL Certificate Files
         run: |
             openssl req -x509 -newkey rsa:2048 -keyout search_files/server.key -out search_files/server.cert -days 365 -nodes -subj "/CN=localhost"
+      - name: Install xvfb
+        run: sudo apt-get update && sudo apt-get install -y xvfb
       - name: Run Tests
         run: |
-          tox -e bdd-tests -- --experiment-branch ${{ matrix.branch }} --experiment-slug ${{ inputs.slug }} --experiment-server ${{inputs.experiment-server}} --private-browsing-enabled --firefox-path="/opt/hostedtoolcache/firefox/${{ matrix.firefox }}/x64/firefox" ${{ inputs.extra-arguments }}
+          xvfb-run -a tox -e bdd-tests -- --experiment-branch ${{ matrix.branch }} --experiment-slug ${{ inputs.slug }} --experiment-server ${{inputs.experiment-server}} --private-browsing-enabled --firefox-path="/opt/hostedtoolcache/firefox/${{ matrix.firefox }}/x64/firefox" ${{ inputs.extra-arguments }}
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
