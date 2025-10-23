@@ -58,7 +58,7 @@ def pytest_addoption(parser) -> None:
         "--experiment-server",
         action="store",
         default="prod",
-        choices=("prod", "stage"),
+        choices=("prod", "stage", "stage/preview"),
         help="The server where the experiment is located, either stage or prod",
     ),
     parser.addoption(
@@ -102,14 +102,19 @@ def fixture_experiment_json(request):
     slug_server = request.config.getoption("--experiment-server")
     experiment_json = request.config.getoption("--experiment-json")
 
+    prod = f"https://experimenter.services.mozilla.com/api/v6/experiments/{experiment_slug}"
+    stage = f"https://stage.experimenter.nonprod.webservices.mozgcp.net/api/v6/experiments/{experiment_slug}/"  # noqa: E501
+
     if experiment_json:
         with open(experiment_json) as f:
             return json.load(f)
     match slug_server:
         case "prod":
-            url = f"https://experimenter.services.mozilla.com/api/v6/experiments/{experiment_slug}/"  # noqa: E501
+            url = prod
         case "stage":
-            url = f"https://stage.experimenter.nonprod.webservices.mozgcp.net/api/v6/experiments/{experiment_slug}/"  # noqa: E501
+            url = stage
+        case "stage/preview":
+            url = stage
     return requests.get(url).json()
 
 
