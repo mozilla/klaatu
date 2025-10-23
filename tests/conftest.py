@@ -16,6 +16,7 @@ import pytest
 import requests
 from pytest_bdd import given, then
 from pytest_metadata.plugin import metadata_key
+from requests.exceptions import ConnectionError, Timeout
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains, Keys
 from selenium.webdriver.common.by import By
@@ -294,7 +295,7 @@ def firefox_options(
     # Delete old pings
     try:
         requests.delete(f"{ping_server}/pings", timeout=5)
-    except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as e:
+    except (Timeout, ConnectionError) as e:
         logging.warning(f"Failed to delete pings from server: {e}")
 
     # Remove old profile
@@ -365,7 +366,7 @@ def fixture_check_ping_for_experiment(trigger_experiment_loader, ping_server):
         while control and time.time() < timeout:
             try:
                 data = requests.get(f"{ping_server}/pings", timeout=5).json()
-            except (requests.exceptions.Timeout, requests.exceptions.ConnectionError):
+            except (Timeout, ConnectionError):
                 logging.warning("Failed to get pings from server, retrying...")
                 time.sleep(5)
                 continue
@@ -687,12 +688,12 @@ def fixture_ping_server():
             try:
                 process.terminate()
                 process.wait(timeout=5)
-            except Exception as e:
-                logging.warning(f"Failed to cleanly terminate ping_server: {e}")
-                try:
-                    process.kill()
-                except Exception:
-                    pass
+            except subprocess.TimeoutExpired:
+                logging.warning("ping_server didn't terminate cleanly, killing it")
+                process.kill()
+            except ProcessLookupError:
+                # Process already dead
+                pass
 
 
 @pytest.fixture(name="firefox_version", autouse=True)
