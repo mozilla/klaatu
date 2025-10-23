@@ -317,6 +317,8 @@ def firefox_startup_time(firefox: typing.Any) -> typing.Any:
 @pytest.fixture
 def selenium(selenium: typing.Any) -> typing.Any:
     """Setup Selenium"""
+    selenium.set_page_load_timeout(60)  # Timeout for page loads
+    selenium.set_script_timeout(60)  # Timeout for async scripts
     return selenium
 
 
