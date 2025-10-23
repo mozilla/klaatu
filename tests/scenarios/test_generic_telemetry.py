@@ -288,7 +288,7 @@ def trigger_follow_on_search(selenium, search_server):
 
 @then("The subsession and subsession length is correctly reported")
 def check_telemetry_for_subsession_length(ping_server):
-    data = requests.get(f"{ping_server}/pings").json()
+    data = requests.get(f"{ping_server}/pings", timeout=10).json()
     for item in data:
         try:
             assert item.get("payload").get("info").get("subsessionLength") is not None

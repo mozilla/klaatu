@@ -115,7 +115,7 @@ def fixture_experiment_json(request):
             url = stage
         case "stage/preview":
             url = stage
-    return requests.get(url).json()
+    return requests.get(url, timeout=30).json()
 
 
 @pytest.fixture(name="enroll_experiment", autouse=True)
@@ -292,7 +292,10 @@ def firefox_options(
     yield firefox_options
 
     # Delete old pings
-    requests.delete(f"{ping_server}/pings")
+    try:
+        requests.delete(f"{ping_server}/pings", timeout=5)
+    except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as e:
+        logging.warning(f"Failed to delete pings from server: {e}")
 
     # Remove old profile
     if (
@@ -360,7 +363,12 @@ def fixture_check_ping_for_experiment(trigger_experiment_loader, ping_server):
         control = True
         timeout = time.time() + 60
         while control and time.time() < timeout:
-            data = requests.get(f"{ping_server}/pings").json()
+            try:
+                data = requests.get(f"{ping_server}/pings", timeout=5).json()
+            except (requests.exceptions.Timeout, requests.exceptions.ConnectionError):
+                logging.warning("Failed to get pings from server, retrying...")
+                time.sleep(5)
+                continue
             try:
                 experiments_data = [
                     item["environment"]["experiments"]
