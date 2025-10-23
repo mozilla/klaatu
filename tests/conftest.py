@@ -676,14 +676,23 @@ def fixture_static_server():
         process.terminate()
 
 
-@pytest.fixture(name="ping_server", autouse=True, scope="session")
+@pytest.fixture(name="ping_server", autouse=True, scope="function")
 def fixture_ping_server():
     if os.environ.get("DEBIAN_FRONTEND") and not os.environ.get("CI"):
         yield "http://ping-server:5000"
     else:
         process = start_process("ping_server", ["python", "ping_server.py"])
         yield "http://localhost:5000"
-        process.terminate()
+        if process:
+            try:
+                process.terminate()
+                process.wait(timeout=5)
+            except Exception as e:
+                logging.warning(f"Failed to cleanly terminate ping_server: {e}")
+                try:
+                    process.kill()
+                except Exception:
+                    pass
 
 
 @pytest.fixture(name="firefox_version", autouse=True)
