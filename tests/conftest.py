@@ -16,6 +16,7 @@ import pytest
 import requests
 from pytest_bdd import given, then
 from pytest_metadata.plugin import metadata_key
+from requests.exceptions import ConnectionError, Timeout
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver import ActionChains, Keys
 from selenium.webdriver.common.by import By
@@ -115,7 +116,7 @@ def fixture_experiment_json(request):
             url = stage
         case "stage/preview":
             url = stage
-    return requests.get(url).json()
+    return requests.get(url, timeout=30).json()
 
 
 @pytest.fixture(name="enroll_experiment", autouse=True)
@@ -292,7 +293,10 @@ def firefox_options(
     yield firefox_options
 
     # Delete old pings
-    requests.delete(f"{ping_server}/pings")
+    try:
+        requests.delete(f"{ping_server}/pings", timeout=5)
+    except (Timeout, ConnectionError) as e:
+        logging.warning(f"Failed to delete pings from server: {e}")
 
     # Remove old profile
     if (
@@ -317,6 +321,8 @@ def firefox_startup_time(firefox: typing.Any) -> typing.Any:
 @pytest.fixture
 def selenium(selenium: typing.Any) -> typing.Any:
     """Setup Selenium"""
+    selenium.set_page_load_timeout(60)  # Timeout for page loads
+    selenium.set_script_timeout(60)  # Timeout for async scripts
     return selenium
 
 
@@ -358,7 +364,12 @@ def fixture_check_ping_for_experiment(trigger_experiment_loader, ping_server):
         control = True
         timeout = time.time() + 60
         while control and time.time() < timeout:
-            data = requests.get(f"{ping_server}/pings").json()
+            try:
+                data = requests.get(f"{ping_server}/pings", timeout=5).json()
+            except (Timeout, ConnectionError):
+                logging.warning("Failed to get pings from server, retrying...")
+                time.sleep(5)
+                continue
             try:
                 experiments_data = [
                     item["environment"]["experiments"]
@@ -666,14 +677,23 @@ def fixture_static_server():
         process.terminate()
 
 
-@pytest.fixture(name="ping_server", autouse=True, scope="session")
+@pytest.fixture(name="ping_server", autouse=True, scope="function")
 def fixture_ping_server():
     if os.environ.get("DEBIAN_FRONTEND") and not os.environ.get("CI"):
         yield "http://ping-server:5000"
     else:
         process = start_process("ping_server", ["python", "ping_server.py"])
         yield "http://localhost:5000"
-        process.terminate()
+        if process:
+            try:
+                process.terminate()
+                process.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                logging.warning("ping_server didn't terminate cleanly, killing it")
+                process.kill()
+            except ProcessLookupError:
+                # Process already dead
+                pass
 
 
 @pytest.fixture(name="firefox_version", autouse=True)
