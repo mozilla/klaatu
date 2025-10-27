@@ -48,7 +48,7 @@ beautifulsoup4 = "^4.14.2"
 pytest-repeat = "^0.9.3"
 flask = "^3.1.0"
 python-dateutil = "^2.9.0.post0"
-tox = "^4.31.0"
+tox = "^4.32.0"
 
 [build-system]
 requires = ["poetry-core"]
