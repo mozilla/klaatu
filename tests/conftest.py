@@ -103,8 +103,8 @@ def fixture_experiment_json(request):
     slug_server = request.config.getoption("--experiment-server")
     experiment_json = request.config.getoption("--experiment-json")
 
-    prod = f"https://experimenter.services.mozilla.com/api/v6/experiments/{experiment_slug}"
-    stage = f"https://stage.experimenter.nonprod.webservices.mozgcp.net/api/v6/experiments/{experiment_slug}/"  # noqa: E501
+    prod = f"https://experimenter.services.mozilla.com/api/v6/experiments/{experiment_slug}/?ts={int(time.time())}/"  # noqa: E501
+    stage = f"https://stage.experimenter.nonprod.webservices.mozgcp.net/api/v6/experiments/{experiment_slug}/?ts={int(time.time())}/"  # noqa: E501
 
     if experiment_json:
         with open(experiment_json) as f:
