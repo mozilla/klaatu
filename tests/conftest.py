@@ -76,6 +76,10 @@ def pytest_addoption(parser) -> None:
     )
 
 
+MIN_FAILURES_FOR_EXIT_CODE = 6
+FAILURE_RATIO_THRESHOLD = 0.1
+
+
 def start_process(path, command):
     module_path = Path(path)
 
@@ -718,6 +722,15 @@ def pytest_sessionfinish(session, exitstatus):
     session.config.stash[metadata_key]["Firefox Version"] = os.environ.get(
         "FIREFOX_VERSION", "N/A"
     )
+    reporter = session.config.pluginmanager.get_plugin("terminalreporter")
+    if reporter:
+        failed_count = len(reporter.stats.get("failed", []))
+        passed_count = len(reporter.stats.get("passed", []))
+        total_count = failed_count + passed_count
+        if failed_count > 0 and (failed_count / total_count) > FAILURE_RATIO_THRESHOLD:
+            session.exitstatus = 1
+        else:
+            session.exitstatus = 0
 
 
 @then("Firefox should be allowed to open a new tab")
