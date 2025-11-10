@@ -6,7 +6,9 @@ import yaml
 
 parser = argparse.ArgumentParser("Options for android apk downloader")
 
-parser.add_argument("--test-files", nargs="+", help="List of test files to generate tests from")
+parser.add_argument(
+    "--test-files", nargs="+", help="List of test files to generate tests from"
+)
 args = parser.parse_args()
 
 
@@ -36,7 +38,9 @@ def search_for_smoke_tests(tests_name):
         test_names.append(code[locations[0] + 1].strip(":"))
 
         for location in locations:
-            for count in range(5):  # loop forward to get 'func' location and then test name
+            for count in range(
+                5
+            ):  # loop forward to get 'func' location and then test name
                 if "func" in code[location + count]:
                     test_name = code[location + count + 1]
                     test_names.append(test_name)

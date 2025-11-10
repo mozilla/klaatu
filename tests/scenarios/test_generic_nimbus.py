@@ -14,7 +14,9 @@ scenarios("../features/generic_nimbus.feature")
 
 
 @then("The experiment branch should be correctly reported")
-def check_branch_in_telemetry(telemetry_event_check, experiment_json, request, experiment_slug):
+def check_branch_in_telemetry(
+    telemetry_event_check, experiment_json, request, experiment_slug
+):
     experiment_branch = request.config.getoption("--experiment-branch")
     telemetry_event_check(f"optin-{experiment_slug}")
     assert experiment_branch in experiment_json["branch"]
@@ -27,9 +29,13 @@ def unenroll_via_studies_page(selenium, experiment_json):
     timeout = timeout = time.time() + 60
     while time.time() < timeout:
         selenium.get("about:studies")
-        WebDriverWait(selenium, 30).until(EC.presence_of_element_located(study_name_locator))
+        WebDriverWait(selenium, 30).until(
+            EC.presence_of_element_located(study_name_locator)
+        )
         items = selenium.find_elements(*study_name_locator)
-        if any(item for item in items if experiment_json["userFacingName"] in item.text):
+        if any(
+            item for item in items if experiment_json["userFacingName"] in item.text
+        ):
             logging.info("Experiment unenrolled")
             return True
         time.sleep(2)

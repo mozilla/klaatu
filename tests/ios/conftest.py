@@ -20,8 +20,12 @@ here = Path()
 
 
 def pytest_addoption(parser):
-    parser.addoption("--experiment-slug", action="store", help="The experiments experimenter URL")
-    parser.addoption("--stage", action="store_true", default=None, help="Use the stage server")
+    parser.addoption(
+        "--experiment-slug", action="store", help="The experiments experimenter URL"
+    )
+    parser.addoption(
+        "--stage", action="store_true", default=None, help="Use the stage server"
+    )
     parser.addoption(
         "--build-dev",
         action="store_true",
@@ -29,7 +33,9 @@ def pytest_addoption(parser):
         help="Build the developer edition of Firefox",
     )
     parser.addoption(
-        "--experiment-feature", action="store", help="Feature name you want to test against"
+        "--experiment-feature",
+        action="store",
+        help="Feature name you want to test against",
     )
     parser.addoption(
         "--experiment-branch",
@@ -132,7 +138,9 @@ def fixture_build_fennec(request):
 
 @pytest.fixture()
 def xcodebuild(xcodebuild_log):
-    yield XCodeBuild(xcodebuild_log, scheme="Fennec", test_plan="ExperimentIntegrationTests")
+    yield XCodeBuild(
+        xcodebuild_log, scheme="Fennec", test_plan="ExperimentIntegrationTests"
+    )
 
 
 @pytest.fixture(scope="session")
@@ -230,7 +238,9 @@ def fixture_set_env_variables(experiment_data):
 
 @pytest.fixture(name="check_ping_for_experiment")
 def fixture_check_ping_for_experiment(experiment_slug, variables):
-    def _check_ping_for_experiment(branch=None, experiment=experiment_slug, reason=None):
+    def _check_ping_for_experiment(
+        branch=None, experiment=experiment_slug, reason=None
+    ):
         model = TelemetryModel(branch=branch, experiment=experiment)
 
         timeout = time.time() + 60 * 5
@@ -252,7 +262,8 @@ def fixture_check_ping_for_experiment(experiment_slug, variables):
             for event in events:
                 event_name = event.get("name")
                 if (reason == "enrollment" and event_name == "enrollment") or (
-                    reason == "unenrollment" and event_name in ["unenrollment", "disqualification"]
+                    reason == "unenrollment"
+                    and event_name in ["unenrollment", "disqualification"]
                 ):
                     telemetry_model = TelemetryModel(
                         branch=event["extra"]["branch"],
@@ -282,10 +293,16 @@ def fixture_run_nimbus_cli_command():
 
 @pytest.fixture(name="setup_experiment")
 def setup_experiment(
-    experiment_slug, experiment_server, experiment_branch, run_nimbus_cli_command, nimbus_cli_args
+    experiment_slug,
+    experiment_server,
+    experiment_branch,
+    run_nimbus_cli_command,
+    nimbus_cli_args,
 ):
     def _setup_experiment():
-        logging.info(f"Testing experiment {experiment_slug}, BRANCH: {experiment_branch}")
+        logging.info(
+            f"Testing experiment {experiment_slug}, BRANCH: {experiment_branch}"
+        )
         command = [
             "nimbus-cli",
             "--app firefox_ios",

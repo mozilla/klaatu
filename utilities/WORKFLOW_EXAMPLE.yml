@@ -1,0 +1,88 @@
+# Example: How to integrate CircleCI APK fetching into your GitHub Actions workflow
+#
+# This shows how to replace the Docker build step with fetching pre-built APKs
+# from CircleCI mozilla/experimenter builds
+
+# Add this step after "Setup Python" and before "Run Tests"
+
+      - name: Install Python dependencies for APK fetcher
+        run: pip install requests
+
+      - name: Fetch Fenix APKs from CircleCI
+        env:
+          # Optional: Add CIRCLECI_TOKEN to your GitHub secrets for private repos
+          CIRCLECI_TOKEN: ${{ secrets.CIRCLECI_TOKEN }}
+        working-directory: klaatu
+        run: |
+          # Fetch APKs from mozilla/experimenter CircleCI builds
+          python utilities/get_circleci_apks.py \
+            --org mozilla \
+            --repo experimenter \
+            --branch main \
+            --output-dir . \
+            --job-name fenix
+
+          # List downloaded files
+          echo "Downloaded APKs:"
+          ls -lh *.apk
+
+      # Then you can install and run tests as normal
+      - name: Run Tests
+        run: |
+          cd klaatu
+
+          # Install the APKs (adjust filenames as needed based on what CircleCI produces)
+          adb install *androidTest*.apk
+          adb install *x86_64*.apk
+
+          # Continue with your test commands...
+          cd ../firefox/mobile/android/fenix/app/src/androidTest/java/org/mozilla/fenix/experimentintegration
+          pip3 install virtualenv poetry pipenv
+          pipenv install
+          pipenv install pytest-rerunfailures
+          pipenv run python generate_smoke_tests.py
+          pipenv run pytest --experiment-slug ${{ inputs.slug }} ...
+
+
+# Alternative: Use the bash wrapper script
+# This is simpler and uses environment variables
+
+      - name: Fetch Fenix APKs from CircleCI (using bash script)
+        env:
+          CIRCLECI_TOKEN: ${{ secrets.CIRCLECI_TOKEN }}
+          CIRCLECI_BRANCH: update_firefox_versions
+          CIRCLECI_OUTPUT_DIR: ${{ github.workspace }}/klaatu
+          CIRCLECI_JOB_NAME: Build Fenix APKs
+        working-directory: klaatu
+        run: ./utilities/fetch_circleci_apks.sh
+
+
+# Alternative: Conditional fetching - use CircleCI if available, fallback to Docker build
+
+      - name: Try to fetch APKs from CircleCI
+        id: fetch_circleci
+        continue-on-error: true
+        env:
+          CIRCLECI_TOKEN: ${{ secrets.CIRCLECI_TOKEN }}
+        working-directory: klaatu
+        run: |
+          pip install requests
+          python utilities/get_circleci_apks.py \
+            --branch main \
+            --output-dir . \
+            --job-name fenix
+
+      - name: Build APKs with Docker (if CircleCI fetch failed)
+        if: steps.fetch_circleci.outcome != 'success'
+        working-directory: klaatu
+        run: |
+          docker build -t fenix-builder -f android-build.Dockerfile .
+          docker run -d --name fenix-builder fenix-builder
+          docker cp fenix-builder:mozilla-central/mobile/android/fenix/app-fenix-debug-androidTest.apk ./
+          docker cp fenix-builder:mozilla-central/mobile/android/fenix/app-fenix-x86_64-debug.apk ./
+
+      - name: Install APKs
+        working-directory: klaatu
+        run: |
+          adb install *androidTest*.apk
+          adb install *x86_64*.apk

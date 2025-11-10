@@ -19,12 +19,18 @@ scenarios(
 )
 
 
-@scenario("../features/generic_telemetry.feature", "Report correct telemetry for organic searches")
+@scenario(
+    "../features/generic_telemetry.feature",
+    "Report correct telemetry for organic searches",
+)
 def test_report_correct_telemetry_for_organic_searches():
     pass
 
 
-@scenario("../features/generic_telemetry.feature", "Report correct telemetry for tagged searches")
+@scenario(
+    "../features/generic_telemetry.feature",
+    "Report correct telemetry for tagged searches",
+)
 def test_report_correct_telemetry_for_tagged_searches():
     pass
 
@@ -101,7 +107,9 @@ def search_using_search_bar_to_return_ads(selenium, enable_search_bar):
 
     # perform search
     with selenium.context(selenium.CONTEXT_CHROME):
-        WebDriverWait(selenium, 60).until(EC.visibility_of_element_located(search_box_locator))
+        WebDriverWait(selenium, 60).until(
+            EC.visibility_of_element_located(search_box_locator)
+        )
         search_bar = selenium.find_element(*search_box_locator)
         search_bar.send_keys("buy stocks")
         search_bar.send_keys(Keys.ENTER)
@@ -112,9 +120,9 @@ def search_using_context_click_menu(selenium, static_server, find_telemetry):
     selenium.get(static_server)
     el = selenium.find_element(By.CSS_SELECTOR, "#search-to-return-ads")
 
-    ActionChains(selenium).move_to_element(el).pause(1).double_click(el).pause(1).context_click(
-        el
-    ).perform()
+    ActionChains(selenium).move_to_element(el).pause(1).double_click(el).pause(
+        1
+    ).context_click(el).perform()
     with selenium.context(selenium.CONTEXT_CHROME):
         menu = selenium.find_element(By.CSS_SELECTOR, "#contentAreaContextMenu")
         menu.find_element(By.CSS_SELECTOR, "#context-searchselect").click()
@@ -137,7 +145,9 @@ def search_using_context_click_menu_full(selenium, static_server, find_telemetry
         with selenium.context(selenium.CONTEXT_CHROME):
             menu = selenium.find_element(By.CSS_SELECTOR, "#contentAreaContextMenu")
             menu.find_element(By.CSS_SELECTOR, "#context-searchselect").click()
-        WebDriverWait(selenium, 60).until(EC.number_of_windows_to_be(current_windows + 1))
+        WebDriverWait(selenium, 60).until(
+            EC.number_of_windows_to_be(current_windows + 1)
+        )
         try:
             assert find_telemetry(
                 "browser.search.withads.contextmenu", scalar="klaatu:tagged", value=1
@@ -150,12 +160,20 @@ def search_using_context_click_menu_full(selenium, static_server, find_telemetry
         assert False
 
 
-@then(parsers.parse("The browser reports correct telemetry for the {search:w} search event"))
+@then(
+    parsers.parse(
+        "The browser reports correct telemetry for the {search:w} search event"
+    )
+)
 def check_telemetry_for_with_ads_search(find_impression, search):
     assert find_impression(source=search, provider="klaatu", tagged="true")
 
 
-@then(parsers.parse("The browser reports correct telemetry for the {search:w} adclick event"))
+@then(
+    parsers.parse(
+        "The browser reports correct telemetry for the {search:w} adclick event"
+    )
+)
 def check_telemetry_for_ad_click_search(find_impression, search):
     assert find_impression(source=search, provider="klaatu", tagged="true")
 
@@ -246,7 +264,9 @@ def close_browser(selenium):
 
 @then("The page loads")
 def wait_for_ad_click_page_to_load(selenium):
-    WebDriverWait(selenium, 60).until(EC.visibility_of_element_located((By.CSS_SELECTOR, "body")))
+    WebDriverWait(selenium, 60).until(
+        EC.visibility_of_element_located((By.CSS_SELECTOR, "body"))
+    )
 
 
 @then("The user goes back to the search page")

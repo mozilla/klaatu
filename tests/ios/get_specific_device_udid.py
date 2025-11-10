@@ -16,6 +16,10 @@ devices = json.loads(output)
 filtered_devices = {}
 for runtime, runtime_devices in devices["devices"].items():
     for device in runtime_devices:
-        if device["isAvailable"] and json_version in runtime and device_name == device["name"]:
+        if (
+            device["isAvailable"]
+            and json_version in runtime
+            and device_name == device["name"]
+        ):
             print(device["udid"])
             break

@@ -60,7 +60,6 @@ def open_a_new_tab_via_keyboard(cmd_or_ctrl_button, selenium):
 
 @then("The user will install a language pack")
 def install_acholi_language_pack(selenium, request):
-
     add_button_locator = (By.CSS_SELECTOR, "#add")
     addon_installed_locator = (By.CSS_SELECTOR, "#appMenu-addon-installed-notification")
     add_to_firefox_locator = (
@@ -74,17 +73,24 @@ def install_acholi_language_pack(selenium, request):
     )
     language_button_locator = (By.CSS_SELECTOR, "#manageBrowserLanguagesButton")
     language_search_locator = (By.CSS_SELECTOR, ".in-menulist menuitem label")
-    menu_list_locator = (By.CSS_SELECTOR, ".languages-grid #availableLocales .in-menulist")
+    menu_list_locator = (
+        By.CSS_SELECTOR,
+        ".languages-grid #availableLocales .in-menulist",
+    )
 
     if not request.config.getoption("--run-update-test"):
         pytest.skip("needs --run-update-test option to run")
         return
 
     # install language pack
-    selenium.get("https://addons.mozilla.org/en-US/firefox/addon/acholi-ug-language-pack/")
+    selenium.get(
+        "https://addons.mozilla.org/en-US/firefox/addon/acholi-ug-language-pack/"
+    )
     selenium.find_element(By.CSS_SELECTOR, ".AMInstallButton-button").click()
     with selenium.context(selenium.CONTEXT_CHROME):
-        WebDriverWait(selenium, 60).until(EC.element_to_be_clickable(add_to_firefox_locator))
+        WebDriverWait(selenium, 60).until(
+            EC.element_to_be_clickable(add_to_firefox_locator)
+        )
         time.sleep(5)  # need to sleep as the waits sometimes don't work
         selenium.find_element(*add_to_firefox_locator).click()
         WebDriverWait(selenium, 60).until(
@@ -95,14 +101,18 @@ def install_acholi_language_pack(selenium, request):
     selenium.get("about:preferences")
     button = selenium.find_element(*language_button_locator)
     button.click()
-    WebDriverWait(selenium, 60).until(EC.visibility_of_element_located(root_dialog_box_locator))
+    WebDriverWait(selenium, 60).until(
+        EC.visibility_of_element_located(root_dialog_box_locator)
+    )
     dialog = selenium.find_element(*root_dialog_box_locator)
     selenium.switch_to.frame(dialog)
 
     dialog = selenium.find_element(*browser_dialog_box_locator)
     menu_list = selenium.find_element(*menu_list_locator)
     menu_list.click()
-    WebDriverWait(menu_list, 60).until(EC.visibility_of_element_located(language_search_locator))
+    WebDriverWait(menu_list, 60).until(
+        EC.visibility_of_element_located(language_search_locator)
+    )
     el = menu_list.find_element(*language_search_locator)
     ActionChains(selenium).move_to_element(el).pause(1).click().perform()
     ActionBuilder(selenium).clear_actions()
@@ -111,7 +121,9 @@ def install_acholi_language_pack(selenium, request):
     for item in language_list:
         if "Acholi" in item.get_attribute("label"):
             selenium.execute_script("arguments[0].scrollIntoView(true);", item)
-            ActionChains(selenium).move_to_element(item).pause(1).click().pause(1).perform()
+            ActionChains(selenium).move_to_element(item).pause(1).click().pause(
+                1
+            ).perform()
             break
     WebDriverWait(dialog, 60).until(
         EC.element_to_be_clickable(add_button_locator), message="Language was not added"
@@ -132,7 +144,9 @@ def check_for_localized_firefox(selenium):
     )
     for item in list:
         if "Acholi" in item.get_attribute("label"):
-            ActionChains(selenium).move_to_element(item).pause(1).click().pause(1).perform()
+            ActionChains(selenium).move_to_element(item).pause(1).click().pause(
+                1
+            ).perform()
             break
     """
     This translates from:

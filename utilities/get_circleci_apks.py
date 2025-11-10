@@ -45,11 +45,7 @@ class CircleCIArtifactFetcher:
             self.headers["Circle-Token"] = self.token
 
     def get_recent_pipelines(
-        self,
-        org: str,
-        repo: str,
-        branch: Optional[str] = None,
-        limit: int = 20
+        self, org: str, repo: str, branch: Optional[str] = None, limit: int = 20
     ) -> List[Dict[str, Any]]:
         """Get recent pipelines for a project."""
         url = f"{self.BASE_URL}/project/github/{org}/{repo}/pipeline"
@@ -81,7 +77,9 @@ class CircleCIArtifactFetcher:
         data = response.json()
         return data.get("items", [])
 
-    def get_job_artifacts(self, job_number: int, org: str, repo: str) -> List[Dict[str, Any]]:
+    def get_job_artifacts(
+        self, job_number: int, org: str, repo: str
+    ) -> List[Dict[str, Any]]:
         """Get artifacts for a specific job."""
         url = f"{self.BASE_URL}/project/github/{org}/{repo}/{job_number}/artifacts"
         response = requests.get(url, headers=self.headers)
@@ -148,7 +146,9 @@ class CircleCIArtifactFetcher:
                         continue
 
                     if workflow_status != "success":
-                        print(f"  Skipping workflow '{workflow_name_actual}' (status: {workflow_status})")
+                        print(
+                            f"  Skipping workflow '{workflow_name_actual}' (status: {workflow_status})"
+                        )
                         continue
 
                     print(f"  Checking workflow: {workflow_name_actual}")
@@ -172,8 +172,7 @@ class CircleCIArtifactFetcher:
                         artifacts = self.get_job_artifacts(job_number, org, repo)
 
                         apk_artifacts = [
-                            a for a in artifacts
-                            if a.get("path", "").endswith(".apk")
+                            a for a in artifacts if a.get("path", "").endswith(".apk")
                         ]
 
                         if apk_artifacts:
@@ -198,13 +197,15 @@ class CircleCIArtifactFetcher:
 
                             # If we downloaded APKs, we're done
                             if downloaded_count > 0:
-                                print(f"\n{'='*80}")
-                                print(f"Successfully downloaded {downloaded_count} APK(s) from:")
+                                print(f"\n{'=' * 80}")
+                                print(
+                                    f"Successfully downloaded {downloaded_count} APK(s) from:"
+                                )
                                 print(f"Pipeline #{pipeline_number}")
                                 print(f"Workflow: {workflow_name_actual}")
                                 print(f"Job: {job_name_actual}")
                                 print(f"Saved to: {output_dir.resolve()}")
-                                print(f"{'='*80}")
+                                print(f"{'=' * 80}")
                                 return downloaded_count
 
             except Exception as e:
@@ -223,37 +224,28 @@ def main():
         description="Automatically find and download APK artifacts from CircleCI"
     )
     parser.add_argument(
-        "--org",
-        default="mozilla",
-        help="GitHub organization name (default: mozilla)"
+        "--org", default="mozilla", help="GitHub organization name (default: mozilla)"
     )
     parser.add_argument(
         "--repo",
         default="experimenter",
-        help="GitHub repository name (default: experimenter)"
+        help="GitHub repository name (default: experimenter)",
+    )
+    parser.add_argument("--branch", default="main", help="Branch name (default: main)")
+    parser.add_argument(
+        "--workflow-name", help="Workflow name filter (optional, matches substring)"
     )
     parser.add_argument(
-        "--branch",
-        default="main",
-        help="Branch name (default: main)"
-    )
-    parser.add_argument(
-        "--workflow-name",
-        help="Workflow name filter (optional, matches substring)"
-    )
-    parser.add_argument(
-        "--job-name",
-        help="Job name filter (optional, matches substring)"
+        "--job-name", help="Job name filter (optional, matches substring)"
     )
     parser.add_argument(
         "--output-dir",
         type=Path,
         default=Path.cwd(),
-        help="Directory to save downloaded APKs (default: current directory)"
+        help="Directory to save downloaded APKs (default: current directory)",
     )
     parser.add_argument(
-        "--token",
-        help="CircleCI API token (or set CIRCLECI_TOKEN env var)"
+        "--token", help="CircleCI API token (or set CIRCLECI_TOKEN env var)"
     )
 
     args = parser.parse_args()

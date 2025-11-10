@@ -2,7 +2,9 @@ import pytest
 
 
 @pytest.mark.generic_test
-def test_experiment_unenrolls_via_studies_toggle(setup_experiment, gradlewbuild, open_app):
+def test_experiment_unenrolls_via_studies_toggle(
+    setup_experiment, gradlewbuild, open_app
+):
     setup_experiment()
     open_app()
     gradlewbuild.test("GenericExperimentIntegrationTest#disableStudiesViaStudiesToggle")
@@ -25,6 +27,8 @@ def test_experiment_unenrolls_via_secret_menu(
 ):
     setup_experiment()
     open_app()
-    gradlewbuild.test("GenericExperimentIntegrationTest#testExperimentUnenrolledViaSecretMenu")
+    gradlewbuild.test(
+        "GenericExperimentIntegrationTest#testExperimentUnenrolledViaSecretMenu"
+    )
     gradlewbuild.test("GenericExperimentIntegrationTest#testExperimentUnenrolled")
     assert check_ping_for_experiment(reason="unenrollment", branch=load_branches[0])

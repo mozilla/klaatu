@@ -1,6 +1,3 @@
-from datetime import date
-import re
-
 import requests
 from bs4 import BeautifulSoup
 
