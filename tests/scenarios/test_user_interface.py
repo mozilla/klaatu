@@ -32,12 +32,16 @@ def test_experiment_does_not_drastically_slow_firefox():
 
 
 @pytest.mark.xfail(reason="Weird behavior with firefox and displaying the string")
-@scenario("../features/user_interface.feature", "The experiment shows on the studies page")
+@scenario(
+    "../features/user_interface.feature", "The experiment shows on the studies page"
+)
 def test_experiment_shows_on_studies_page():
     pass
 
 
-@scenario("../features/user_interface.feature", "The experiment shows on the support page")
+@scenario(
+    "../features/user_interface.feature", "The experiment shows on the support page"
+)
 def test_experiment_shows_on_support_page():
     pass
 
@@ -104,9 +108,9 @@ def firefox_speed(selenium, firefox_startup_time):
         return perfData.loadEventEnd - perfData.navigationStart
         """
     )
-    assert (
-        (int(firefox_startup_time) * 0.2) + int(firefox_startup_time)
-    ) >= startup, "This experiment caused a slowdown within Firefox."
+    assert ((int(firefox_startup_time) * 0.2) + int(firefox_startup_time)) >= startup, (
+        "This experiment caused a slowdown within Firefox."
+    )
 
 
 @then("A user chooses to update Firefox")
@@ -138,7 +142,7 @@ def start_updated_firefox():
     # Build new Firefox Instance
     options = Options()
     options.add_argument("-profile")
-    options.add_argument(f'{Path("utilities/klaatu-profile").absolute()}')
+    options.add_argument(f"{Path('utilities/klaatu-profile').absolute()}")
     options.add_argument("-headless")
     binary = f"{Path('utilities/firefox-old-nightly/firefox/firefox-bin').absolute()}"
     options.binary_location = f"{binary}"

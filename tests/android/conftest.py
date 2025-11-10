@@ -119,7 +119,9 @@ def fixture_experiment_feature(request):
 
 @pytest.fixture(name="check_ping_for_experiment")
 def fixture_check_ping_for_experiment(experiment_slug, variables):
-    def _check_ping_for_experiment(branch=None, experiment=experiment_slug, reason=None):
+    def _check_ping_for_experiment(
+        branch=None, experiment=experiment_slug, reason=None
+    ):
         model = TelemetryModel(branch=branch, experiment=experiment)
 
         timeout = time.time() + 60 * 5
@@ -142,7 +144,8 @@ def fixture_check_ping_for_experiment(experiment_slug, variables):
             for event in events:
                 event_name = event.get("name")
                 if (reason == "enrollment" and event_name == "enrollment") or (
-                    reason == "unenrollment" and event_name in ["unenrollment", "disqualification"]
+                    reason == "unenrollment"
+                    and event_name in ["unenrollment", "disqualification"]
                 ):
                     telemetry_model = TelemetryModel(
                         branch=event["extra"]["branch"],
@@ -278,7 +281,9 @@ def fixture_dismiss_system_dialogs():
 
 
 @pytest.fixture(name="setup_experiment")
-def fixture_setup_experiment(run_nimbus_cli_command, experiment_slug, experiment_branch):
+def fixture_setup_experiment(
+    run_nimbus_cli_command, experiment_slug, experiment_branch
+):
     def setup_experiment():
         logging.info("====== Beginning Test ======")
         command = [
@@ -294,6 +299,8 @@ def fixture_setup_experiment(run_nimbus_cli_command, experiment_slug, experiment
             "--reset-app",
         ]
         run_nimbus_cli_command(" ".join(command))
-        time.sleep(10)  # Wait a while as there's no real way to know when the app has started
+        time.sleep(
+            10
+        )  # Wait a while as there's no real way to know when the app has started
 
     return setup_experiment

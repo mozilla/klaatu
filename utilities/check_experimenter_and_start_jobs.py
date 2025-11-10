@@ -12,40 +12,39 @@ from collections import defaultdict
 import requests
 
 
-experimenter_url = "https://experimenter.services.mozilla.com/api/v6/experiments/?=status=Preview"
+experimenter_url = (
+    "https://experimenter.services.mozilla.com/api/v6/experiments/?=status=Preview"
+)
 run_flag = False
 testing_list = {}
 path = Path().cwd()
 
 versions = requests.get("https://whattrainisitnow.com/api/firefox/releases/").json()
 
+
 def trigger_github_action(slug, branch, firefox_version, workflow_id):
-    url = f'https://api.github.com/repos/jrbenny35/klaatu/actions/workflows/{workflow_id}/dispatches'
-    inputs = {
-        'slug': slug,
-        'branch': branch,
-        'firefox-version': f"{firefox_version}"
-    }
+    url = f"https://api.github.com/repos/jrbenny35/klaatu/actions/workflows/{workflow_id}/dispatches"
+    inputs = {"slug": slug, "branch": branch, "firefox-version": f"{firefox_version}"}
 
     headers = {
-        'Accept': 'application/vnd.github.v3+json',
-        'Authorization': f"Bearer {os.getenv('BEARER_TOKEN')}" ,
-        'X-GitHub-Api-Version': '2022-11-28'
+        "Accept": "application/vnd.github.v3+json",
+        "Authorization": f"Bearer {os.getenv('BEARER_TOKEN')}",
+        "X-GitHub-Api-Version": "2022-11-28",
     }
-    
-    data = {
-        'ref': 'main',
-        'inputs': inputs or {}
-    }
-    print(f"Running tests for {inputs['slug']}, with data {data}, on workflow {workflow_id}")
+
+    data = {"ref": "main", "inputs": inputs or {}}
+    print(
+        f"Running tests for {inputs['slug']}, with data {data}, on workflow {workflow_id}"
+    )
 
     response = requests.post(url, headers=headers, data=json.dumps(data))
-    
+
     if response.status_code == 204:
-        print('Workflow triggered successfully!')
+        print("Workflow triggered successfully!")
     else:
-        print(f'Failed to trigger workflow: {response.status_code}')
+        print(f"Failed to trigger workflow: {response.status_code}")
         print(response.text)
+
 
 def get_latest_versions(versions, min_version):
     # Parse versions and group by major.minor
@@ -53,10 +52,10 @@ def get_latest_versions(versions, min_version):
     version_list = []
 
     from packaging.version import Version
-    
+
     for version in versions.keys():
         if Version(version) >= Version(min_version[0]):
-           version_list.append(version)
+            version_list.append(version)
 
     version_groups = defaultdict(list)
     for version_str in version_list:
@@ -64,27 +63,31 @@ def get_latest_versions(versions, min_version):
         major_minor = f"{version.major}.{version.minor}"
         version_groups[major_minor].append(version)
 
-
     # Determine the latest version in each group
     latest_versions = {}
     for major_minor, versions in version_groups.items():
-        latest_versions[major_minor] = max(versions, key=lambda v: (v.major, v.minor, v.micro))
-    
+        latest_versions[major_minor] = max(
+            versions, key=lambda v: (v.major, v.minor, v.micro)
+        )
+
     # Return the latest versions sorted by major.minor
     return [f"{version}" for version in sorted(latest_versions.values())]
 
+
 def get_firefox_verions(app_name, channel, min_version):
     test_versions = set()
-    non_desktop_beta = [f"{Version(list(versions.keys())[-1]).major +1}.0b"]
-    
+    non_desktop_beta = [f"{Version(list(versions.keys())[-1]).major + 1}.0b"]
+
     if "firefox_ios" in app_name:
         # Get list of versions from requested to current based on whattrainisitnow
         for version in reversed(versions.keys()):
             version = Version(version)
             if version.major > Version(min_version).major:
                 test_versions.add(version.major)
-        if not test_versions: # if the version doesn't exist in whattrainisitnow just return it
-           return [f"{Version(min_version)}"]
+        if (
+            not test_versions
+        ):  # if the version doesn't exist in whattrainisitnow just return it
+            return [f"{Version(min_version)}"]
         else:
             return [f"{_}" for _ in test_versions if _ >= 128]
     else:
@@ -92,7 +95,7 @@ def get_firefox_verions(app_name, channel, min_version):
             case "release":
                 test_versions = get_latest_versions(versions, min_version)
                 if "desktop" in app_name:
-                    test_versions.extend(['latest', 'latest-beta'])
+                    test_versions.extend(["latest", "latest-beta"])
                 return test_versions
             case "nightly":
                 return "['latest']"
@@ -101,9 +104,10 @@ def get_firefox_verions(app_name, channel, min_version):
                     return "['latest-beta']"
                 return non_desktop_beta
 
+
 # Load string of last experiment
 try:
-    with open('previous_experiment.txt') as f:
+    with open("previous_experiment.txt") as f:
         previous_experiment = f.read()
 except FileNotFoundError:
     subprocess.run([f"touch {path}"], encoding="utf8", shell=True)
@@ -121,13 +125,15 @@ if not run_flag:
     exit
 
 # Sorted list of experiments that have a publishedDate field
-experiments = [_ for _ in current_experiments if _['publishedDate'] is not None]
-experiments = sorted(experiments, key=lambda _: parser.isoparse(_.get('publishedDate')))
+experiments = [_ for _ in current_experiments if _["publishedDate"] is not None]
+experiments = sorted(experiments, key=lambda _: parser.isoparse(_.get("publishedDate")))
 current_experiments = []
 
 for experiment in experiments:
     try:
-        if parser.parse(experiment.get("startDate")) >= datetime.now() - timedelta(days=7):
+        if parser.parse(experiment.get("startDate")) >= datetime.now() - timedelta(
+            days=7
+        ):
             current_experiments.append(experiment)
     except TypeError:
         continue
@@ -135,7 +141,7 @@ for experiment in experiments:
 
 temp_experiments_list = []
 for count, item in enumerate(current_experiments):
-    if not item.get('isRollout'):
+    if not item.get("isRollout"):
         temp_experiments_list.append(item)
 
 current_experiments = temp_experiments_list
@@ -154,32 +160,45 @@ for slug, data in testing_list.items():
     desktop_workflows = ["windows_manual.yml", "linux_manual.yml"]
 
     try:
-        ff_version = [re.search(r"versionCompare\('(\d+).!'\)", data["targeting"]).group(1)]
+        ff_version = [
+            re.search(r"versionCompare\('(\d+).!'\)", data["targeting"]).group(1)
+        ]
     except AttributeError:
         continue  # Don't test experiments with no target version
 
-    branches = f"{[item["slug"] for item in data["branches"]]}"
+    branches = f"{[item['slug'] for item in data['branches']]}"
     match data["appName"]:
         case "firefox_desktop":
             for workflow_id in desktop_workflows:
                 trigger_github_action(
-                    slug, branches, get_firefox_verions(data["appName"], data["channel"], ff_version), workflow_id
+                    slug,
+                    branches,
+                    get_firefox_verions(data["appName"], data["channel"], ff_version),
+                    workflow_id,
                 )
         case "firefox_ios":
             workflow_id = "ios_manual.yml"
             _ff_version = Version(ff_version[0])
             trigger_github_action(
-                slug, branches, get_firefox_verions(data["appName"], data["channel"], f"{_ff_version.major}"), workflow_id
+                slug,
+                branches,
+                get_firefox_verions(
+                    data["appName"], data["channel"], f"{_ff_version.major}"
+                ),
+                workflow_id,
             )
         case "fenix":
             workflow_id = "android_manual.yml"
             _ff_version = Version(ff_version[0])
             trigger_github_action(
-                slug, branches, get_firefox_verions(data["appName"], data["channel"], ff_version), workflow_id
+                slug,
+                branches,
+                get_firefox_verions(data["appName"], data["channel"], ff_version),
+                workflow_id,
             )
     time.sleep(30)
 #  Write last experiment to file for next cron run
-with open('previous_experiment.txt', 'w') as f:
+with open("previous_experiment.txt", "w") as f:
     f.writelines(experiments[-1]["slug"])
 
 print(f"Last experiment checked was {experiments[-1]['slug']}")

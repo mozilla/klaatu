@@ -10,7 +10,9 @@ import yaml
 
 parser = argparse.ArgumentParser("Options for android apk downloader")
 
-parser.add_argument("--test-files", nargs="+", help="List of test files to generate tests from")
+parser.add_argument(
+    "--test-files", nargs="+", help="List of test files to generate tests from"
+)
 args = parser.parse_args()
 
 

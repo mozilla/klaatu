@@ -25,49 +25,63 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 
 def pytest_addoption(parser) -> None:
-    parser.addoption(
-        "--experiment-recipe",
-        action="store",
-        default=None,
-        help="Recipe JSON for experiment",
-    ),
-    parser.addoption(
-        "--experiment-branch",
-        action="store",
-        default=None,
-        help="Experiment Branch to test",
-    ),
-    parser.addoption(
-        "--run-update-test",
-        action="store_true",
-        default=None,
-        help="Run older version of firefox",
-    ),
-    parser.addoption(
-        "--private-browsing-enabled",
-        action="store_true",
-        default=None,
-        help="Run private browsing test",
-    ),
-    parser.addoption(
-        "--experiment-slug",
-        action="store",
-        default=None,
-        help="Experiment slug from Experimenter",
-    ),
-    parser.addoption(
-        "--experiment-server",
-        action="store",
-        default="prod",
-        choices=("prod", "stage", "stage/preview"),
-        help="The server where the experiment is located, either stage or prod",
-    ),
-    parser.addoption(
-        "--experiment-json",
-        action="store",
-        default=None,
-        help="The experiments JSON file.",
-    ),
+    (
+        parser.addoption(
+            "--experiment-recipe",
+            action="store",
+            default=None,
+            help="Recipe JSON for experiment",
+        ),
+    )
+    (
+        parser.addoption(
+            "--experiment-branch",
+            action="store",
+            default=None,
+            help="Experiment Branch to test",
+        ),
+    )
+    (
+        parser.addoption(
+            "--run-update-test",
+            action="store_true",
+            default=None,
+            help="Run older version of firefox",
+        ),
+    )
+    (
+        parser.addoption(
+            "--private-browsing-enabled",
+            action="store_true",
+            default=None,
+            help="Run private browsing test",
+        ),
+    )
+    (
+        parser.addoption(
+            "--experiment-slug",
+            action="store",
+            default=None,
+            help="Experiment slug from Experimenter",
+        ),
+    )
+    (
+        parser.addoption(
+            "--experiment-server",
+            action="store",
+            default="prod",
+            choices=("prod", "stage", "stage/preview"),
+            help="The server where the experiment is located, either stage or prod",
+        ),
+    )
+    (
+        parser.addoption(
+            "--experiment-json",
+            action="store",
+            default=None,
+            help="The experiments JSON file.",
+        ),
+    )
     parser.addoption(
         "--firefox-path",
         action="store",
@@ -167,7 +181,9 @@ def fixture_enroll_experiment(
     try:
         with selenium.context(selenium.CONTEXT_CHROME):
             time.sleep(5)
-            result = selenium.execute_async_script(script, experiment_json, experiment_branch)
+            result = selenium.execute_async_script(
+                script, experiment_json, experiment_branch
+            )
             logging.info(f"Force Enrolling: {result}")
     except JavascriptException as e:
         if "slug" in str(e):
@@ -205,16 +221,16 @@ def setup_profile(pytestconfig: typing.Any, request: typing.Any) -> typing.Any:
             dirs_exist_ok=True,
             ignore_dangling_symlinks=True,
         )
-        return f'{Path("utilities/klaatu-profile").absolute()}'
-    if request.node.get_closest_marker("reuse_profile") and not request.config.getoption(
-        "--run-update-test"
-    ):
+        return f"{Path('utilities/klaatu-profile').absolute()}"
+    if request.node.get_closest_marker(
+        "reuse_profile"
+    ) and not request.config.getoption("--run-update-test"):
         shutil.copytree(
             Path("utilities/klaatu-profile-firefox-base").absolute(),
             Path("utilities/klaatu-profile-current-base").absolute(),
             dirs_exist_ok=True,
         )
-        return f'{Path("utilities/klaatu-profile-current-base").absolute()}'
+        return f"{Path('utilities/klaatu-profile-current-base').absolute()}"
 
 
 @pytest.fixture
@@ -231,20 +247,22 @@ def firefox_options(
         logging.info(f"Using firefox at {firefox_path}")
     firefox_options.log.level = "trace"
     if request.config.getoption("--run-update-test"):
-        if request.node.get_closest_marker("update_test"):  # disable test needs different firefox
+        if request.node.get_closest_marker(
+            "update_test"
+        ):  # disable test needs different firefox
             binary = Path(
                 "utilities/firefox-old-nightly-disable-test/firefox/firefox-bin"
             ).absolute()
             firefox_options.binary = f"{binary}"
             firefox_options.add_argument("-profile")
             firefox_options.add_argument(
-                f'{Path("utilities/klaatu-profile-disable-test").absolute()}'
+                f"{Path('utilities/klaatu-profile-disable-test').absolute()}"
             )
         firefox_options.add_argument("-profile")
         firefox_options.add_argument(setup_profile)
-    if request.node.get_closest_marker("reuse_profile") and not request.config.getoption(
-        "--run-update-test"
-    ):
+    if request.node.get_closest_marker(
+        "reuse_profile"
+    ) and not request.config.getoption("--run-update-test"):
         firefox_options.add_argument("-profile")
         firefox_options.add_argument(setup_profile)
     firefox_options.add_argument("-remote-allow-system-access")
@@ -265,7 +283,9 @@ def firefox_options(
     firefox_options.set_preference("toolkit.telemetry.log.level", "Trace")
     firefox_options.set_preference("toolkit.telemetry.log.dump", True)
     firefox_options.set_preference("toolkit.telemetry.send.overrideOfficialCheck", True)
-    firefox_options.set_preference("toolkit.telemetry.testing.disableFuzzingDelay", True)
+    firefox_options.set_preference(
+        "toolkit.telemetry.testing.disableFuzzingDelay", True
+    )
     firefox_options.set_preference("nimbus.debug", True)
     firefox_options.set_preference("app.normandy.run_interval_seconds", 30)
     firefox_options.set_preference(
@@ -273,7 +293,9 @@ def firefox_options(
         "5E:36:F2:14:DE:82:3F:8B:29:96:89:23:5F:03:41:AC:AF:A0:75:AF:82:CB:4C:D4:30:7C:3D:B3:43:39:2A:FE",  # noqa: E501
     )
     firefox_options.set_preference("datareporting.healthreport.service.enabled", True)
-    firefox_options.set_preference("datareporting.healthreport.logging.consoleEnabled", True)
+    firefox_options.set_preference(
+        "datareporting.healthreport.logging.consoleEnabled", True
+    )
     firefox_options.set_preference("datareporting.healthreport.service.firstRun", True)
     firefox_options.set_preference(
         "datareporting.healthreport.documentServerURI",
@@ -282,7 +304,9 @@ def firefox_options(
     firefox_options.set_preference(
         "app.normandy.api_url", "https://normandy.cdn.mozilla.net/api/v1"
     )
-    firefox_options.set_preference("app.normandy.user_id", "7ef5ab6d-42d6-4c4e-877d-c3174438050a")
+    firefox_options.set_preference(
+        "app.normandy.user_id", "7ef5ab6d-42d6-4c4e-877d-c3174438050a"
+    )
     firefox_options.set_preference("messaging-system.log", "debug")
     firefox_options.set_preference("toolkit.telemetry.scheduler.tickInterval", 15)
     firefox_options.set_preference("toolkit.telemetry.collectInterval", 10)
@@ -431,9 +455,11 @@ def fixture_navigate_using_url_bar(selenium, cmd_or_ctrl_button):
             el = selenium.find_element(By.CSS_SELECTOR, "#urlbar-input")
             WebDriverWait(selenium, 60).until(EC.element_to_be_clickable(el))
             if use_clipboard:
-                ActionChains(selenium).move_to_element(el).pause(1).click().pause(1).key_down(
+                ActionChains(selenium).move_to_element(el).pause(1).click().pause(
+                    1
+                ).key_down(cmd_or_ctrl_button).send_keys("v").key_up(
                     cmd_or_ctrl_button
-                ).send_keys("v").key_up(cmd_or_ctrl_button).send_keys(Keys.ENTER).perform()
+                ).send_keys(Keys.ENTER).perform()
                 return
             else:
                 el.click()
@@ -453,7 +479,9 @@ def fixture_navigate_using_url_bar(selenium, cmd_or_ctrl_button):
 
 @pytest.fixture(name="find_impression")
 def fixture_find_impression(selenium, find_telemetry):
-    def fixture_find_impression_runner(source: str, provider: str, tagged: bool) -> bool:
+    def fixture_find_impression_runner(
+        source: str, provider: str, tagged: bool
+    ) -> bool:
         control = True
         timeout = time.time() + 120
         script = "return Glean.serp.impression.testGetValue()"
@@ -750,7 +778,8 @@ def check_new_tab(selenium):
 
 
 @given(
-    "Firefox is launched enrolled in an Experiment with custom search", target_fixture="selenium"
+    "Firefox is launched enrolled in an Experiment with custom search",
+    target_fixture="selenium",
 )
 def setup_browser(selenium, setup_search_test):
     selenium.implicitly_wait(5)

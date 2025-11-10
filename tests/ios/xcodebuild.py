@@ -14,7 +14,9 @@ class XCodeBuild(object):
         self.device = os.getenv("SIMULATOR_DEVICE", "iPhone 17")
         self.ios_version = os.getenv("IOS_VERSION", "26.0")
         self.binary = "xcodebuild"
-        self.destination = f"platform=iOS Simulator,name={self.device},OS={self.ios_version}"
+        self.destination = (
+            f"platform=iOS Simulator,name={self.device},OS={self.ios_version}"
+        )
         self.scheme = "Fennec"
         self.testPlan = "ExperimentIntegrationTests"
         self.xcrun = XCRun()
@@ -66,7 +68,10 @@ class XCodeBuild(object):
         self.logger.info("Running: {}".format(" ".join(args)))
         try:
             out = subprocess.check_output(
-                args, cwd=f"{here.parents[3]}", stderr=subprocess.STDOUT, universal_newlines=True
+                args,
+                cwd=f"{here.parents[3]}",
+                stderr=subprocess.STDOUT,
+                universal_newlines=True,
             )
         except subprocess.CalledProcessError as e:
             out = e.output

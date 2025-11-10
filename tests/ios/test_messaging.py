@@ -8,7 +8,11 @@ import pytest
 
 @pytest.mark.messaging_survey
 def test_survey_navigates_correctly(
-    xcodebuild, setup_experiment, start_app, experiment_branch, check_ping_for_experiment
+    xcodebuild,
+    setup_experiment,
+    start_app,
+    experiment_branch,
+    check_ping_for_experiment,
 ):
     xcodebuild.install(boot=False)
     setup_experiment()
@@ -29,7 +33,11 @@ def test_survey_navigates_correctly(
 
 @pytest.mark.messaging_survey
 def test_survey_no_thanks_navigates_correctly(
-    xcodebuild, setup_experiment, start_app, experiment_branch, check_ping_for_experiment
+    xcodebuild,
+    setup_experiment,
+    start_app,
+    experiment_branch,
+    check_ping_for_experiment,
 ):
     xcodebuild.install(boot=False)
     setup_experiment()
@@ -50,7 +58,11 @@ def test_survey_no_thanks_navigates_correctly(
 
 @pytest.mark.messaging_survey
 def test_survey_landscape_looks_correct(
-    xcodebuild, setup_experiment, start_app, experiment_branch, check_ping_for_experiment
+    xcodebuild,
+    setup_experiment,
+    start_app,
+    experiment_branch,
+    check_ping_for_experiment,
 ):
     xcodebuild.install(boot=False)
     setup_experiment()
@@ -71,7 +83,11 @@ def test_survey_landscape_looks_correct(
 
 @pytest.mark.messaging_new_tab_card
 def test_homescreen_survey_navigates_correctly(
-    xcodebuild, setup_experiment, start_app, experiment_branch, check_ping_for_experiment
+    xcodebuild,
+    setup_experiment,
+    start_app,
+    experiment_branch,
+    check_ping_for_experiment,
 ):
     xcodebuild.install(boot=False)
     setup_experiment()
@@ -92,7 +108,11 @@ def test_homescreen_survey_navigates_correctly(
 
 @pytest.mark.messaging_new_tab_card
 def test_homescreen_survey_dismisses_correctly(
-    xcodebuild, setup_experiment, start_app, experiment_branch, check_ping_for_experiment
+    xcodebuild,
+    setup_experiment,
+    start_app,
+    experiment_branch,
+    check_ping_for_experiment,
 ):
     xcodebuild.install(boot=False)
     setup_experiment()
